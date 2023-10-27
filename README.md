@@ -11,4 +11,9 @@ Laravel command to install AWS-SDK to connect to DynamoDB:  `composer require aw
 
 Install Laravel Passport or Sanctum using Composer. For Passport, use `composer require laravel/passport`.
 
+
+To use Tinker `php artisan vendor:publish --provider="Laravel/Tinker/TinkerServiceProvider"`
+
+`php artisan vendor:publish` command, Laravel will provide you with a list of providers that have assets available for publishing.
+
 For Sanctum, use `composer require laravel/sanctum`.

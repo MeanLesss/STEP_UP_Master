@@ -93,15 +93,6 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
-        'dynamodb' => [
-            'driver' => 'dynamodb',
-            'key' => env('DYNAMODB_KEY'),
-            'secret' => env('DYNAMODB_SECRET'),
-            'region' => env('DYNAMODB_REGION'),
-            'endpoint' => env('DYNAMODB_LOCAL_ENDPOINT'),
-            'database' => env('DYNAMODB_DATABASE'),
-        ],
-
     ],
 
     /*
