@@ -14,20 +14,11 @@ services:
     working_dir: /var/www/html/STEP_UP_Master
     volumes:
       - ./:/var/www/html/STEP_UP_Master
-      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - laravel
 
-  node:
-    image: node:14.15.1
-    container_name: node
-    volumes:
-      - ./:/var/www
-    working_dir: /var/www
-    command: bash -c "yarn install && yarn run dev"
-
   nginx:
-    image: nginx:latest
+    image: nginx:alpine
     container_name: docker-nginx
     ports:
       - "168:80"
