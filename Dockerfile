@@ -2,11 +2,7 @@ FROM php:8.2-fpm
 
 WORKDIR /var/www
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    locales \
-    zip \
-    vim \
+RUN vim \
     unzip \
     git \
     curl
