@@ -11,9 +11,9 @@ services:
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
-    working_dir: /var/www
+    working_dir: /var/www/html/STEP_UP_Master
     volumes:
-      - ./:/var/www
+      - ./:/var/www/html/STEP_UP_Master
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - laravel
@@ -28,11 +28,11 @@ services:
 
   nginx:
     image: nginx:latest
-    container_name: nginxserver
+    container_name: docker-nginx
     ports:
       - "168:80"
     volumes:
-      - ./:/usr/share/nginx/html
+      - ./:/usr/share/nginx/html/STEP_UP_Master
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - laravel
