@@ -1,26 +1,35 @@
-FROM php:8.2-fpm-alpine
+FROM php:8.2-fpm
 
 WORKDIR /var/www
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
     vim \
     unzip \
     git \
     curl
 
-RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl gd
+RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install gd
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN addgroup -g 1000 www && adduser -u 1000 -G www -s /bin/sh -D www
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
 COPY . /var/www
 
-RUN chown -R www:www /var/www && chmod -R 755 /var/www
+COPY --chown=www:www . /var/www
 
 USER www
 
 EXPOSE 9000
 
 CMD ["php-fpm"]
-
