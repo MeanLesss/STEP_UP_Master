@@ -18,7 +18,7 @@ services:
       - laravel
 
   nginx:
-    image: nginx:latest
+    image: nginx:alpine
     container_name: docker-nginx
     ports:
       - "168:80"
