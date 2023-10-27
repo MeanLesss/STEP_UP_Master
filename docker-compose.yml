@@ -18,12 +18,12 @@ services:
       - laravel
 
   nginx:
-    image: nginx:alpine
+    image: nginx:latest
     container_name: docker-nginx
     ports:
       - "168:80"
     volumes:
-      - ./:/usr/share/nginx/html/STEP_UP_Master
+      - ./:/usr/share/nginx/html
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - laravel
