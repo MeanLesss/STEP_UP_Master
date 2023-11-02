@@ -41,98 +41,7 @@ Source: Conversation with Bing, 10/27/2023
 ```
 
 
-# To Create docker Nginx
-
-```
-To install Nginx on Docker, you can follow these steps:
-
-1. **Pull the Nginx Docker Image**: You can download Nginx from a pre-built Docker image, with a default Nginx configuration, by running the following command²:
-```bash
-docker pull nginx
-```
-This command downloads all the necessary components for the container².
-
-2. **Run the Nginx Docker Container**: To start your Nginx Docker container, run this command²:
-```bash
-docker run --name docker-nginx -p 80:80 nginx
-```
-Here's a quick rundown of what's happening with this command²:
-- `run` is the command to create a new container.
-- The `--name` flag is how you specify the name of the container.
-- `-p 80:80` maps port 80 of the container to port 80 of the host machine.
-- `nginx` is the name of the image to use to create the container.
-
-3. **Verify Installation**: You can verify that Nginx is running by opening your web browser and visiting `http://localhost`. You should see a welcome page for Nginx, which confirms that Nginx is running correctly².
-
-Remember, when you run a process in a Docker container, even if you close the terminal or get disconnected, the process will continue to run in the background. This is particularly useful for long-running processes or when running processes over an unstable network connection.
-
-Please note that these commands should be run in your project's root directory where your `docker-compose.yml` file is located. Also, make sure to replace `"docker-nginx"` with the actual container name if it's different.
-
  
-```
-# Host on docker nginx 
-```
-To clone a Laravel project into an Nginx Docker container, you can follow these steps:
-
-1. **Pull the Nginx Docker Image**: You can download Nginx from a pre-built Docker image, with a default Nginx configuration, by running the following command¹:
-```bash
-docker pull nginx
-```
-
-2. **Clone the Project**: Clone your project from GitHub or any other version control system. For example¹:
-```bash
-git clone https://github.com/yourusername/your-repo.git
-```
-Replace `"https://github.com/yourusername/your-repo.git"` with the actual URL of your repository.
-
-3. **Create a Dockerfile**: In the root directory of your project, create a Dockerfile³. Here's an example of what your Dockerfile might look like for an Angular application³:
-```Dockerfile
-# Stage 1: Compile and Build angular codebase
-# Use official node image as the base image
-FROM node:latest as build
-
-# Set the working directory
-WORKDIR /usr/local/app
-
-# Add the source code to app
-COPY ./ /usr/local/app/
-
-# Install all the dependencies
-RUN npm install
-
-# Generate the build of the application
-RUN npm run build
-
-# Stage 2: Serve app with nginx server
-# Use official nginx image as the base image
-FROM nginx:latest
-
-# Copy the build output to replace the default nginx contents.
-COPY --from=build /usr/local/app/dist /usr/share/nginx/html
-```
-This Dockerfile first builds your Angular application and then copies the build output (the `dist` directory) to replace the default Nginx contents³.
-
-4. **Build Your Docker Image**: You can now build your Docker image using the `docker build` command¹:
-```bash
-docker build -t my-nginx-image .
-```
-Replace `"my-nginx-image"` with whatever name you want to give your Docker image¹.
-
-5. **Run Your Docker Container**: Finally, you can run your Docker container using the `docker run` command¹:
-```bash
-docker run --name my-nginx-container -p 80:80 -d my-nginx-image
-```
-Replace `"my-nginx-container"` with whatever name you want to give your Docker container, and replace `"my-nginx-image"` with the name of your Docker image¹.
-
-Now, you should be able to access your project by navigating to `http://localhost` in your web browser¹.
-
-To update your Laravel project in a Docker container, you can use a combination of `git pull` to fetch the latest changes from your repository and `docker-compose up --build -d` to rebuild your Docker containers¹³. This will ensure that your containers are always running with the latest version of your Laravel project.
-
-Remember, when you run a process in a Docker container, even if you close the terminal or get disconnected, the process will continue to run in the background. This is particularly useful for long-running processes or when running processes over an unstable network connection.
-
- 
-```
-
 # Docker Compose
 ```
 Sure, here's a step-by-step guide on how to use Docker Compose to set up a Laravel project:
@@ -143,33 +52,51 @@ Sure, here's a step-by-step guide on how to use Docker Compose to set up a Larav
 
 3. **Create a Dockerfile**: In the root directory of your Laravel project, create a file named `Dockerfile`. This file will define how to build a Docker image for your Laravel application. Here's an example of what your Dockerfile might look like:
 ```Dockerfile
-FROM php:7.4-fpm
+FROM php:8.2-fpm
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
+WORKDIR /var/www/html
+
+RUN apt-get update && apt-get install -y --fix-missing \
+    libonig-dev \
     build-essential \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
     locales \
-    libzip-dev \
-    libonig-dev \
     zip \
-    jpegoptim optipng pngquant gifsicle
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    curl \
+    libzip-dev
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install extensions
-RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-RUN docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/
+RUN docker-php-ext-install pdo_mysql
+RUN docker-php-ext-install mbstring
+RUN docker-php-ext-install zip
+RUN docker-php-ext-install exif
+RUN docker-php-ext-install pcntl
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 
-WORKDIR /var/www
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN rm -rf /var/www/html
-COPY . /var/www
-RUN chown -R www-data:www-data /var/www
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
+
+COPY . /var/www/html
+
+#COPY --chown=www-data:www-data . /var/www/html
+COPY --chown=www:www . /var/www/html
+
+USER root
+# RUN chown -R www:www /var/www/html
+USER www
+
+EXPOSE 9000
+
+CMD ["php-fpm","composer update"]
+
 ```
 This Dockerfile starts from the `php:7.4-fpm` image, installs some dependencies, and copies your Laravel project files into the image.
 
@@ -177,50 +104,55 @@ This Dockerfile starts from the `php:7.4-fpm` image, installs some dependencies,
 ```yaml
 version: '3'
 services:
-
-  #PHP Service
-  app:
+  step_up_app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: digitalocean.com/php
-    container_name: app
+    image: step_up_app
+    container_name: step_up_app
     restart: unless-stopped
     tty: true
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
-    working_dir: /var/www
+    working_dir: /var/www/html
     volumes:
-      - ./:/var/www
-      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./:/var/www/html
     networks:
-      - app-network
+      - laravel
 
-  #Nginx Service
-  webserver:
-    image: nginx:alpine
-    container_name: webserver
-    restart: unless-stopped
-    tty: true
+  nginx:
+    image: nginx:latest
+    container_name: step_up_nginx
     ports:
-      - "80:80"
-      - "443:443"
+      - "168:80"
     volumes:
-      - ./:/var/www
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./:/usr/share/nginx/html  # Changed this line
+      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
     networks:
-      - app-network
+      - laravel
 
-#Docker Networks
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - laravel
+
+  laravel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - laravel
 networks:
-  app-network:
+  laravel:
     driver: bridge
 
-#Volumes
-volumes:
-  dbdata:
-    driver: local
 ```
 This `docker-compose.yml` file defines two services, `app` for the Laravel application and `webserver` for Nginx. It also defines a network for these two services to communicate and a volume to persist data.
 
