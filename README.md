@@ -196,3 +196,12 @@ Here’s what this command does1:
 -v /var/run/docker.sock:/var/run/docker.sock: This option mounts the Docker socket from the host into the container. This allows the Portainer Agent to communicate with the Docker API.
 -v /var/lib/docker/volumes:/var/lib/docker/volumes: This option mounts the Docker volumes directory from the host into the container. This allows the Portainer Agent to access your Docker volumes1.
 ```
+
+
+# The end to fix the package need to run this 
+
+```
+docker exec step_up_app composer update
+
+--->>> step_up_app the name defined in the docker-compose file it might be other name
+```
