@@ -36,7 +36,7 @@ COPY . /var/www/html
 COPY --chown=www:www . /var/www/html
 
 USER root
-# RUN chown -R www:www /var/www/html
+RUN chown -R www:www /var/www/html
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 USER www
