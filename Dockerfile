@@ -38,10 +38,10 @@ COPY --chown=www-data:www-data . /var/www/html/public
 # COPY --chown=www:www . /var/www/html
 
 USER root
-RUN chown -R www:www /var/www/html
+RUN chown -R www-data:www-data /var/www/html
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
-USER www
+USER www-data
 
 EXPOSE 9000
 
