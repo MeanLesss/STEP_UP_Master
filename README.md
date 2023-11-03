@@ -196,12 +196,68 @@ Here’s what this command does1:
 -v /var/run/docker.sock:/var/run/docker.sock: This option mounts the Docker socket from the host into the container. This allows the Portainer Agent to communicate with the Docker API.
 -v /var/lib/docker/volumes:/var/lib/docker/volumes: This option mounts the Docker volumes directory from the host into the container. This allows the Portainer Agent to access your Docker volumes1.
 ```
+```
 
 
 # The end to fix the package need to run this 
-
 ```
 docker exec step_up_app composer update
-
 --->>> step_up_app the name defined in the docker-compose file it might be other name
 ```
+
+# if the project laravel is changed  and to update the docker :
+```
+docker-compose up --build -d
+-------then-------
+docker exec -it <container_name> php artisan route:clear
+
+```
+
+
+# GitHub CI/CD to manage work flow
+Setting up a CI/CD service with GitHub Actions involves several steps¹²³:
+
+1. **Create a GitHub Actions Workflow File**: In your GitHub repository, create a new file in the `.github/workflows` directory. This file will define your CI/CD pipeline¹. You can name it something like `ci.yml`.
+
+2. **Define the Workflow**: In the workflow file, you'll define the steps that should be taken when the workflow is triggered¹. This typically includes steps to set up the environment, install dependencies, run tests, and deploy your application¹.
+
+Here's an example of what a basic Laravel CI/CD workflow file might look like:
+
+```yaml
+name: Laravel CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Copy .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+    - name: Install Dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Generate key
+      run: php artisan key:generate
+
+    - name: Directory Permissions
+      run: chmod -R 777 storage bootstrap/cache
+
+    - name: Run Tests
+      run: vendor/bin/phpunit
+```
+
+This workflow is triggered whenever you push to the `master` branch. It sets up an Ubuntu environment, checks out your code, installs dependencies, generates an app key, sets directory permissions, and runs your tests¹.
+
+1. **Commit and Push Your Workflow File**: Once you've defined your workflow, commit the workflow file and push it to your GitHub repository³. GitHub Actions will automatically recognize the workflow file and start running it whenever it's triggered³.
+
+2. **Monitor Your Workflow**: You can monitor the status of your workflows in the "Actions" tab of your GitHub repository³. Here you'll see a list of all workflow runs, and you can click on a run to see more details about it³.
+
+Remember that this is just a basic example. Depending on your application, you might need to add more steps to your workflow, such as compiling assets or running database migrations¹²³.
+ 
