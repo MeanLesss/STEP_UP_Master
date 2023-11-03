@@ -32,8 +32,8 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 
 COPY . /var/www/html
 
-#COPY --chown=www-data:www-data . /var/www/html
-COPY --chown=www:www . /var/www/html
+COPY --chown=www-data:www-data . /var/www/html/public
+# COPY --chown=www:www . /var/www/html
 
 USER root
 RUN chown -R www:www /var/www/html
