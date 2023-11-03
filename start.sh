@@ -1,4 +1,4 @@
 #!/bin/sh
 npm install
-composer update
+composer install
 php-fpm
