@@ -17,6 +17,9 @@ RUN apt-get update && apt-get install -y --fix-missing \
     curl \
     libzip-dev
 
+RUN apt-get update && apt-get install -y nodejs
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mbstring
 RUN docker-php-ext-install zip
@@ -39,6 +42,8 @@ COPY --chown=www-data:www-data . /var/www/html/public
 
 USER root
 RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 775 /var/www/html
+
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 USER www-data
