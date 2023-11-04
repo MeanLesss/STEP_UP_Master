@@ -3,7 +3,8 @@ FROM php:8.2-fpm
 WORKDIR /var/www/html
 
 RUN apt update && apt install -y \
-    apt-utils\
+    nodejs \
+    apt-utils \
     libonig-dev \
     build-essential \
     libpng-dev \
