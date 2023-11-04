@@ -19,7 +19,7 @@ RUN apt update && apt install -y \
     libzip-dev
 
 RUN apt update && apt install -y nodejs
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+# RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mbstring
