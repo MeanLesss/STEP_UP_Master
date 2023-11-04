@@ -19,7 +19,7 @@ RUN apt update && apt install -y \
     libzip-dev
 
 RUN apt install -y nodejs
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mbstring
@@ -42,6 +42,8 @@ COPY --chown=www-data:www-data . /var/www/html/public
 
 USER root
 RUN chown -R www-data:www-data /var/www/html
+USER www-data
+RUN chmod +x /start.sh
 RUN chmod -R 775 /var/www/html
 
 COPY start.sh /start.sh
