@@ -46,10 +46,10 @@ USER www-data
 RUN chmod +x /start.sh
 RUN chmod -R 775 /var/www/html
 
-COPY start.sh ./start.sh
-RUN chmod +x ./start.sh
+# COPY start.sh ./start.sh
+RUN chmod +x start.sh
 USER www-data
 
 EXPOSE 9000
 
-CMD ["./start.sh"]
+CMD ["/start.sh"]
