@@ -16,7 +16,7 @@ services:
       - ./:/var/www/html
     networks:
       - laravel
-    command: npm install
+    # command: npm install
 
   nginx:
     image: nginx:latest
