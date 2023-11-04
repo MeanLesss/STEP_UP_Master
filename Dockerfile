@@ -2,7 +2,7 @@ FROM php:8.2-fpm
 
 WORKDIR /var/www/html
 
-RUN apt-get update && apt-get install -y --fix-missing \
+RUN apt update && apt install -y \
     libonig-dev \
     build-essential \
     libpng-dev \
@@ -17,8 +17,8 @@ RUN apt-get update && apt-get install -y --fix-missing \
     curl \
     libzip-dev
 
-RUN apt-get update && apt-get install -y nodejs
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt install -y nodejs
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mbstring
@@ -38,7 +38,6 @@ COPY . /var/www/html
 COPY --chown=www-data:www-data . /var/www/html/storage
 COPY --chown=www-data:www-data . /var/www/html/bootstrap/cache
 COPY --chown=www-data:www-data . /var/www/html/public
-# COPY --chown=www:www . /var/www/html
 
 USER root
 RUN chown -R www-data:www-data /var/www/html
