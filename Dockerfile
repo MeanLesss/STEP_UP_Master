@@ -19,7 +19,7 @@ RUN apt update && apt install -y \
     libzip-dev
 
 # Install Node.js LTS version
-RUN curl -sL https://deb.nodesource.com/setup_lts.x | bash - && apt-get install -y nodejs
+RUN apt install -y nodejs
 
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mbstring
