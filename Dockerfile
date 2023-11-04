@@ -42,12 +42,10 @@ COPY --chown=www-data:www-data . /var/www/html/public
 
 USER root
 RUN chown -R www-data:www-data /var/www/html
-USER www-data
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 RUN chmod -R 775 /var/www/html
 
-# RUN chmod +x start.sh
 USER www-data
 
 EXPOSE 9000
