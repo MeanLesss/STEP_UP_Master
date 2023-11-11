@@ -38,7 +38,7 @@ services:
     volumes:
       - ./:/var/www/html
     ports:
-      - "9050:9000"
+      - "9000:9000"
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
