@@ -6,7 +6,8 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./:/var/www
+      - ./:/var/www/html
+    #   - ./:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     depends_on:
       - step_up_app
@@ -35,13 +36,14 @@ services:
     container_name: step_up_app
     restart: unless-stopped
     volumes:
-      - ./:/var/www
+      - ./:/var/www/html
     ports:
       - "9050:9000"
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
-    working_dir: /var/www
+    working_dir: /var/www/html
+    # working_dir: /var/www
     networks:
       - laravel
 
