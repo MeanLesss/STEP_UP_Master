@@ -1,54 +1,55 @@
-FROM php:8.2-fpm
+FROM php:8.2.11-fpm
 
-WORKDIR /var/www/html
+# Install composer
+RUN echo "\e[1;33mInstall COMPOSER\e[0m"
+RUN cd /tmp \
+    && curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer
 
-RUN apt update && apt install -y \
-    nodejs \
+RUN docker-php-ext-install pdo pdo_mysql
+
+RUN apt-get update
+
+# Install useful tools
+RUN apt-get -y install apt-utils nano wget dialog vim
+
+# Install important libraries
+RUN echo "\e[1;33mInstall important libraries\e[0m"
+RUN apt-get -y install --fix-missing \
     apt-utils \
-    libonig-dev \
     build-essential \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
-    zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
     git \
     curl \
-    libzip-dev
+    libcurl4 \
+    libcurl4-openssl-dev \
+    zlib1g-dev \
+    libzip-dev \
+    zip \
+    libbz2-dev \
+    locales \
+    libmcrypt-dev \
+    libicu-dev \
+    libonig-dev \
+    libxml2-dev
 
-# Install Node.js LTS version
-RUN apt install -y nodejs
+# RUN echo "\e[1;33mInstall important docker dependencies\e[0m"
+# RUN docker-php-ext-install \
+#     exif \
+#     pcntl \
+#     bcmath \
+#     ctype \
+#     curl \
+#     iconv \
+#     xml \
+#     soap \
+#     pcntl \
+#     mbstring \
+#     tokenizer \
+#     bz2 \
+#     zip \
+#     intl
 
-RUN docker-php-ext-install pdo_mysql
-RUN docker-php-ext-install mbstring
-RUN docker-php-ext-install zip
-RUN docker-php-ext-install exif
-RUN docker-php-ext-install pcntl
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install gd
-
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
-
-COPY . /var/www/html
-
-COPY --chown=www-data:www-data . /var/www/html/storage
-COPY --chown=www-data:www-data . /var/www/html/bootstrap/cache
-COPY --chown=www-data:www-data . /var/www/html/public
-
-USER root
-RUN chown -R www-data:www-data /var/www/html
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-RUN chmod -R 775 /var/www/html
-
-USER www-data
-
-EXPOSE 9000
-
-CMD ["/start.sh"]
+# Install Postgre PDO
+# RUN apt-get install -y libpq-dev \
+#     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+#     && docker-php-ext-install pdo pdo_pgsql pgsql

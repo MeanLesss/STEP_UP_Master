@@ -1,5 +1,32 @@
-version: '3'
+version: '3.8'
 services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - step_up_app
+    #   - step_up
+    networks:
+      - laravel
+
+#   step_up:
+#     image: mysql
+#     container_name: step_up
+#     volumes:
+#       - ./mysql/data:/var/lib/mysql
+#     ports:
+#       - "33063:3306"
+#     environment:
+#       MYSQL_DATABASE: step_up
+#       MYSQL_ROOT_PASSWORD: #StepUp@3344
+#     networks:
+#       - laravel
+
   step_up_app:
     build:
       context: .
@@ -7,45 +34,67 @@ services:
     image: step_up_app
     container_name: step_up_app
     restart: unless-stopped
-    tty: true
+    volumes:
+      - ./:/var/www
+    ports:
+      - "9050:9000"
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
-    working_dir: /var/www/html
-    volumes:
-      - ./:/var/www/html
-    networks:
-      - laravel
-    # command: npm install
-
-  nginx:
-    image: nginx:latest
-    container_name: step_up_nginx
-    ports:
-      - "168:80"
-    volumes:
-      - ./:/usr/share/nginx/html  # Changed this line
-      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+    working_dir: /var/www
     networks:
       - laravel
 
-  php:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./:/var/www/html
-    networks:
-      - laravel
 
-  laravel:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./:/var/www/html
-    networks:
-      - laravel
+  # step_up_postgres:
+  #   image: postgres
+  #   container_name: postgres
+  #   volumes:
+  #     - ./postgresql/data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_DB: blog
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: password
+
+  # php:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./:/var/www/html
+  #   networks:
+  #     - laravel
+
+  # laravel:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./:/var/www/html
+  #   networks:
+  #     - laravel
+
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin
+  #   container_name: phpmyadmin
+  #   ports:
+  #     - "3400:80"
+  #   depends_on:
+  #     - db
+
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgAdmin
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: hanieasemi76@gmail.com
+  #     PGADMIN_DEFAULT_PASSWORD: password
+
 networks:
   laravel:
     driver: bridge
