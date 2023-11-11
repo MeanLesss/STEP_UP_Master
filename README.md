@@ -5,9 +5,9 @@ After create run this command to generate the key : `php artisan key:generate --
 # After cloning the project
 ```
 create the .env file first and config your DB
-
-then change the user permission and group please refer the [note.md](note.md) in the root directory 
 ```
+
+## then change the user permission and group please refer the [note.md](note.md) in the root directory 
 Migrate Database command (Optional if want to use the server db instead of local) : `php artisan migrate`
 
 To use file first need to link storage with this command : `php artisan storage:link`
