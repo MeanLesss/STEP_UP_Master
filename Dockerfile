@@ -32,6 +32,23 @@ RUN apt-get -y install --fix-missing \
     libonig-dev \
     libxml2-dev
 
+# Copy existing application directory
+COPY . /var/www
+
+# Change the ownership from root to www-data
+RUN chown -R www-data:www-data /var/www
+
+# Change current user to www-data
+USER www-data
+
+# Change the ownership of the `storage` and `bootstrap/cache` directories
+RUN chown -R www-data:www-data storage && \
+    chown -R www-data:www-data bootstrap/cache
+
+# Change the permissions of the `storage` and `bootstrap/cache` directories
+RUN chmod -R 775 storage && \
+    chmod -R 775 bootstrap/cache
+
 # RUN echo "\e[1;33mInstall important docker dependencies\e[0m"
 # RUN docker-php-ext-install \
 #     exif \
