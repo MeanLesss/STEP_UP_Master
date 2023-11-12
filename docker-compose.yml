@@ -4,7 +4,7 @@ services:
     image: nginx:alpine
     container_name: nginx
     ports:
-      - "8080:80"
+      - "168:80"
     volumes:
       - ./:/var/www/html
     #   - ./:/var/www
