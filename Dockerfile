@@ -41,13 +41,15 @@ RUN chown -R www-data:www-data /var/www
 # Change current user to www-data
 USER www-data
 
-# Change the ownership of the `storage` and `bootstrap/cache` directories
-RUN chown -R www-data:www-data storage && \
-    chown -R www-data:www-data bootstrap/cache
-
-# Change the permissions of the `storage` and `bootstrap/cache` directories
-RUN chmod -R 775 storage && \
-    chmod -R 775 bootstrap/cache
+# Check if the directories exist before changing their ownership and permissions
+RUN if [ -d "storage" ]; then \
+    chown -R www-data:www-data storage && \
+    chmod -R 775 storage; \
+    fi && \
+    if [ -d "bootstrap/cache" ]; then \
+    chown -R www-data:www-data bootstrap/cache && \
+    chmod -R 775 bootstrap/cache; \
+    fi
 
 # RUN echo "\e[1;33mInstall important docker dependencies\e[0m"
 # RUN docker-php-ext-install \
