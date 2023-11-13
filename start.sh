@@ -2,6 +2,8 @@
 # npm install
 composer install
 
+chown -R www-data:www-data /var/www
+
 # Check if the directories exist before changing their ownership and permissions
 if [ -d "storage" ]; then \
     chown -R www-data:www-data storage && \

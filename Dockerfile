@@ -34,22 +34,7 @@ RUN apt-get -y install --fix-missing \
 
 # Copy existing application directory
 COPY . /var/www
-
-# Change the ownership from root to www-data
-RUN chown -R www-data:www-data /var/www
-
-# Change current user to www-data
-USER www-data
-
-# Check if the directories exist before changing their ownership and permissions
-RUN if [ -d "storage" ]; then \
-    chown -R www-data:www-data storage && \
-    chmod -R 775 storage; \
-    fi && \
-    if [ -d "bootstrap/cache" ]; then \
-    chown -R www-data:www-data bootstrap/cache && \
-    chmod -R 775 bootstrap/cache; \
-    fi
+RUN chmod -x start.sh
 
 CMD ["/start.sh"]
 
