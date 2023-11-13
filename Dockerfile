@@ -33,7 +33,7 @@ RUN apt-get -y install --fix-missing \
     libxml2-dev
 
 # Copy existing application directory
-COPY . /var/www
+# COPY . /var/www
 RUN chmod -x start.sh
 
 CMD ["/start.sh"]
