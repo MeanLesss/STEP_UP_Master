@@ -37,7 +37,9 @@ COPY . /var/www
 
 RUN chmod +x /var/www/start.sh
 
-CMD ["/var/www/start.sh"]
+RUN chmod +x /var/www/html/start.sh
+
+CMD ["/var/www/html/start.sh"]
 
 # RUN echo "\e[1;33mInstall important docker dependencies\e[0m"
 # RUN docker-php-ext-install \

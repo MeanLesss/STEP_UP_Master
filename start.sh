@@ -14,4 +14,6 @@ if [ -d "bootstrap/cache" ]; then \
     chmod -R 775 bootstrap/cache; \
 fi
 
+# Exit the script
+exit 0
 # php-fpm
