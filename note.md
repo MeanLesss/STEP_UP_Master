@@ -2,6 +2,28 @@
 
 # =======> if facing the permission problem for AutoLoad
 
+# run this command to change permission in the container
+- <container-name> in this case step_up_app
+```
+docker exec -u root -it <container-name> bash
+```
+- then you should be in the root directory (var/www/html) then give permission to `start.sh` by running this command :
+
+```
+chmod 775 start.sh
+```
+- After giving the permission then run the script with this command : 
+
+```
+./start.sh
+```
+## `🚀refresh or clear caches on the browser the refresh and it done`
+
+
+# This part is optional if the sheel script doesn't work 
+
+
+---------------------------------------------------------------------
 
 The error message indicates that Laravel is unable to write to the `storage/logs/laravel.log` file due to insufficient permissions. This is a common issue when running Laravel in a Docker container, as the user inside the Docker container may not have the necessary permissions to write to the `storage` directory.
 

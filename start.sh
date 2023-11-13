@@ -14,6 +14,9 @@ if [ -d "bootstrap/cache" ]; then \
     chmod -R 775 bootstrap/cache; \
 fi
 
+if [ -d "public" ]; then \
+    php artisan storage:link
+fi
 php artisan config:clear
 php artisan cache:clear
 # Exit the script

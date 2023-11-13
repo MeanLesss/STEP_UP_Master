@@ -1,13 +1,15 @@
+# `This part is for fresh start up only`
 Create project command : `composer create-project laravel/laravel example-app`
 
 
 After create run this command to generate the key : `php artisan key:generate --ansi`
-# After cloning the project
+# `This part is after cloning the project`
 ```
-create the .env file first and config your DB
+create the .env file first by copy the .env.example to .env and config your DB
 ```
 
-## then change the user permission and group please refer the [note.md](note.md) in the root directory 
+## `then change the user permission and group please refer the` [note.md](note.md) `in the root directory`
+ 
 Migrate Database command (Optional if want to use the server db instead of local) : `php artisan migrate`
 
 To use file first need to link storage with this command : `php artisan storage:link`
