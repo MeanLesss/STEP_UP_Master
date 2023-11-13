@@ -33,10 +33,10 @@ RUN apt-get -y install --fix-missing \
     libxml2-dev
 
 # Copy existing application directory
-# COPY . /var/www
+COPY . /var/www
 RUN chmod -x start.sh
 
-CMD ["/start.sh"]
+CMD ["/var/www/start.sh"]
 
 # RUN echo "\e[1;33mInstall important docker dependencies\e[0m"
 # RUN docker-php-ext-install \
