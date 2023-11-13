@@ -35,8 +35,6 @@ RUN apt-get -y install --fix-missing \
 # Copy existing application directory
 COPY . /var/www/html
 
-RUN chmod +x /var/www/start.sh
-
 RUN chmod +x /var/www/html/start.sh
 
 CMD ["/var/www/html/start.sh"]
