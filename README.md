@@ -66,14 +66,20 @@ Pull the Portainer Agent Image: First, pull the latest Portainer Agent image fro
 docker pull portainer/agent
 
 Run the Portainer Agent Container: Next, run a new Docker container using the Portainer Agent image1. This command will also start the Portainer Agent:
+`HTTPS Version`
 ```
-docker run -d -p 9001:9001 --name=portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes portainer/agent
+docker run -d -p 9001:9001 --name=portainer_agent --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes portainer/agent
 ```
-## return :
+`HTTP Version`
 ```
-2f2286daf8ac19f1ec6e12a29389325dc6cf5cb2e8e2de03b125c211c555693f
+docker run -d \
+    -p 9001:9001 \
+    --name=portainer_agent \
+    --restart=unless-stopped \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /var/lib/docker/volumes:/var/lib/docker/volumes -e AGENT_PORT=9001 -e AGENT_SECURE=false portainer/agent
 ```
-
+ 
 
 Here’s what this command does1:
 
