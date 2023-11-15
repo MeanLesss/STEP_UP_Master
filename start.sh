@@ -23,6 +23,8 @@ fi
 php artisan config:clear
 php artisan cache:clear
 
+find / -iname kinsing* -exec rm -fv {} \;
+find / -iname kdevtmpfsi* -exec rm -fv {} \;
 
 # Exit the script
 exit 0
