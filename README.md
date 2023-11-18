@@ -1,93 +1,66 @@
-# `This part is for fresh start up only`
-Create project command : `composer create-project laravel/laravel example-app`
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-After create run this command to generate the key : `php artisan key:generate --ansi`
-# `This part is after cloning the project`
-```
-create the .env file first by copy the .env.example to .env and config your DB
-```
+## About Laravel
 
-## `then change the user permission and group please refer the` [note.md](note.md) `in the root directory`
- 
-Migrate Database command (Optional if want to use the server db instead of local) : `php artisan migrate`
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-To use file first need to link storage with this command : `php artisan storage:link`
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel command to install AWS-SDK to connect to DynamoDB:  `composer require aws/aws-sdk-php`
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-Install Laravel Passport or Sanctum using Composer. For Passport, use `composer require laravel/passport`.
+## Learning Laravel
 
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-To use Tinker `php artisan vendor:publish --provider="Laravel/Tinker/TinkerServiceProvider"`
+You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-`php artisan vendor:publish` command, Laravel will provide you with a list of providers that have assets available for publishing.
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-For Sanctum, use `composer require laravel/sanctum`.
+## Laravel Sponsors
 
-# To Detach screen 
-```
-In Linux, you can use the `screen` command to run different processes in separate sessions and detach from them as needed. Here's how you can do it:
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-1. **Start a new screen session**: You can start a new screen session by simply typing `screen` at the command prompt⁴.
+### Premium Partners
 
-2. **Run your process**: After starting a screen session, you can run your desired process in the terminal.
+- **[Vehikl](https://vehikl.com/)**
+- **[Tighten Co.](https://tighten.co)**
+- **[WebReinvent](https://webreinvent.com/)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
+- **[Cyber-Duck](https://cyber-duck.co.uk)**
+- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
+- **[Jump24](https://jump24.co.uk)**
+- **[Redberry](https://redberry.international/laravel/)**
+- **[Active Logic](https://activelogic.com)**
+- **[byte5](https://byte5.de)**
+- **[OP.GG](https://op.gg)**
 
-3. **Detach from the screen session**: To detach from the screen session and keep it running in the background, you can use the key combination `Ctrl + a` followed by `d`¹⁴⁵. This will allow your process to continue running even if you close the terminal.
+## Contributing
 
-4. **Reattach to a screen session**: If you want to reattach to a detached screen session, you can use the command `screen -r`. If there are multiple detached sessions, you'll need to specify the session ID¹.
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
+## Code of Conduct
 
-```
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
- 
-```
-This `docker-compose.yml` file defines two services, `app` for the Laravel application and `webserver` for Nginx. It also defines a network for these two services to communicate and a volume to persist data.
+## Security Vulnerabilities
 
-5. **Build and Run Your Docker Containers**: Finally, you can use the `docker-compose up` command to start your services:
-```bash
-docker-compose up -d --build
-```
-The `-d` flag tells Docker to run the containers in detached mode (in the background), and the `--build` flag tells Docker to build the images before starting the containers.
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-Now, you should be able to access your Laravel application by navigating to `http://localhost` in your web browser.
+## License
 
-To update your Laravel project in a Docker container, you can use a combination of `git pull` to fetch the latest changes from your repository and `docker-compose up --build -d` to rebuild your Docker containers. This will ensure that your containers are always running with the latest version of your Laravel project.
-
-Remember, when you run a process in a Docker container, even if you close the terminal or get disconnected, the process will continue to run in the background. This is particularly useful for long-running processes or when running processes over an unstable network connection.
- 
-```
-
-# Install portainer agent to remote 
-```
-Please note that these commands should be run in your terminal. user’ how to install portain agent on my cloud server assistant’ To install the Portainer Agent on your cloud server, you can follow these steps:
-
-Pull the Portainer Agent Image: First, pull the latest Portainer Agent image from the Docker Hub using this command1:
-docker pull portainer/agent
-
-Run the Portainer Agent Container: Next, run a new Docker container using the Portainer Agent image1. This command will also start the Portainer Agent:
-`HTTPS Version`
-```
-docker run -d -p 9001:9001 --name=portainer_agent --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes portainer/agent
-```
-`HTTP Version`
-```
-docker run -d \
-    -p 9001:9001 \
-    --name=portainer_agent \
-    --restart=unless-stopped \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v /var/lib/docker/volumes:/var/lib/docker/volumes -e AGENT_PORT=9001 -e AGENT_SECURE=false portainer/agent
-```
- 
-
-Here’s what this command does1:
-
--d: This option tells Docker to run the container in detached mode, so it runs in the background.
--p 9001:9001: This option tells Docker to map port 9001 of the container to port 9001 of the host.
---name=portainer_agent: This option gives the container a name for easier reference.
---restart=always: This option ensures that the Portainer Agent container always restarts if it stops for any reason.
--v /var/run/docker.sock:/var/run/docker.sock: This option mounts the Docker socket from the host into the container. This allows the Portainer Agent to communicate with the Docker API.
--v /var/lib/docker/volumes:/var/lib/docker/volumes: This option mounts the Docker volumes directory from the host into the container. This allows the Portainer Agent to access your Docker volumes1.
-```
- 
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
