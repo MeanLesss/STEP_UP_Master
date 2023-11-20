@@ -1,0 +1,115 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "168:168"
+    volumes:
+      - ./:/var/www/html
+    #   - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - step_up_app
+      - step_up
+    networks:
+      - laravel
+
+  step_up:
+    image: mysql
+    container_name: step_up
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+    ports:
+      - "33063:3306"
+    environment:
+      MYSQL_DATABASE: step_up
+      MYSQL_ROOT_PASSWORD: /run/secrets/db_password
+    secrets:
+      - db_password
+    networks:
+      - laravel
+
+  step_up_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: step_up_app
+    container_name: step_up_app
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "9000:9000"
+    working_dir: /var/www/html
+    networks:
+      - laravel
+    deploy:
+      resources:
+        limits:
+          cpus: '0.6'
+  duckdns:
+    image: linuxserver/duckdns
+    container_name: duckdns
+    environment:
+      - SUBDOMAINS=step-up-kh.duckdns.org
+      - TOKEN=2fa0c36d-66a5-4242-acfa-d1cfcd1227c3
+      - LOG_FILE=true
+    restart: unless-stopped
+networks:
+  laravel:
+    driver: bridge
+
+secrets:
+  db_password:
+    file: ./db_password.txt
+  # step_up_postgres:
+  #   image: postgres
+  #   container_name: postgres
+  #   volumes:
+  #     - ./postgresql/data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_DB: blog
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: password
+
+  # php:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./:/var/www/html
+  #   networks:
+  #     - laravel
+
+  # laravel:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./:/var/www/html
+  #   networks:
+  #     - laravel
+
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin
+  #   container_name: phpmyadmin
+  #   ports:
+  #     - "3400:80"
+  #   depends_on:
+  #     - db
+
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgAdmin
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: hanieasemi76@gmail.com
+  #     PGADMIN_DEFAULT_PASSWORD: password
+
+
