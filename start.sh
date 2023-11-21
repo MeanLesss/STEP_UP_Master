@@ -1,9 +1,11 @@
 #!/bin/sh
 set -e
 
+# ================>>This script is for CentOS 9 Only
+
 # Full paths to commands
-/usr/local/bin/npm install
-/usr/local/bin/composer install
+# npm install
+composer install
 
 # Check if the directories exist before changing their ownership and permissions
 if [ -d "/var/www/html/storage" ]; then
