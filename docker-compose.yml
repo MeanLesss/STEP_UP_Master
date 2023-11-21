@@ -24,7 +24,7 @@ services:
       - "33063:3306"
     environment:
       MYSQL_DATABASE: step_up
-      MYSQL_ROOT_PASSWORD: #StepUp@3344
+      MYSQL_ROOT_PASSWORD: "#StepUp@3344"
     networks:
       - laravel
 
