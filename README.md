@@ -10,6 +10,12 @@ create the .env file first by copy the .env.example to .env and config your DB
 
 ## `then change the user permission and group please refer the` [note.md](note.md) `in the root directory`
  
+## Create DB on docker
+```
+docker run --name step_up -e MYSQL_ROOT_PASSWORD=#Thepassword -p 33063:3306 -d mysql:latest
+```
+
+
 Migrate Database command (Optional if want to use the server db instead of local) : `php artisan migrate`
 
 To use file first need to link storage with this command : `php artisan storage:link`
