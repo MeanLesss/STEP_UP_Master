@@ -20,7 +20,6 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -35,7 +34,6 @@ class LoginController extends Controller
                 'error_msg' => 'The provided credentials are incorrect.',
             ]);
         }
-
         return response()->json([
             'verified' => true,
             'status' =>  'success',
