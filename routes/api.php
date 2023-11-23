@@ -29,4 +29,4 @@ Route::get('/test/{id}', function (int $id) {
 });
 
 // Login as Guest
-Route::post('/guest', [LoginController::class,'store'])->name('guest');
+Route::post('/signup', [LoginController::class,'store'])->name('signup');

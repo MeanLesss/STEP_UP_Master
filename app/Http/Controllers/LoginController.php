@@ -78,10 +78,6 @@ class LoginController extends Controller
      */
     public function store(Request $request)
     {
-        //
-       /* The code ` ->validate([...])` is used to validate the data received in the ``
-       object. It ensures that the data meets certain validation rules before proceeding with the
-       rest of the code. */
         $request->validate([
             'guest' => 'required|boolean',
             'name' => 'required_if:guest,false',
@@ -92,7 +88,7 @@ class LoginController extends Controller
             $user = new User();
             if($request->guest)
             {
-                $user->name = 'Guest_'.Str::random(10);
+                $user->name = $request->name != '' ? $request->name : 'Guest_'.Str::random(10);
                 $user->email = $user->name.'@guest.com';
                 $user->password = '';
                 $user->created_at = Carbon::now();
