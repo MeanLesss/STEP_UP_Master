@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
@@ -26,15 +27,22 @@ class LoginController extends Controller
         ]);
 
         if (!Auth::attempt($request->only('email', 'password'))) {
-            return var_dump(['The provided credentials are incorrect.']);
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+            //return var_dump(['The provided credentials are incorrect.']);
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  '',
+                'error_msg' => 'The provided credentials are incorrect.',
             ]);
         }
 
-        $user = User::where('email', $request->email)->first();
-
-        return var_dump($user->createToken('token')->plainTextToken);
+        return response()->json([
+            'verified' => true,
+            'status' =>  'success',
+            'msg' => 'Login Successfully',
+            'error_msg' => '',
+            'user_token' => Auth::user()->createToken('token')->plainTextToken,
+        ]);
     }
     /**
      * Show the form for creating a new resource.
@@ -50,14 +58,32 @@ class LoginController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'guest' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+        $user = new User();
+        if($request->guest)
+        {
+            $user->name = 'Guest_'.Str::random(10);
+            $user->email = $user->name.'@guest.com';
+            $user->password = '';
+        }else{
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+        }
+        // $random = Str::random(10);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request)
     {
         //
+        return $request->user();
     }
 
     /**

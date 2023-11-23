@@ -14,12 +14,18 @@ use App\Http\Controllers\LoginController;
 |
 */
 
+// Login API
 Route::post('/login', [LoginController::class,'login'])->name('login');
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    //     return $request->user();
+    // });
+
+Route::middleware('auth:sanctum')->get('/user', [LoginController::class,'show']);
 
 Route::get('/test/{id}', function (int $id) {
     return response()->json(['message' => 'This is a public API endpoint. this is the id : '.$id]);
 });
+
+// Login as Guest
+Route::post('/guest', [LoginController::class,'store'])->name('guest');
