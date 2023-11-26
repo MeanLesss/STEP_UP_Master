@@ -81,7 +81,7 @@ class LoginController extends Controller
                         'error_msg' => 'The provided credentials are incorrect.',
                     ]);
                 }
-                return var_dump([2,2,3,3]);
+                // return var_dump([2,2,3,3]);
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
