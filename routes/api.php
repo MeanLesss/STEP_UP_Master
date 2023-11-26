@@ -15,8 +15,8 @@ use App\Http\Controllers\LoginController;
 */
 
 // Login API
-// Route::post('/login', [LoginController::class,'login'])->name('login');
-Route::get('/login/{email}/{password}', [LoginController::class,'login'])->name('signin');
+Route::post('/login', [LoginController::class,'login'])->name('login');
+// Route::get('/login/{email}/{password}', [LoginController::class,'login'])->name('signin');
 Route::get('/logout', [LoginController::class,'logout'])->middleware('auth:sanctum')->name('logout');
 // Login as Guest
 Route::post('/signup', [LoginController::class,'store'])->name('signup');

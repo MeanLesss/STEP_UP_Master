@@ -54,8 +54,8 @@ class LoginController extends Controller
     }
 }
 
-    // public function login(Request $request)
-    public function login($email,$password)
+    public function login(Request $request)
+    // public function login($email,$password)
     {
         try{
             // $validator = Validator::make($request->all(), [
@@ -72,8 +72,8 @@ class LoginController extends Controller
             //     ], 400);
             // }
 
-            // if (!Auth::attempt($request->only('email', 'password'))) {
-            if (!Auth::attempt(['email'=>$email,'password'=>$password])) {
+            if (!Auth::attempt($request->only('email', 'password'))) {
+            // if (!Auth::attempt(['email'=>$email,'password'=>$password])) {
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
