@@ -54,24 +54,26 @@ class LoginController extends Controller
     }
 }
 
-    public function login(Request $request)
+    // public function login(Request $request)
+    public function login($email,$password)
     {
         try{
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                'password' => 'required',
-            ]);
+            // $validator = Validator::make($request->all(), [
+            //     'email' => 'required|email',
+            //     'password' => 'required',
+            // ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'verified' => false,
-                    'status' =>  'error',
-                    'msg' =>  '',
-                    'error_msg' => $validator->errors(),
-                ], 400);
-            }
+            // if ($validator->fails()) {
+            //     return response()->json([
+            //         'verified' => false,
+            //         'status' =>  'error',
+            //         'msg' =>  '',
+            //         'error_msg' => $validator->errors(),
+            //     ], 400);
+            // }
 
-            if (!Auth::attempt($request->only('email', 'password'))) {
+            // if (!Auth::attempt($request->only('email', 'password'))) {
+            if (!Auth::attempt(['email'=>$email,'password'=>$password])) {
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
