@@ -16,7 +16,7 @@ use App\Http\Controllers\LoginController;
 
 // Login API
 Route::post('/login', [LoginController::class,'login'])->name('login');
-Route::get('/logout', [LoginController::class,'logout'])->name('logout');
+Route::get('/logout', [LoginController::class,'logout'])->middleware('auth:sanctum')->name('logout');
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //         return $request->user();

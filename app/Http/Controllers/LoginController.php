@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
@@ -22,23 +23,50 @@ class LoginController extends Controller
     }
 
     public function logout()
-    {
-        Auth::logout();
+{
+    if (Auth::check()) {
+        try {
+            Auth::user()->tokens()->delete();
+            return response()->json([
+                'verified' => true,
+                'status' =>  'success',
+                'msg' =>  'User logged out',
+                'error_msg' => '',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  '',
+                'error_msg' => $e->getMessage(),
+            ]);
+        }
+    } else {
         return response()->json([
-            'verified' => true,
-            'status' =>  'success',
-            'msg' =>  'User logged out',
+            'verified' => false,
+            'status' =>  'error',
+            'msg' =>  'No user is authenticated',
             'error_msg' => '',
         ]);
     }
+}
+
     public function login(Request $request)
     {
         try{
-
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  '',
+                    'error_msg' => $validator->errors(),
+                ], 400);
+            }
 
             if (!Auth::attempt($request->only('email', 'password'))) {
                 return response()->json([
@@ -78,13 +106,36 @@ class LoginController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'guest' => 'required|boolean',
             'name' => 'required_if:guest,false',
             'email' => 'required_if:guest,false|email',
             'password' => 'required_if:guest,false',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  '',
+                'error_msg' => $validator->errors(),
+            ], 400);
+        }
+
         try{
+            $userExists = User::where('name', $request->name)
+            ->orWhere('email', $request->email)
+            ->exists();
+
+            if($userExists){
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  '',
+                    'error_msg' => 'Sorry the Name or Email is taken !',
+                ], 200);
+            }
+
             $user = new User();
             if($request->guest)
             {
