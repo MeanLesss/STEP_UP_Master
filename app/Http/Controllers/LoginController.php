@@ -59,13 +59,13 @@ class LoginController extends Controller
     {
         try{
             // $validator = Validator::make($request->all(), [
-            //     'email' => 'required|email',
-            //     'password' => 'required',
-            // ]);
+                //     'email' => 'required|email',
+                //     'password' => 'required',
+                // ]);
 
-            // if ($validator->fails()) {
-            //     return response()->json([
-            //         'verified' => false,
+                // if ($validator->fails()) {
+                    //     return response()->json([
+                        //         'verified' => false,
             //         'status' =>  'error',
             //         'msg' =>  '',
             //         'error_msg' => $validator->errors(),
@@ -73,21 +73,22 @@ class LoginController extends Controller
             // }
 
             if (!Auth::attempt($request->only('email', 'password'))) {
-            // if (!Auth::attempt(['email'=>$email,'password'=>$password])) {
+                // if (!Auth::attempt(['email'=>$email,'password'=>$password])) {
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' =>  '',
+                        'error_msg' => 'The provided credentials are incorrect.',
+                    ]);
+                }
+                return var_dump([2,2,3,3]);
                 return response()->json([
-                    'verified' => false,
-                    'status' =>  'error',
-                    'msg' =>  '',
-                    'error_msg' => 'The provided credentials are incorrect.',
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => 'Login Successfully',
+                    'error_msg' => '',
+                    'user_token' => Auth::user()->createToken('token')->plainTextToken,
                 ]);
-            }
-            return response()->json([
-                'verified' => true,
-                'status' =>  'success',
-                'msg' => 'Login Successfully',
-                'error_msg' => '',
-                'user_token' => Auth::user()->createToken('token')->plainTextToken,
-            ]);
         }catch(Exception $e){
             return response()->json([
                 'verified' => false,
