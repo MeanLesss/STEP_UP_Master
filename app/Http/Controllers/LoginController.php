@@ -11,9 +11,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class LoginController extends Controller
 {
+    use AuthorizesRequests, ValidatesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -53,44 +56,44 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        // try{
-        //     $validator = Validator::make($request->all(), [
-        //         'email' => 'required|email',
-        //         'password' => 'required',
-        //     ]);
+        try{
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
 
-        //     if ($validator->fails()) {
-        //         return response()->json([
-        //             'verified' => false,
-        //             'status' =>  'error',
-        //             'msg' =>  '',
-        //             'error_msg' => $validator->errors(),
-        //         ], 400);
-        //     }
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  '',
+                    'error_msg' => $validator->errors(),
+                ], 400);
+            }
 
-        //     if (!Auth::attempt($request->only('email', 'password'))) {
-        //         return response()->json([
-        //             'verified' => false,
-        //             'status' =>  'error',
-        //             'msg' =>  '',
-        //             'error_msg' => 'The provided credentials are incorrect.',
-        //         ]);
-        //     }
-        //     return response()->json([
-        //         'verified' => true,
-        //         'status' =>  'success',
-        //         'msg' => 'Login Successfully',
-        //         'error_msg' => '',
-        //         'user_token' => Auth::user()->createToken('token')->plainTextToken,
-        //     ]);
-        // }catch(Exception $e){
-        //     return response()->json([
-        //         'verified' => false,
-        //         'status' =>  'error',
-        //         'msg' =>  '',
-        //         'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
-        //     ]);
-        // }
+            if (!Auth::attempt($request->only('email', 'password'))) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  '',
+                    'error_msg' => 'The provided credentials are incorrect.',
+                ]);
+            }
+            return response()->json([
+                'verified' => true,
+                'status' =>  'success',
+                'msg' => 'Login Successfully',
+                'error_msg' => '',
+                'user_token' => Auth::user()->createToken('token')->plainTextToken,
+            ]);
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  '',
+                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+            ]);
+        }
 
     }
     /**
