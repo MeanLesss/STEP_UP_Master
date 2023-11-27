@@ -16,7 +16,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class LoginController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
+    //use AuthorizesRequests, ValidatesRequests;
+
     /**
      * Display a listing of the resource.
      */
