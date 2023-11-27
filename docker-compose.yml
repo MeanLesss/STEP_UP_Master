@@ -11,7 +11,7 @@ services:
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     depends_on:
       - step_up_app
-      - step_up
+    #   - step_up
     networks:
       - laravel
 
