@@ -109,7 +109,6 @@ class LoginController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -133,21 +132,12 @@ class LoginController extends Controller
             // $userExists = User::where('name', $request->name)
             //     ->orWhere('email', $request->email)
             //     ->exists();
-            $userExists = User::where('email', $request->email)->exists();
-            if($userExists){
-                return response()->json([
-                    'verified' => false,
-                    'status' =>  'error',
-                    'msg' =>  '',
-                    'error_msg' => 'Sorry try other credential!',
-                ], 200);
-            }
-
             $user = new User();
             if($request->guest)
             {
                 $user->name = $request->name != '' ? $request->name.'_'.Str::random(10) : 'Guest_'.Str::random(10);
                 $user->email = $user->name.'@guest.com';
+                $user->isGuest = true;
                 $user->password = '';
                 $user->created_at = Carbon::now();
                 $user->updated_at = Carbon::now();
@@ -160,10 +150,21 @@ class LoginController extends Controller
                     'user_token' => $user->createToken('token')->plainTextToken,
                 ]);
             }else{
+                $userExists = User::where('email', $request->email)->exists();
+
+                if($userExists){
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' =>  '',
+                        'error_msg' => 'Sorry try other credential!',
+                    ], 200);
+                }
                 if($request->password == $request->confirm_password){
 
                     $user->name = $request->name;
                     $user->email = $request->email;
+                    $user->isGuest = false;
                     $user->password = Hash::make($request->password);
                     $user->created_at = Carbon::now();
                     $user->updated_at = Carbon::now();
@@ -193,12 +194,10 @@ class LoginController extends Controller
             ]);
         }
     }
-    public function guestUpdate(Request $request){
+    public function userUpdate(Request $request){
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required',
-            'password' => 'required',
-            'confirm_password' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -212,30 +211,51 @@ class LoginController extends Controller
 
         try{
             if (Auth::check()) {
-                $userExists = User::where('email', $request->email)->exists();
-                if($userExists){
-                    return response()->json([
-                        'verified' => false,
-                        'status' =>  'error',
-                        'msg' =>  '',
-                        'error_msg' => 'Sorry try other credential!',
-                    ], 200);
-                }
-
                 $user = Auth::user();
-                $user->update([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'password' => Hash::make($request->password),
-                ]);
-
+                if($user->email != $request->email){
+                    $userExists = User::where('email', $request->email)->exists();
+                    if($userExists){
+                        return response()->json([
+                            'verified' => false,
+                            'status' =>  'error',
+                            'msg' =>  '',
+                            'error_msg' => 'Sorry try other credential!',
+                        ], 200);
+                    }
+                }
+                if($user->isGuest){
+                    if($request->password == $request->confirm_password){
+                        $user->update([
+                            'name' => $request->name,
+                            'email' => $request->email,
+                            'isGuest' => false,
+                            'password' => Hash::make($request->password),
+                        ]);
+                    }
+                }else{
+                    if($request->password != '' || $request->confirm_password!= ''){
+                        if($request->password == $request->confirm_password){
+                            $user->update([
+                                'name' => $request->name,
+                                'email' => $request->email,
+                                'password' => Hash::make($request->password),
+                            ]);
+                        }
+                    }else{
+                        if($request->password == $request->confirm_password){
+                            $user->update([
+                                'name' => $request->name,
+                                'email' => $request->email,
+                            ]);
+                        }
+                    }
+                }
                 // If the user is authenticated, return the user data
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
-                    'msg' => 'success',
+                    'msg' => 'Update Successfully!',
                     'error_msg' => '',
-                    'user_token' => $user->createToken('token')->plainTextToken,
                 ]);
             } else {
                 // If the user is not authenticated, return a custom message

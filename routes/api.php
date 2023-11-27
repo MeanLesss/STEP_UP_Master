@@ -20,7 +20,7 @@ Route::post('/login', [LoginController::class,'login'])->name('login');
 Route::get('/logout', [LoginController::class,'logout'])->middleware('auth:sanctum')->name('logout');
 // Login as Guest
 Route::post('/signup', [LoginController::class,'store'])->name('signup');
-Route::post('/guest/update', [LoginController::class,'guestUpdate'])->middleware('auth:sanctum')->name('guestUpdate');
+Route::post('/user/update', [LoginController::class,'userUpdate'])->middleware('auth:sanctum')->name('userUpdate');
 
 Route::get('/user', [LoginController::class,'show'])->middleware('auth:sanctum');
 
