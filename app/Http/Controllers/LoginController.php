@@ -97,7 +97,6 @@ class LoginController extends Controller
                 'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
             ]);
         }
-
     }
     /**
      * Show the form for creating a new resource.
