@@ -26,54 +26,53 @@ class LoginController extends Controller
     }
 
     public function logout()
-{
-    if (Auth::check()) {
-        try {
-            Auth::user()->tokens()->delete();
-            return response()->json([
-                'verified' => true,
-                'status' =>  'success',
-                'msg' =>  'User logged out',
-                'error_msg' => '',
-            ]);
-        } catch (\Exception $e) {
+    {
+        if (Auth::check()) {
+            try {
+                Auth::user()->tokens()->delete();
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' =>  'User logged out',
+                    'error_msg' => '',
+                ]);
+            } catch (Exception $e) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  '',
+                    'error_msg' => $e->getMessage(),
+                ]);
+            }
+        } else {
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' =>  '',
-                'error_msg' => $e->getMessage(),
+                'msg' =>  'No user is authenticated',
+                'error_msg' => '',
             ]);
         }
-    } else {
-        return response()->json([
-            'verified' => false,
-            'status' =>  'error',
-            'msg' =>  'No user is authenticated',
-            'error_msg' => '',
-        ]);
     }
-}
 
     public function login(Request $request)
     // public function login($email,$password)
     {
         try{
-            // $validator = Validator::make($request->all(), [
-                //     'email' => 'required|email',
-                //     'password' => 'required',
-                // ]);
+            $validator = Validator::make($request->all(), [
+                    'email' => 'required|email',
+                    'password' => 'required',
+                ]);
 
-                // if ($validator->fails()) {
-                    //     return response()->json([
-                        //         'verified' => false,
-            //         'status' =>  'error',
-            //         'msg' =>  '',
-            //         'error_msg' => $validator->errors(),
-            //     ], 400);
-            // }
+                if ($validator->fails()) {
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' =>  '',
+                        'error_msg' => $validator->errors(),
+                    ], 400);
+            }
 
             if (!Auth::attempt($request->only('email', 'password'))) {
-                // if (!Auth::attempt(['email'=>$email,'password'=>$password])) {
                     return response()->json([
                         'verified' => false,
                         'status' =>  'error',
@@ -110,6 +109,7 @@ class LoginController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -117,6 +117,7 @@ class LoginController extends Controller
             'name' => 'required_if:guest,false',
             'email' => 'required_if:guest,false|email',
             'password' => 'required_if:guest,false',
+            'confirm_password' => 'required_if:guest,false'
         ]);
 
         if ($validator->fails()) {
@@ -129,23 +130,23 @@ class LoginController extends Controller
         }
 
         try{
-            $userExists = User::where('name', $request->name)
-            ->orWhere('email', $request->email)
-            ->exists();
-
+            // $userExists = User::where('name', $request->name)
+            //     ->orWhere('email', $request->email)
+            //     ->exists();
+            $userExists = User::where('email', $request->email)->exists();
             if($userExists){
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
                     'msg' =>  '',
-                    'error_msg' => 'Sorry the Name or Email is taken !',
+                    'error_msg' => 'Sorry try other credential!',
                 ], 200);
             }
 
             $user = new User();
             if($request->guest)
             {
-                $user->name = $request->name != '' ? $request->name : 'Guest_'.Str::random(10);
+                $user->name = $request->name != '' ? $request->name.'_'.Str::random(10) : 'Guest_'.Str::random(10);
                 $user->email = $user->name.'@guest.com';
                 $user->password = '';
                 $user->created_at = Carbon::now();
@@ -159,19 +160,29 @@ class LoginController extends Controller
                     'user_token' => $user->createToken('token')->plainTextToken,
                 ]);
             }else{
-                $user->name = $request->name;
-                $user->email = $request->email;
-                $user->password = Hash::make($request->password);
-                $user->created_at = Carbon::now();
-                $user->updated_at = Carbon::now();
-                $user->save();
-                return response()->json([
-                    'verified' => true,
-                    'status' =>  'success',
-                    'msg' => 'Sign up Successfully',
-                    'error_msg' => '',
-                    'user_token' => $user->createToken('token')->plainTextToken,
-                ]);
+                if($request->password == $request->confirm_password){
+
+                    $user->name = $request->name;
+                    $user->email = $request->email;
+                    $user->password = Hash::make($request->password);
+                    $user->created_at = Carbon::now();
+                    $user->updated_at = Carbon::now();
+                    $user->save();
+                    return response()->json([
+                        'verified' => true,
+                        'status' =>  'success',
+                        'msg' => 'Sign up Successfully',
+                        'error_msg' => '',
+                        'user_token' => $user->createToken('token')->plainTextToken,
+                    ]);
+                }else{
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' => 'Sign up failed!',
+                        'error_msg' => 'The password does not match!' ,
+                    ]);
+                }
             }
         }catch(Exception $e){
             return response()->json([
@@ -181,7 +192,64 @@ class LoginController extends Controller
                 'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
             ]);
         }
-        // $random = Str::random(10);
+    }
+    public function guestUpdate(Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+            'confirm_password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  '',
+                'error_msg' => $validator->errors(),
+            ], 400);
+        }
+
+        try{
+            if (Auth::check()) {
+                $userExists = User::where('email', $request->email)->exists();
+                if($userExists){
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' =>  '',
+                        'error_msg' => 'Sorry try other credential!',
+                    ], 200);
+                }
+
+                $user = Auth::user();
+                $user->update([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                ]);
+
+                // If the user is authenticated, return the user data
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => 'success',
+                    'error_msg' => '',
+                    'user_token' => $user->createToken('token')->plainTextToken,
+                ]);
+            } else {
+                // If the user is not authenticated, return a custom message
+                return response()->json(['error' => 'Authenticated failed! Please try again!']);
+            }
+
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' => 'Sign up failed!',
+                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+            ]);
+        }
     }
 
     /**
