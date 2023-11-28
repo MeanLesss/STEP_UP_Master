@@ -87,7 +87,8 @@ class LoginController extends Controller
                     'status' =>  'success',
                     'msg' => 'Login Successfully',
                     'error_msg' => '',
-                    'user_token' => Auth::user()->createToken('token')->plainTextToken,
+                    'data' =>['user_token' => Auth::user()->createToken('token')->plainTextToken,],
+
                 ]);
         }catch(Exception $e){
             return response()->json([
@@ -147,7 +148,9 @@ class LoginController extends Controller
                     'status' =>  'success',
                     'msg' => 'Sign up as guest Successfully',
                     'error_msg' => '',
-                    'user_token' => $user->createToken('token')->plainTextToken,
+                    'data' =>[ 'user_token' => $user->createToken('token')->plainTextToken,],
+
+
                 ]);
             }else{
                 $userExists = User::where('email', $request->email)->exists();
@@ -174,7 +177,9 @@ class LoginController extends Controller
                         'status' =>  'success',
                         'msg' => 'Sign up Successfully',
                         'error_msg' => '',
-                        'user_token' => $user->createToken('token')->plainTextToken,
+                        'data' =>['user_token' => $user->createToken('token')->plainTextToken, ],
+
+
                     ]);
                 }else{
                     return response()->json([
@@ -288,7 +293,9 @@ class LoginController extends Controller
                     'status' =>  'success',
                     'msg' => 'success',
                     'error_msg' => '',
-                    'user_info' => $request->user() ,
+                    'data' =>[ 'user_info' => $request->user() ],
+
+
                 ]);
                 //return response()->json(Auth::user(), 200);
             } else {
