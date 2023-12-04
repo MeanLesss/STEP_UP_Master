@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="plugins/css/sweetalert2.css">
+
     <title>Login Page</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -56,7 +58,8 @@
     </div>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="{{ asset('plugins/jquery.min.js') }}"></script>
+    <script src="{{ asset('plugins/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('plugins/js/sweetalert2.all.min.js') }}"></script>
 </body>
 
 <script>
