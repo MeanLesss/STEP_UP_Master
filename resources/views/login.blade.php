@@ -10,6 +10,7 @@
     <style>
 
         .form-container {
+            z-index: 1;
             border-radius: 15px;
             box-shadow: 2px 2px 10px 0px #000;
             padding: 30px;
@@ -39,17 +40,17 @@
                 <div class="card form-container">
                     <div class="card-body">
                         <img src="{{ asset('storage/app_img/Step_up_logo.png') }}" class="mx-auto d-block" style="max-width: 100%;"/>
-                        <form method="POST" action="{{ route('login') }}" >
+                        <form id="loginForm" method="POST">
                             @csrf
                             <div class="form-group">
                                 <label for="email">Email address:</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                                <input type="text" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="form-group">
                                 <label for="password">Password:</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                            <button type="submit" class="btn btn-primary w-100" >Login</button>
                         </form>
                     </div>
                 </div>
@@ -57,14 +58,29 @@
         </div>
     </div>
 
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="{{ asset('plugins/js/jquery.min.js') }}"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="{{ asset('plugins/js/sweetalert2.all.min.js') }}"></script>
+
+    <script>
+        $(document).ready(()=>{
+
+            $("#loginForm").submit(function(event){
+                event.preventDefault();
+                var valid = isValidEmail($('#email').val());
+                if(valid){
+                    Swal.fire("SweetAlert2 is working!");
+                }else{
+                    Swal.fire("SweetAlert2 is not working!");
+                }
+            });
+            function isValidEmail(email) {
+                var emailReg = /^([a-zA-Z0-9_.+-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/;
+                return emailReg.test(email);
+            }
+        });
+    </script>
+
 </body>
-
-<script>
-
-</script>
-
 </html>
 
