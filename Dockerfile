@@ -32,6 +32,7 @@ COPY . /var/www
 # Run as non-root user
 USER www-data
 
+
 # RUN chmod +x /var/www/start.sh
 
 # CMD ["/var/www/start.sh"]

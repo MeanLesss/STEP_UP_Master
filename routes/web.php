@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,7 +14,7 @@ use App\Http\Controllers\LoginController;
 |
 */
 
-// Route::get('/login', 'LoginController@login//')->name('login');
+Route::get('/login_app', [LoginController::class,'index'])->name('login_app');
 Route::get('/', function () {
     return view('welcome');
 });

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('role')->comment('10:guest,100:freelancer,101:client,1000:admin,1001:legal')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->integer('login_attempt')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

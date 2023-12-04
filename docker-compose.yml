@@ -14,19 +14,17 @@ services:
     #   - step_up
     networks:
       - laravel
-
-#   step_up:
-#     image: mysql
-#     container_name: step_up
-#     volumes:
-#       - ./mysql/data:/var/lib/mysql
-#     ports:
-#       - "33063:3306"
-#     environment:
-#       MYSQL_DATABASE: step_up
-#       MYSQL_ROOT_PASSWORD: "#StepUp@3344"
-#     networks:
-#       - laravel
+  nodejs:
+    build:
+      context: .
+      dockerfile: Dockerfile_node
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - laravel
 
   step_up_app:
     build:
