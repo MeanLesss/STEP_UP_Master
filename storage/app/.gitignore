@@ -2,4 +2,4 @@
 # !public/
 # !public/plugins
 # !public/app_img
-# !.gitignore
+!.gitignore
