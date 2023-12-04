@@ -36,7 +36,7 @@
             <div class="col-md-6">
                 <div class="card form-container">
                     <div class="card-body">
-                        <img src="/storage/img/Step_up_logo.png" class="mx-auto d-block" style="max-width: 100%;"/>
+                        <img src="/storage/app_img/Step_up_logo.png" class="mx-auto d-block" style="max-width: 100%;"/>
                         <form method="POST" action="{{ route('login') }}" >
                             @csrf
                             <div class="form-group">
