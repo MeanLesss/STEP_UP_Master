@@ -35,7 +35,7 @@ class LoginController extends Controller
             return response()->json($response);
         }else{
             // return var_dump($response);
-            return response( )->json($response);
+            return response()->json($response);
         }
     }
 

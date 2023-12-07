@@ -72,6 +72,10 @@
     <script>
         $(document).ready(function() {
             $("#loginForm").on('submit', function(event) {
+                var valid = isValidEmail($('#email').val());
+                if(!valid){
+                    return;
+                }
                 event.preventDefault();
                 var settings = {
                     "url": "{{route('login_submit')}}",
@@ -113,10 +117,6 @@
                 $.ajax(settings).done(function(response) {
                     console.log(response);
                 });
-
-
-
-
             });
 
             function isValidEmail(email) {
