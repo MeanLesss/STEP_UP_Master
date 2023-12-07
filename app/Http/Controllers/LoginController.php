@@ -32,10 +32,10 @@ class LoginController extends Controller
         $response = $this->login($request)->original;
         if($response['verified']){
             session(['user_token' => $response['data']['user_token']]);
-            return response($response);
+            return response()->json($response);
         }else{
             // return var_dump($response);
-            return response($response);
+            return response( )->json($response);
         }
     }
 
