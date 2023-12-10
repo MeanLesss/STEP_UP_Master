@@ -95,12 +95,42 @@ class LoginController extends Controller
                     ]);
                 }
                 // return var_dump([2,2,3,3]);
+                if(Auth::user()->role == 1000){
+                    $user_token = Auth::user()->createToken('token',[
+                        'service:create',
+                        'service:update',
+                        'service:delete',
+                        'service:cancel',
+                        'service:read',
+                        'service:ban',
+                        'user:status',])->plainTextToken;
+                }
+                if(Auth::user()->role == 100){
+                    $user_token = Auth::user()->createToken('token',[
+                        'service:create',
+                        'service:update',
+                        'service:delete',
+                        'service:cancel',
+                        'service:read',
+                        'service:purchase',])->plainTextToken;
+                }
+                if(Auth::user()->role == 101){
+                    $user_token = Auth::user()->createToken('token',[
+                        'service:read',
+                        'service:cancel',
+                        'service:purchase',])->plainTextToken;
+                }
+                if(Auth::user()->role == 101){
+                    $user_token = Auth::user()->createToken('token',[
+                        'service:read', ])->plainTextToken;
+                }
+
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => 'Login Successfully',
                     'error_msg' => '',
-                    'data' =>['user_token' => Auth::user()->createToken('token')->plainTextToken,],
+                    'data' =>['user_token' => $user_token],
 
                 ]);
         }catch(Exception $e){

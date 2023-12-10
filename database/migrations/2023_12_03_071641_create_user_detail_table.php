@@ -24,8 +24,8 @@ return new class extends Migration
             $table->string('card_date')->nullable()->comment('Hashed');
             $table->integer('credit_score')->default(100)->comment('max : 100,80 :warning, 50 : 3 days ban,30: 7days ,25:permanent');
             $table->double('balance')->default(0.00)->comment('$0.01');
-            $table->unsignedBigInteger('Created_By');
-            $table->unsignedBigInteger('Updated_By')->nullable();
+            $table->unsignedBigInteger('created_By');
+            $table->unsignedBigInteger('updated_By')->nullable();
             $table->timestamps();
         });
     }

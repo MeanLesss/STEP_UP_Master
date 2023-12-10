@@ -16,10 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('tranc_id');
             $table->unsignedBigInteger('tranc_user_id');
             $table->unsignedBigInteger('tranc_service_id');
-            $table->string('Title')->comment('use required if is cancel is complain ');;
-            $table->text('Description')->comment('use required if is cancel when is complain ');;
-            $table->unsignedBigInteger('Created_by');
-            $table->unsignedBigInteger('Updated_by');
+            $table->string('title')->comment('use required if is cancel is complain ');;
+            $table->text('description')->comment('use required if is cancel when is complain ');;
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by');
             $table->timestamps();
         });
     }

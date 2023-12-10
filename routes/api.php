@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ServiceController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,4 +28,7 @@ Route::get('/user', [LoginController::class,'show'])->middleware('auth:sanctum')
 Route::get('/test/{id}', function (int $id) {
     return response()->json(['message' => 'This is a public API endpoint. this is the id : '.$id]);
 });
+
+
+Route::post('/service/create',[ServiceController::class,'store'])->middleware('auth:sanctum');
 

@@ -20,8 +20,8 @@ return new class extends Migration
             $table->boolean('isComplain')->default(0)->comment('use required if is cancel');
             $table->integer('rate')->nullable()->comment('1 -> 5');
             $table->integer('tranc_status')->default(0)->comment('0:pending,1:failed,2:accepted');
-            $table->unsignedBigInteger('Created_By');
-            $table->unsignedBigInteger('Updated_By');
+            $table->unsignedBigInteger('created_By');
+            $table->unsignedBigInteger('updated_By');
             $table->timestamps();
         });
     }
