@@ -58,16 +58,13 @@ class ServiceController extends Controller
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
-                    'msg' => 'Test service Successfully',
+                    'msg' => 'Your service created successfully',
                     'error_msg' => '',
                 ]);
             }
-
-
             /**
              * If the user have no authorization for the action.
              */
-
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
