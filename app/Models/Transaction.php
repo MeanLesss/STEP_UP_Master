@@ -20,8 +20,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $isComplain
  * @property int|null $rate
  * @property int $tranc_status
- * @property int $created_By
- * @property int $updated_By
+ * @property int $created_by
+ * @property int $updated_by
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -39,8 +39,8 @@ class Transaction extends Model
 		'isComplain' => 'bool',
 		'rate' => 'int',
 		'tranc_status' => 'int',
-		'created_By' => 'int',
-		'updated_By' => 'int'
+		'created_by' => 'int',
+		'updated_by' => 'int'
 	];
 
 	protected $fillable = [
@@ -51,7 +51,7 @@ class Transaction extends Model
 		'isComplain',
 		'rate',
 		'tranc_status',
-		'created_By',
-		'updated_By'
+		'created_by',
+		'updated_by'
 	];
 }

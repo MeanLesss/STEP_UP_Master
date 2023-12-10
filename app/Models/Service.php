@@ -23,8 +23,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $service_type
  * @property Carbon $start_date
  * @property Carbon $end_date
- * @property int $created_By
- * @property int|null $updated_By
+ * @property int $created_by
+ * @property int|null $updated_by
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -40,8 +40,8 @@ class Service extends Model
 		'discount' => 'float',
 		'start_date' => 'datetime',
 		'end_date' => 'datetime',
-		'created_By' => 'int',
-		'updated_By' => 'int'
+		'created_by' => 'int',
+		'updated_by' => 'int'
 	];
 
 	protected $fillable = [
@@ -55,7 +55,7 @@ class Service extends Model
 		'service_type',
 		'start_date',
 		'end_date',
-		'created_By',
-		'updated_By'
+		'created_by',
+		'updated_by'
 	];
 }

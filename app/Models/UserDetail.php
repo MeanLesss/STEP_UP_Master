@@ -24,8 +24,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $card_date
  * @property int $credit_score
  * @property float $balance
- * @property int $created_By
- * @property int|null $updated_By
+ * @property int $created_by
+ * @property int|null $updated_by
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -39,8 +39,8 @@ class UserDetail extends Model
 		'user_id' => 'int',
 		'credit_score' => 'int',
 		'balance' => 'float',
-		'created_By' => 'int',
-		'updated_By' => 'int'
+		'created_by' => 'int',
+		'updated_by' => 'int'
 	];
 
 	protected $fillable = [
@@ -55,7 +55,7 @@ class UserDetail extends Model
 		'card_date',
 		'credit_score',
 		'balance',
-		'created_By',
-		'updated_By'
+		'created_by',
+		'updated_by'
 	];
 }

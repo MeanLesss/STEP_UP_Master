@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Service;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ServiceController extends Controller
 {
@@ -34,7 +37,7 @@ class ServiceController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'description' => 'required',
-                'price' => 'required',
+                'price' => 'required|numeric|min:5',
                 'service_type' => 'required',
                 'start_date' => 'required',
                 'end_date' => 'required',
@@ -50,14 +53,12 @@ class ServiceController extends Controller
             }
 
             if(Auth::user()->tokenCan('service:create')){
-
-
-
+                $service = Service::create($request->all());
 
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
-                    'msg' => 'Test sercice Successfully',
+                    'msg' => 'Test service Successfully',
                     'error_msg' => '',
                 ]);
             }

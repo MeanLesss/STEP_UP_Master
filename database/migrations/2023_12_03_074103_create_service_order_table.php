@@ -27,9 +27,9 @@ return new class extends Migration
             $table->date('expand_end_date')->nullable()->comment('Only when the freelancer requested and accepted by user expand time on project');
             $table->date('expected_start_date')->comment('Expectation from client');
             $table->date('expected_end_date')->comment('to automatically take down when it reach the date use trigger');
-            $table->timestamp('accepted_At')->nullable();
-            $table->unsignedBigInteger('created_By');
-            $table->unsignedBigInteger('updated_By')->nullable();
+            $table->timestamp('accepted_at')->nullable();
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
         });
     }

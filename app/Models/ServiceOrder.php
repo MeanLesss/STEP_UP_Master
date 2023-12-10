@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class ServiceOrder
- *
+ * 
  * @property int $id
  * @property int $service_id
  * @property int $order_by
@@ -27,9 +27,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $expand_end_date
  * @property Carbon $expected_start_date
  * @property Carbon $expected_end_date
- * @property Carbon|null $Accepted_At
- * @property int $created_By
- * @property int|null $updated_By
+ * @property Carbon|null $accepted_at
+ * @property int $created_by
+ * @property int|null $updated_by
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -51,9 +51,9 @@ class ServiceOrder extends Model
 		'expand_end_date' => 'datetime',
 		'expected_start_date' => 'datetime',
 		'expected_end_date' => 'datetime',
-		'accepted_At' => 'datetime',
-		'created_By' => 'int',
-		'updated_By' => 'int'
+		'accepted_at' => 'datetime',
+		'created_by' => 'int',
+		'updated_by' => 'int'
 	];
 
 	protected $fillable = [
@@ -71,8 +71,8 @@ class ServiceOrder extends Model
 		'expand_end_date',
 		'expected_start_date',
 		'expected_end_date',
-		'Accepted_At',
-		'created_By',
-		'updated_By'
+		'accepted_at',
+		'created_by',
+		'updated_by'
 	];
 }

@@ -77,62 +77,78 @@ class LoginController extends Controller
                     'password' => 'required',
                 ]);
 
-                if ($validator->fails()) {
-                    return response()->json([
-                        'verified' => false,
-                        'status' =>  'error',
-                        'msg' =>  '',
-                        'error_msg' => $validator->errors(),
-                    ], 400);
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  '',
+                    'error_msg' => $validator->errors(),
+                ], 400);
             }
 
             if (!Auth::attempt($request->only('email', 'password'))) {
-                    return response()->json([
-                        'verified' => false,
-                        'status' =>  'error',
-                        'msg' =>  '',
-                        'error_msg' => 'The provided credentials are incorrect.',
-                    ]);
-                }
-                // return var_dump([2,2,3,3]);
-                if(Auth::user()->role == 1000){
-                    $user_token = Auth::user()->createToken('token',[
-                        'service:create',
-                        'service:update',
-                        'service:delete',
-                        'service:cancel',
-                        'service:read',
-                        'service:ban',
-                        'user:status',])->plainTextToken;
-                }
-                if(Auth::user()->role == 100){
-                    $user_token = Auth::user()->createToken('token',[
-                        'service:create',
-                        'service:update',
-                        'service:delete',
-                        'service:cancel',
-                        'service:read',
-                        'service:purchase',])->plainTextToken;
-                }
-                if(Auth::user()->role == 101){
-                    $user_token = Auth::user()->createToken('token',[
-                        'service:read',
-                        'service:cancel',
-                        'service:purchase',])->plainTextToken;
-                }
-                if(Auth::user()->role == 101){
-                    $user_token = Auth::user()->createToken('token',[
-                        'service:read', ])->plainTextToken;
-                }
 
+                $check = User::where('email', $request->email)->first();
+                if($check){
+                    if($check->login_attempt <= 5){
+                        $check->update(['login_attempt' => $check->login_attempt + 1]);
+                    }else{
+                        return response()->json([
+                            'verified' => false,
+                            'status' =>  'error',
+                            'msg' =>  '',
+                            'error_msg' => 'Too many attempts, please reset your password!',
+                        ]);
+                    }
+                }
                 return response()->json([
-                    'verified' => true,
-                    'status' =>  'success',
-                    'msg' => 'Login Successfully',
-                    'error_msg' => '',
-                    'data' =>['user_token' => $user_token],
-
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  '',
+                    'error_msg' => 'The provided credentials are incorrect.',
                 ]);
+            }
+
+            Auth::user()->update(['login_attempt' => 0]);
+            // return var_dump([2,2,3,3]);
+            if(Auth::user()->role == 1000){
+                $user_token = Auth::user()->createToken('token',[
+                    'service:create',
+                    'service:update',
+                    'service:delete',
+                    'service:cancel',
+                    'service:read',
+                    'service:ban',
+                    'user:status',])->plainTextToken;
+            }
+            if(Auth::user()->role == 100){
+                $user_token = Auth::user()->createToken('token',[
+                    'service:create',
+                    'service:update',
+                    'service:delete',
+                    'service:cancel',
+                    'service:read',
+                    'service:purchase',])->plainTextToken;
+            }
+            if(Auth::user()->role == 101){
+                $user_token = Auth::user()->createToken('token',[
+                    'service:read',
+                    'service:cancel',
+                    'service:purchase',])->plainTextToken;
+            }
+            if(Auth::user()->role == 101){
+                $user_token = Auth::user()->createToken('token',[
+                    'service:read', ])->plainTextToken;
+            }
+
+            return response()->json([
+                'verified' => true,
+                'status' =>  'success',
+                'msg' => 'Login Successfully',
+                'error_msg' => '',
+                'data' =>['user_token' => $user_token],
+
+            ]);
         }catch(Exception $e){
             return response()->json([
                 'verified' => false,

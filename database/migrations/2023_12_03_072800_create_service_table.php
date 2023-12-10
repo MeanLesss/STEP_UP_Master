@@ -23,8 +23,8 @@ return new class extends Migration
             $table->string('service_type')->nullable()->comment('Software Developement, Graphic Design : as dropdown');
             $table->date('start_date');
             $table->date('end_date');
-            $table->unsignedBigInteger('created_By');
-            $table->unsignedBigInteger('updated_By')->nullable();
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
         });
     }
