@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('description')->nullable();
             $table->integer('status')->default(0);
-            $table->string('attachments')->nullable();
+            $table->json('attachments')->nullable();
             $table->string('requirement')->nullable();
             $table->double('price')->default(5.00)->comment('Greater than $5');
             $table->double('discount')->default(0.00)->nullable();

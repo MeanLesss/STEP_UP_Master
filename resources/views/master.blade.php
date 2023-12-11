@@ -10,5 +10,7 @@
 <body>
     <h1>Master page</h1>
     <h1>{{Auth::user()->name}}</h1>
+    <img src="{{ asset('storage/uploads/1/Screenshot 2023-11-23 200712.png') }}" class="mx-auto d-block"
+    style="max-width: 100%;" />
 </body>
 </html>

@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ServiceController extends Controller
@@ -41,6 +45,7 @@ class ServiceController extends Controller
                 'service_type' => 'required',
                 'start_date' => 'required',
                 'end_date' => 'required',
+                // 'attachment_files.*' => 'file|max:3032'
             ]);
 
             if ($validator->fails()) {
@@ -53,7 +58,41 @@ class ServiceController extends Controller
             }
 
             if(Auth::user()->tokenCan('service:create')){
-                $service = Service::create($request->all());
+                try{
+                    $service = new Service($request->all());
+
+                    if($request->hasFile('attachment_files')) {
+                        $filePaths = array();
+                        // Check if 'attachment_files' is an array of files or a single file
+                        $files = is_array($request->file('attachment_files')) ? $request->file('attachment_files') : [$request->file('attachment_files')];
+                        foreach ($files as $file) {
+                            $originalName = $file->getClientOriginalName();
+                            $extension = $file->getClientOriginalExtension();
+                            $nameWithoutExtension = str_replace("." . $extension, "", $originalName);
+                            $encryptedName = base64_encode($nameWithoutExtension);
+                            $encryptedNameWithExtension = $encryptedName . '.' . $extension;
+                            $path = 'uploads/'. Auth::user()->id;
+                            $file->storeAs('public/'.$path, $encryptedNameWithExtension);
+
+                            $filePaths[$originalName] = $path . '/' . $encryptedNameWithExtension;
+                        }
+                        $service->attachments = json_encode($filePaths);
+                    }
+
+                }catch(Exception $e){
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' =>  '',
+                        'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                    ]);
+                }
+
+                $service->created_by = Auth::user()->id;
+                $service->created_at = Carbon::now();
+                $service->updated_by = Auth::user()->id;
+                $service->updated_at = Carbon::now();
+                $service->save();
 
                 return response()->json([
                     'verified' => true,
