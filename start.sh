@@ -9,7 +9,7 @@ composer install
 
 # Check if the directories exist before changing their ownership and permissions
 if [ -d "/var/www/html/storage" ]; then
-    chown -R www-data:www-data /var/www/html/storage && \
+    chown -R $USER:www-data /var/www/html/storage && \
     chmod -R 775 /var/www/html/storage
 fi
 
