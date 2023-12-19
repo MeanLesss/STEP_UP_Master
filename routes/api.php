@@ -27,6 +27,7 @@ Route::get('/user', [LoginController::class,'show'])->middleware('auth:sanctum')
 
 // Service part
 Route::post('/service/create',[ServiceController::class,'store'])->middleware('auth:sanctum');
+Route::post('/service/{id}/update',[ServiceController::class,'update'])->middleware('auth:sanctum');
 Route::post('/service/data',[ServiceController::class,'getAllServices']);
 
 Route::get('/test/{id}', function (int $id) {

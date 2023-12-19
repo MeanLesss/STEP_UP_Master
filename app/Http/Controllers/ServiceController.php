@@ -206,6 +206,82 @@ class ServiceController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        try{
+            $validator = Validator::make($request->all(), [
+                'title' => 'required',
+                'description' => 'required',
+                'price' => 'required|numeric|min:5',
+                'service_type' => 'required',
+                'start_date' => 'required',
+                'end_date' => 'required',
+                // 'attachment_files.*' => 'file|max:3032'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  '',
+                    'error_msg' => $validator->errors(),
+                ], 400);
+            }
+
+            if(Auth::user()->tokenCan('service:update')){
+                try{
+                    $service = Service::find($id);
+
+                    if($request->hasFile('attachment_files')) {
+                        $filePaths = array();
+                        // Check if 'attachment_files' is an array of files or a single file
+                        $files = is_array($request->file('attachment_files')) ? $request->file('attachment_files') : [$request->file('attachment_files')];
+                        foreach ($files as $file) {
+                            $originalName = $file->getClientOriginalName();
+                            $extension = $file->getClientOriginalExtension();
+                            $nameWithoutExtension = str_replace("." . $extension, "", $originalName);
+                            $encryptedName = base64_encode($nameWithoutExtension);
+                            $encryptedNameWithExtension = $encryptedName . '.' . $extension;
+                            $path = 'uploads/'. Auth::user()->id;
+                            $file->storeAs('public/'.$path, $encryptedNameWithExtension);
+
+                            $filePaths[$originalName] = $path . '/' . $encryptedNameWithExtension;
+                        }
+                        $request->merge(['attachments' => json_encode($filePaths)]);
+                    }
+                    $request->merge(['updated_at' => Carbon::now(),'updated_by'=>Auth::user()->id]);
+                    $service->update($request->all());
+                }catch(Exception $e){
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' =>  '',
+                        'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                    ]);
+                }
+
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => 'Your service updated successfully',
+                    'error_msg' => '',
+                ]);
+            }
+            /**
+             * If the user have no authorization for the action.
+             */
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' => '',
+                'error_msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
+            ]);
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  '',
+                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+            ]);
+        }
     }
 
     /**
