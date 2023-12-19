@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('title');
             $table->string('description')->nullable();
             $table->integer('status')->default(0);
+            $table->integer('view')->default(0);
+            $table->integer('service_rate')->default(0);
+            $table->integer('service_ordered_count')->default(0);
             $table->json('attachments')->nullable();
             $table->string('requirement')->nullable();
             $table->double('price')->default(5.00)->comment('Greater than $5');

@@ -118,8 +118,10 @@ class LoginController extends Controller
                     'service:delete',
                     'service:cancel',
                     'service:read',
+                    'service:view',
                     'service:ban',
-                    'user:status',])->plainTextToken;
+                    'user:status',
+                    'self:update'])->plainTextToken;
             }
             if(Auth::user()->role == 100){
                 $user_token = Auth::user()->createToken('token',[
@@ -128,17 +130,23 @@ class LoginController extends Controller
                     'service:delete',
                     'service:cancel',
                     'service:read',
-                    'service:purchase',])->plainTextToken;
+                    'service:view',
+                    'service:purchase',
+                    'free:update'])->plainTextToken;
             }
             if(Auth::user()->role == 101){
                 $user_token = Auth::user()->createToken('token',[
                     'service:read',
+                    'service:view',
                     'service:cancel',
-                    'service:purchase',])->plainTextToken;
+                    'service:purchase',
+                    'client:update'])->plainTextToken;
             }
-            if(Auth::user()->role == 101){
+            if(Auth::user()->role == 10){
                 $user_token = Auth::user()->createToken('token',[
-                    'service:read', ])->plainTextToken;
+                    'service:read',
+                    'service:view',
+                    'guest:update' ])->plainTextToken;
             }
 
             return response()->json([
@@ -274,7 +282,7 @@ class LoginController extends Controller
         }
 
         try{
-            if (Auth::check()) {
+            if (Auth::check() ) {
                 $user = Auth::user();
                 if($user->email != $request->email){
                     $userExists = User::where('email', $request->email)->exists();
@@ -283,11 +291,11 @@ class LoginController extends Controller
                             'verified' => false,
                             'status' =>  'error',
                             'msg' =>  '',
-                            'error_msg' => 'Sorry try other credential!',
+                            'error_msg' => 'Sorry please try other credential!',
                         ], 200);
                     }
                 }
-                if($user->isGuest){
+                if($user->tokenCan('guest:update')){
                     if($request->password == $request->confirm_password){
                         $user->update([
                             'name' => $request->name,
@@ -325,7 +333,6 @@ class LoginController extends Controller
                 // If the user is not authenticated, return a custom message
                 return response()->json(['error' => 'Authenticated failed! Please try again!']);
             }
-
         }catch(Exception $e){
             return response()->json([
                 'verified' => false,

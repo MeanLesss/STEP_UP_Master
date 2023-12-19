@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MasterController;
+use App\Http\Controllers\ServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/index', [MasterController::class,'index'])->name('master');
+
+
+

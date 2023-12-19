@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Crypt;
@@ -30,6 +31,58 @@ class ServiceController extends Controller
     {
         //
 
+    }
+
+    public function getAllServices(Request $request){
+        try{
+
+            $validator = Validator::make($request->all(), [
+                'range' => 'required | numeric',
+                'page'=>'required | numeric'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  '',
+                    'error_msg' => $validator->errors(),
+                ], 400);
+            }
+
+            $page = $request->get('page', 1);
+            Paginator::currentPageResolver(function () use ($page) {
+                return $page;
+            });
+            if(isset($request->service_type)){
+                $result = Service::where('service_type',$request->service_type)->paginate($request->range);
+            }else{
+                //$result = Service::paginate($request->range);
+                $result = Service::paginate($request->range);
+            }
+
+            $transformedCollection = $result->getCollection()->transform(function ($item, $key) {
+                $item->attachments = json_decode($item->attachments, true);
+                return $item;
+            });
+
+            $result->setCollection($transformedCollection);
+
+            return response()->json([
+                'verified' => true,
+                'status' =>  'success',
+                'msg' => 'Enjoy!',
+                'error_msg' => "",
+                'data'=> $result
+            ]);
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  '',
+                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+            ]);
+        }
     }
 
     /**
@@ -126,6 +179,17 @@ class ServiceController extends Controller
     public function show(string $id)
     {
         //
+        $result = Service::where('id',$id)->increment('view');
+        $result = Service::where('id',$id)->first();
+
+        $result->attachments = json_decode($result->attachments);
+        return response()->json([
+            'verified' => true,
+            'status' =>  'success',
+            'msg' => '',
+            'error_msg' => "",
+            'data'=>$result
+        ]);
     }
 
     /**

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Service
- * 
+ *
  * @property int $id
  * @property string $title
  * @property string|null $description
@@ -48,6 +48,8 @@ class Service extends Model
 		'title',
 		'description',
 		'status',
+		'view',
+		'service_rate',
 		'attachments',
 		'requirement',
 		'price',
