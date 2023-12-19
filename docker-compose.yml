@@ -14,17 +14,17 @@ services:
     #   - step_up
     networks:
       - laravel
-  nodejs:
-    build:
-      context: .
-      dockerfile: Dockerfile_node
-    ports:
-      - "3000:3000"
-    volumes:
-      - .:/app
-      - /app/node_modules
-    networks:
-      - laravel
+#   nodejs:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile_node
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - .:/app
+#       - /app/node_modules
+#     networks:
+#       - laravel
 
   step_up_app:
     build:
