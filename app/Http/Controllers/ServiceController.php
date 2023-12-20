@@ -63,8 +63,10 @@ class ServiceController extends Controller
 
             $transformedCollection = $result->getCollection()->transform(function ($item, $key) {
                 $attachments = json_decode($item->attachments, true);
-                foreach($attachments as &$attachment){
-                    $attachment = env('APP_URL').$attachment;
+                if(isset($attachments)){
+                    foreach($attachments as &$attachment){
+                        $attachment = env('APP_URL').$attachment;
+                    }
                 }
                 $item->attachments = $attachments;
                 return $item;
