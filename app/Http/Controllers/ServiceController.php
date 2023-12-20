@@ -65,7 +65,8 @@ class ServiceController extends Controller
                 $attachments = json_decode($item->attachments, true);
                 if(isset($attachments)){
                     foreach($attachments as &$attachment){
-                        $attachment = env('APP_URL').$attachment;
+                        // $attachment = env('APP_URL').$attachment;
+                        $attachment = asset('storage/'.$attachment);
                     }
                 }
                 $item->attachments = $attachments;
@@ -191,7 +192,8 @@ class ServiceController extends Controller
 
         $attachments = json_decode($result->attachments);
         foreach($attachments as &$attachment){
-            $attachment = env('APP_URL').$attachment;
+            // $attachment = env('APP_URL').$attachment;
+            $attachment = asset('storage/'.$attachment);
         }
         $result->attachments = $attachments;
         return response()->json([
