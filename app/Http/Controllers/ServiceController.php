@@ -62,9 +62,14 @@ class ServiceController extends Controller
             }
 
             $transformedCollection = $result->getCollection()->transform(function ($item, $key) {
-                $item->attachments = json_decode($item->attachments, true);
+                $attachments = json_decode($item->attachments, true);
+                foreach($attachments as &$attachment){
+                    $attachment = env('APP_URL').$attachment;
+                }
+                $item->attachments = $attachments;
                 return $item;
             });
+
 
             $result->setCollection($transformedCollection);
 
@@ -182,7 +187,11 @@ class ServiceController extends Controller
         $result = Service::where('id',$id)->increment('view');
         $result = Service::where('id',$id)->first();
 
-        $result->attachments = json_decode($result->attachments);
+        $attachments = json_decode($result->attachments);
+        foreach($attachments as &$attachment){
+            $attachment = env('APP_URL').$attachment;
+        }
+        $result->attachments = $attachments;
         return response()->json([
             'verified' => true,
             'status' =>  'success',
@@ -191,6 +200,7 @@ class ServiceController extends Controller
             'data'=>$result
         ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
