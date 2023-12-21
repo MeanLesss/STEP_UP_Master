@@ -28,7 +28,7 @@
     <script>
         $(document).ready(function() {
             var settings = {
-                "url": "http://localhost:8000/api/service/32/view",
+                "url": "{{url('/api/service/32/view')}}",
                 "method": "GET",
                 "timeout": 0,
                 "headers": {
