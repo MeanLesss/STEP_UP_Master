@@ -133,7 +133,7 @@ class ServiceController extends Controller
                             $encryptedName = base64_encode($nameWithoutExtension);
                             $encryptedNameWithExtension = $encryptedName . '.' . $extension;
                             $path = 'uploads/'. Auth::user()->id;
-                            $file->storeAs('public/'.$path, $encryptedNameWithExtension);
+                            $file->storeAs('storage/'.$path, $encryptedNameWithExtension);
 
                             $filePaths[$originalName] = $path . '/' . $encryptedNameWithExtension;
                         }
@@ -255,7 +255,7 @@ class ServiceController extends Controller
                             $encryptedName = base64_encode($nameWithoutExtension);
                             $encryptedNameWithExtension = $encryptedName . '.' . $extension;
                             $path = 'uploads/'. Auth::user()->id;
-                            $file->storeAs('public/'.$path, $encryptedNameWithExtension);
+                            $file->storeAs('storage/'.$path, $encryptedNameWithExtension);
 
                             $filePaths[$originalName] = $path . '/' . $encryptedNameWithExtension;
                         }
