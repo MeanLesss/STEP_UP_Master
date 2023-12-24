@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('service_id');
             $table->unsignedBigInteger('order_by');
-            $table->unsignedBigInteger('cancel_by');
-            $table->boolean('isCancel')->default(0)->comment('0:false,1:true');
+            $table->unsignedBigInteger('cancel_by')->nullable();
+            $table->boolean('isCancel')->nullable()->default(0)->comment('0:false,1:true');
+            $table->boolean('isAgreementAgreed')->nullable()->default(0)->comment('0:false,1:true');
             $table->date('cancel_at')->nullable()->comment('use required if is cancel');
             $table->text('cancel_desc')->nullable()->comment('use required if is cancel');
             $table->string('order_title');
             $table->text('order_description');
             $table->integer('order_status')->default(0)->comment('-1 :Declined,0 :pending, 1 :in progress ,2 :In Review,3 :Success, 4 :Fail');
-            $table->json('order_attachments')->comment('[{0 :"Path1"},{ 1 :"path2"}]');
+            $table->json('order_attachments')->nullable()->comment('[{0 :"Path1"},{ 1 :"path2"}]');
             $table->date('expected_expand_date')->nullable()->comment('this will send the notification to the client for the date expand than will update expand_due_date');
             $table->date('expand_end_date')->nullable()->comment('Only when the freelancer requested and accepted by user expand time on project');
             $table->date('expected_start_date')->comment('Expectation from client');

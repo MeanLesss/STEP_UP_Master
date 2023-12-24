@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class ServiceOrder
- * 
+ *
  * @property int $id
  * @property int $service_id
  * @property int $order_by
@@ -61,6 +61,7 @@ class ServiceOrder extends Model
 		'order_by',
 		'cancel_by',
 		'isCancel',
+        'isAgreementAgreed',
 		'cancel_at',
 		'cancel_desc',
 		'order_title',

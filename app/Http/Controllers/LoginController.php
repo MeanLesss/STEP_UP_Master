@@ -121,6 +121,7 @@ class LoginController extends Controller
                     'service:view',
                     'service:ban',
                     'user:status',
+                    'service:purchase',
                     'self:update'])->plainTextToken;
             }
             if(Auth::user()->role == 100){
@@ -155,7 +156,6 @@ class LoginController extends Controller
                 'msg' => 'Login Successfully',
                 'error_msg' => '',
                 'data' =>['user_token' => $user_token],
-
             ]);
         }catch(Exception $e){
             return response()->json([

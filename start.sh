@@ -22,6 +22,8 @@ if [ -d "/var/www/html/public" ]; then
     /usr/local/bin/php artisan storage:link
 fi
 
+chown -R $USER:www-data /var/www/html/public
+
 /usr/local/bin/php artisan config:clear
 /usr/local/bin/php artisan cache:clear
 

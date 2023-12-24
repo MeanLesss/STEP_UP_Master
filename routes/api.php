@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ServiceOrderController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,3 +37,6 @@ Route::get('/test/{id}', function (int $id) {
 
 Route::get('/service/{id}/view',[ServiceController::class ,'show'])->name('clientViewWeb');
 
+Route::get('/service/agreement',[ServiceOrderController::class,'showAgreement']);
+Route::post('/service/confirm-agreement/',[ServiceOrderController::class,'confirmAgreement'])->middleware('auth:sanctum');
+Route::post('/service/purchase',[ServiceOrderController::class,'store'])->middleware('auth:sanctum');
