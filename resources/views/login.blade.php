@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login Page</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="plugins/css/sweetalert2.css">
-    <title>Login Page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
@@ -71,6 +71,9 @@
 
     <script>
         $(document).ready(function() {
+            if(sessionStorage.getItem('user_token') != '' && sessionStorage.getItem('user_token') != null){
+                window.location.href = "/index";
+            }
             $("#loginForm").on('submit', function(event) {
                 var valid = isValidEmail($('#email').val());
                 if(!valid){

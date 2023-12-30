@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\UserDetail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,8 @@ class LoginController extends Controller
         if($response['verified']){
             session(['user_token' => $response['data']['user_token']]);
             return response()->json($response);
+            // return view('layouts.page_template.auth', ['activePage' => 'home','namePage'=>'home']);
+            // return view('home', ['activePage' => 'home','namePage'=>'home']);
         }else{
             // return var_dump($response);
             return response()->json($response);
@@ -43,6 +46,7 @@ class LoginController extends Controller
     {
         if (Auth::check()) {
             try {
+                session()->forget('user_token');
                 Auth::user()->tokens()->delete();
                 return response()->json([
                     'verified' => true,
@@ -181,6 +185,7 @@ class LoginController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'guest' => 'required|boolean',
+            'freelancer' => 'required|boolean',
             'name' => 'required_if:guest,false',
             'email' => 'required_if:guest,false|email',
             'password' => 'required_if:guest,false',
@@ -201,11 +206,13 @@ class LoginController extends Controller
             //     ->orWhere('email', $request->email)
             //     ->exists();
             $user = new User();
+            $userDetail = new UserDetail();
             if($request->guest)
             {
                 $user->name = $request->name != '' ? $request->name.'_'.Str::random(10) : 'Guest_'.Str::random(10);
                 $user->email = $user->name.'@guest.com';
                 $user->isGuest = true;
+                $user->role = 10;
                 $user->password = '';
                 $user->created_at = Carbon::now();
                 $user->updated_at = Carbon::now();
@@ -216,37 +223,61 @@ class LoginController extends Controller
                     'msg' => 'Sign up as guest Successfully',
                     'error_msg' => '',
                     'data' =>[ 'user_token' => $user->createToken('token')->plainTextToken,],
-
-
                 ]);
             }else{
-                $userExists = User::where('email', $request->email)->exists();
-
+                $userExists = User::where('email', $request->email)->first();
                 if($userExists){
-                    return response()->json([
-                        'verified' => false,
-                        'status' =>  'error',
-                        'msg' =>  '',
-                        'error_msg' => 'Sorry try other credential!',
-                    ], 200);
+                    if($request->freelancer){
+                        if($userExists->role != 100){
+                            $userExists->update(['role'=>100]);
+                            return response()->json([
+                                'verified' => true,
+                                'status' =>  'success',
+                                'msg' => 'Successfully become a freelaner, let begin the journey!',
+                                'error_msg' => '',
+                                // 'data' =>['user_token' => $user->createToken('token')->plainTextToken, ],
+                            ]);
+                        }else{
+                            return response()->json([
+                                'verified' => false,
+                                'status' =>  'error',
+                                'msg' => '',
+                                'error_msg' => 'You are already a freelancer!',
+                                // 'data' =>['user_token' => $user->createToken('token')->plainTextToken, ],
+                            ]);
+                        }
+                    }else{
+                        return response()->json([
+                            'verified' => false,
+                            'status' =>  'error',
+                            'msg' =>  '',
+                            'error_msg' => 'Sorry try other credential!',
+                        ], 200);
+                    }
                 }
                 if($request->password == $request->confirm_password){
 
                     $user->name = $request->name;
                     $user->email = $request->email;
                     $user->isGuest = false;
+                    $user->role = $request->freelancer ? 100 : 101;
                     $user->password = Hash::make($request->password);
                     $user->created_at = Carbon::now();
                     $user->updated_at = Carbon::now();
                     $user->save();
+                    $userDetail = new UserDetail();
+                    $userDetail->user_id = $user->id;
+                    $userDetail->created_by = $user->id;
+                    $userDetail->updated_by = $user->id;
+                    $userDetail->created_at = Carbon::now();
+                    $userDetail->updated_at = Carbon::now();
+                    $userDetail->save();
                     return response()->json([
                         'verified' => true,
                         'status' =>  'success',
                         'msg' => 'Sign up Successfully',
                         'error_msg' => '',
                         'data' =>['user_token' => $user->createToken('token')->plainTextToken, ],
-
-
                     ]);
                 }else{
                     return response()->json([
