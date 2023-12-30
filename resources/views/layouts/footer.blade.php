@@ -3,23 +3,23 @@
     <nav>
       <ul>
         <li>
-          <a href="https://www.creative-tim.com" target="_blank">
-            {{__(" Creative Tim")}}
+          <a href="#" target="_blank">
+            {{__(" Copied")}}
           </a>
         </li>
         <li>
-          <a href="http://presentation.creative-tim.com" target="_blank">
+          <a href="#" target="_blank">
             {{__(" About Us")}}
           </a>
         </li>
         <li>
-          <a href="http://blog.creative-tim.com" target="_blank">
-            {{__(" Blog")}}
+          <a href="#" target="_blank">
+            {{__(" Not")}}
           </a>
         </li>
         <li>
-          <a href="https://www.updivision.com" target="_blank">
-            {{__(" Updivision")}}</a>
+          <a href="#" target="_blank">
+            {{__(" Okay")}}</a>
         </li>
       </ul>
     </nav>
@@ -28,9 +28,9 @@
       <script>
         document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
       </script>, {{__(" Designed by")}}
-      <a href="https://www.invisionapp.com" target="_blank">{{__(" Invision")}}</a>{{__(" . Coded by")}}
-      <a href="https://www.creative-tim.com" target="_blank">{{__(" Creative Tim ")}}</a>&
-      <a href="https://www.updivision.com" target="_blank">{{__(" Updivision")}}</a>
+      <a href="#" target="_blank">{{__(" Team")}}</a>{{__(" . Copied by")}}
+      <a href="#" target="_blank">{{__(" Late programmer ")}}</a>&
+      <a href="#" target="_blank">{{__(" Coffee")}}</a>
     </div>
   </div>
 </footer>
