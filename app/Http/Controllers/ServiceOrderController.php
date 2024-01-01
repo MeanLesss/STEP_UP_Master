@@ -20,6 +20,32 @@ class ServiceOrderController extends Controller
         //
     }
 
+    public function showOrdersForFreelancer(){
+        if(Auth::user()->tokenCan( 'serviceOrder:view')){
+            $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
+            $masterController = new MasterController();
+            foreach( $result as $data ){
+                $stringStatus = $masterController->checkServiceStatus($data->order_status);
+                $data->status = $stringStatus;
+            }
+            return response()->json([
+                'verified' => true,
+                'status' =>  'success',
+                'msg' => 'Success',
+                'error_msg' => "",
+                'data'=>$result
+            ]);
+        }else{
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' => '',
+                'error_msg' => "Please Login to view purchase!",
+            ]);
+
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -115,6 +141,8 @@ class ServiceOrderController extends Controller
 
             if(Auth::user()->tokenCan('service:purchase')){
                 try{
+
+                    //check user balance
                     $userDetail = UserDetail::where('user_id',Auth::user()->id)->first();
                     if(isset($userDetail) && $userDetail->balance <= 0 ){
                         return response()->json([
@@ -177,6 +205,7 @@ class ServiceOrderController extends Controller
                         'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
                     ]);
                 }
+                $serviceOrder->freelancer_id = $service->created_by;
                 $serviceOrder->isAgreementAgreed = 1;
                 $serviceOrder->order_by = Auth::user()->id;
                 $serviceOrder->created_by = Auth::user()->id;

@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('service_order', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('service_id');
+            $table->unsignedBigInteger('freelancer_id')->nullable();
             $table->unsignedBigInteger('order_by');
             $table->unsignedBigInteger('cancel_by')->nullable();
             $table->boolean('isCancel')->nullable()->default(0)->comment('0:false,1:true');
             $table->boolean('isAgreementAgreed')->nullable()->default(0)->comment('0:false,1:true');
+            $table->date('accepted_at')->nullable()->comment(' ');
+            $table->date('start_at')->nullable()->comment(' ');
             $table->date('cancel_at')->nullable()->comment('use required if is cancel');
             $table->text('cancel_desc')->nullable()->comment('use required if is cancel');
             $table->string('order_title');

@@ -14,7 +14,32 @@ class MasterController extends Controller
         //
         return view('master');
     }
-
+    public function checkServiceStatus(int $status){
+        $stringStatus = '';
+        switch ($status) {
+            case -1:
+                $stringStatus = 'Declined';
+                break;
+            case 0:
+                $stringStatus = 'Pending';
+                break;
+            case 1:
+                $stringStatus = 'In Progress';
+                break;
+            case 2:
+                $stringStatus = 'In Review';
+                break;
+            case 3:
+                $stringStatus = 'Success';
+                break;
+            case 4:
+                $stringStatus = 'Fail';
+                break;
+            default:
+                $stringStatus = 'Unknown';
+        }
+        return $stringStatus;
+    }
     /**
      * Show the form for creating a new resource.
      */

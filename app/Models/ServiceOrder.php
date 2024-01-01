@@ -58,10 +58,13 @@ class ServiceOrder extends Model
 
 	protected $fillable = [
 		'service_id',
+		'freelancer_id',
 		'order_by',
 		'cancel_by',
 		'isCancel',
         'isAgreementAgreed',
+        'accepted_at',
+        'start_at',
 		'cancel_at',
 		'cancel_desc',
 		'order_title',

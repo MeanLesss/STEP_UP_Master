@@ -124,6 +124,7 @@ class LoginController extends Controller
                     'service:read',
                     'service:view',
                     'service:ban',
+                    'serviceOrder:view',
                     'user:status',
                     'service:purchase',
                     'self:update'])->plainTextToken;
@@ -136,6 +137,7 @@ class LoginController extends Controller
                     'service:cancel',
                     'service:read',
                     'service:view',
+                    'serviceOrder:view',
                     'service:purchase',
                     'free:update'])->plainTextToken;
             }
@@ -145,6 +147,7 @@ class LoginController extends Controller
                     'service:view',
                     'service:cancel',
                     'service:purchase',
+                    'serviceOrder:view',
                     'client:update'])->plainTextToken;
             }
             if(Auth::user()->role == 10){

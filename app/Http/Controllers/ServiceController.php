@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Support\Str;
+use App\Models\ServiceOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\MasterController;
 
 class ServiceController extends Controller
 {
@@ -186,7 +188,27 @@ class ServiceController extends Controller
      */
     public function show(string $id)
     {
-        //
+         //check if the service is already purchase  and in progress
+        //  $orderCheck = ServiceOrder::where('service_id',$request->service_id)
+
+        $orderCheck = ServiceOrder::where('service_id',$id)
+        ->where('order_by',Auth::user()->id)
+        ->whereIn('order_status', [0, 1, 2])
+        ->first();
+
+        if(isset($orderCheck)){
+            $masterController = new MasterController();
+            $stringStatus = $masterController->checkServiceStatus($orderCheck->order_status);
+            $orderCheck->status = $stringStatus;
+            return response()->json([
+                'verified' => false,
+                'status' =>  'warning',
+                'msg' => "You're already bought the service and still in progress !",
+                'error_msg' => '',
+                'data'=>$orderCheck,
+                'isReadOnly'=> true
+            ]);
+        }
         $result = Service::where('id',$id)->increment('view');
         $result = Service::where('id',$id)->first();
 
@@ -201,7 +223,8 @@ class ServiceController extends Controller
             'status' =>  'success',
             'msg' => '',
             'error_msg' => "",
-            'data'=>$result
+            'data'=>$result,
+            'isReadOnly'=> false
         ]);
     }
 
