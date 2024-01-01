@@ -189,7 +189,7 @@ class ServiceOrderController extends Controller
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
-                    'msg' => 'Your service created successfully! 🎊',
+                    'msg' => 'Order successfully! 🎊 Waiting for confirmation from freelancer! After 1 week ordered without confirmation or cancel by freelancer a fully refund will be issued automatically!',
                     'error_msg' => '',
                 ]);
             }

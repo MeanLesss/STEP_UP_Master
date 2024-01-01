@@ -189,7 +189,11 @@ class LoginController extends Controller
             'name' => 'required_if:guest,false',
             'email' => 'required_if:guest,false|email',
             'password' => 'required_if:guest,false',
-            'confirm_password' => 'required_if:guest,false'
+            'confirm_password' => 'required_if:guest,false',
+            'phone_number' => 'required_if:guest,false',
+            'id_number' => 'required_if:guest,false',
+            'job_type' => 'required_if:guest,false'
+
         ]);
 
         if ($validator->fails()) {
@@ -267,6 +271,9 @@ class LoginController extends Controller
                     $user->save();
                     $userDetail = new UserDetail();
                     $userDetail->user_id = $user->id;
+                    $userDetail->phone = $request->phone_number;
+                    $userDetail->id_card_no = $request->id_number;
+                    $userDetail->job_type = $request->job_type;
                     $userDetail->created_by = $user->id;
                     $userDetail->updated_by = $user->id;
                     $userDetail->created_at = Carbon::now();
@@ -353,6 +360,20 @@ class LoginController extends Controller
                         }
                     }
                 }
+
+                $userDetail = UserDetail::where('user_id',$user->id)->first();
+                if(!isset($userDetail)){
+                    $userDetail = new UserDetail();
+                }
+                $userDetail->user_id = $user->id;
+                $userDetail->phone = $request->phone_number;
+                $userDetail->id_card_no = $request->id_number;
+                $userDetail->job_type = $request->job_type;
+                $userDetail->created_by = $user->id;
+                $userDetail->updated_by = $user->id;
+                $userDetail->created_at = Carbon::now();
+                $userDetail->updated_at = Carbon::now();
+                $userDetail->save();
                 // If the user is authenticated, return the user data
                 return response()->json([
                     'verified' => true,

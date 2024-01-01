@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class UserDetail
- * 
+ *
  * @property int $id
  * @property int $user_id
  * @property string|null $phone
@@ -46,6 +46,7 @@ class UserDetail extends Model
 	protected $fillable = [
 		'user_id',
 		'phone',
+        'job_type',
 		'id_card_no',
 		'id_attachment',
 		'profile_image',

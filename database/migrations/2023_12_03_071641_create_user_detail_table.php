@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('phone')->nullable();
             $table->string('id_card_no')->nullable();
+            $table->string('job_type',45)->nullable();
             $table->string('id_attachment')->nullable()->comment('image path');
             $table->string('profile_image')->nullable()->comment('image path');
             $table->string('card_number')->nullable()->comment('Hashed and when pass back to user show less');
