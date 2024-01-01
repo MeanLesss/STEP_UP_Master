@@ -50,6 +50,7 @@ class Service extends Model
 		'status',
 		'view',
 		'service_rate',
+        'service_ordered_count',
 		'attachments',
 		'requirement',
 		'price',

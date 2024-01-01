@@ -136,7 +136,7 @@ class ServiceOrderController extends Controller
                     }
 
                     $taxRate = 0.10; // 10% tax
-                    $priceWithTax = $service->price + ($service->price * $taxRate);
+                    $priceWithTax = $service->price * (1 + $taxRate);
                     if($userDetail->balance < $priceWithTax){
                         return response()->json([
                             'verified' => false,
@@ -184,6 +184,7 @@ class ServiceOrderController extends Controller
                 $serviceOrder->updated_by = Auth::user()->id;
                 $serviceOrder->updated_at = Carbon::now();
                 $serviceOrder->save();
+                $service->increment('service_ordered_count');
 
                 return response()->json([
                     'verified' => true,

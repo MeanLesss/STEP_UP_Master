@@ -35,7 +35,7 @@ Route::get('/test/{id}', function (int $id) {
     return response()->json(['message' => 'This is a public API endpoint. this is the id : '.$id]);
 });
 
-Route::get('/service/{id}/view',[ServiceController::class ,'show'])->name('clientViewWeb');
+Route::get('/service/{id}/view',[ServiceController::class ,'show']) ;
 
 Route::get('/service/agreement',[ServiceOrderController::class,'showAgreement']);
 Route::post('/service/confirm-agreement/',[ServiceOrderController::class,'confirmAgreement'])->middleware('auth:sanctum');
