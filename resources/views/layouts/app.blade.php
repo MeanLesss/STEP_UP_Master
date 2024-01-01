@@ -1,3 +1,8 @@
+@guest
+{{-- @include('layouts.page_template.guest') --}}
+@include('login')
+@endguest
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,12 +34,13 @@
 <body class="{{ $class ?? '' }}">
     <div class="wrapper">
         <div class="full-page-background" style="background-image: url('{{ asset('plugins/img/bg14.jpg') }}')"/>
+
         @auth
             @include('layouts.page_template.auth')
         @endauth
-        @guest
+        {{-- @guest
             @include('layouts.page_template.guest')
-        @endguest
+        @endguest --}}
     </div>
 
     <!--   Core JS Files   -->
@@ -52,7 +58,8 @@
     <!--  Google Maps Plugin    -->
     {{-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script> --}}
     <!-- Chart JS -->
-    <script src="{{ asset('plugins') }}/js/plugins/chartjs.min.js"></script>
+    {{-- <script src="{{ asset('plugins') }}/js/plugins/chartjs.min.js"></script> --}}
+    <script src="{{ asset('plugins') }}/js/chart.umd.js"></script>
     <!--  Notifications Plugin    -->
     <script src="{{ asset('plugins') }}/js/plugins/bootstrap-notify.js"></script>
     <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->

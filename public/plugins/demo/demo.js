@@ -51,7 +51,7 @@ demo = {
             },
             responsive: true,
             scales: {
-                yAxes: [{
+                y: {
                     display: 0,
                     gridLines: 0,
                     ticks: {
@@ -63,8 +63,8 @@ demo = {
                         display: false,
                         drawBorder: false
                     }
-                }],
-                xAxes: [{
+                },
+                x: {
                     display: 0,
                     gridLines: 0,
                     ticks: {
@@ -76,7 +76,7 @@ demo = {
                         display: false,
                         drawBorder: false
                     }
-                }]
+                }
             },
             layout: {
                 padding: {
@@ -124,7 +124,7 @@ demo = {
 
     initDashboardPageCharts: function() {
 
-        chartColor = "#FFFFFF";
+        chartColor = "#FAFF00";
 
         // General configuration for the charts with Line gradientStroke
         gradientChartOptionsConfiguration = {
@@ -143,7 +143,7 @@ demo = {
             },
             responsive: 1,
             scales: {
-                yAxes: [{
+                y: {
                     display: 0,
                     gridLines: 0,
                     ticks: {
@@ -155,8 +155,8 @@ demo = {
                         display: false,
                         drawBorder: false
                     }
-                }],
-                xAxes: [{
+                },
+                x: {
                     display: 0,
                     gridLines: 0,
                     ticks: {
@@ -168,7 +168,7 @@ demo = {
                         display: false,
                         drawBorder: false
                     }
-                }]
+                }
             },
             layout: {
                 padding: {
@@ -196,14 +196,14 @@ demo = {
             },
             responsive: true,
             scales: {
-                yAxes: [{
+                y: {
                     gridLines: 0,
                     gridLines: {
                         zeroLineColor: "transparent",
                         drawBorder: false
                     }
-                }],
-                xAxes: [{
+                },
+                x: {
                     display: 0,
                     gridLines: 0,
                     ticks: {
@@ -215,7 +215,7 @@ demo = {
                         display: false,
                         drawBorder: false
                     }
-                }]
+                }
             },
             layout: {
                 padding: {
@@ -237,6 +237,7 @@ demo = {
         gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
         gradientFill.addColorStop(1, "rgba(255, 255, 255, 0.24)");
 
+        var data = [50, 150, 100, 190, 130, 90, 150, 160, 120, 140, 190, 95];
         var myChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -255,7 +256,7 @@ demo = {
                     fill: true,
                     backgroundColor: gradientFill,
                     borderWidth: 2,
-                    data: [50, 150, 100, 190, 130, 90, 150, 160, 120, 140, 190, 95]
+                    data: data
                 }]
             },
             options: {
@@ -265,6 +266,16 @@ demo = {
                         right: 20,
                         top: 0,
                         bottom: 0
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'User over the year',
+                        padding: {
+                            top: 10,
+                            bottom: 30
+                        }
                     }
                 },
                 maintainAspectRatio: false,
@@ -284,13 +295,14 @@ demo = {
                     display: false
                 },
                 scales: {
-                    yAxes: [{
+                    y: {  // 'y' instead of 'yAxes'
                         ticks: {
                             fontColor: "rgba(255,255,255,0.4)",
                             fontStyle: "bold",
                             beginAtZero: true,
                             maxTicksLimit: 5,
-                            padding: 10
+                            padding: 10,
+                            max: Math.max(...data)  // Set max value dynamically
                         },
                         gridLines: {
                             drawTicks: true,
@@ -299,9 +311,8 @@ demo = {
                             color: "rgba(255,255,255,0.1)",
                             zeroLineColor: "transparent"
                         }
-
-                    }],
-                    xAxes: [{
+                    },
+                    x: {
                         gridLines: {
                             zeroLineColor: "transparent",
                             display: false,
@@ -312,7 +323,7 @@ demo = {
                             fontColor: "rgba(255,255,255,0.4)",
                             fontStyle: "bold"
                         }
-                    }]
+                    }
                 }
             }
         });
@@ -428,14 +439,14 @@ demo = {
                 },
                 responsive: 1,
                 scales: {
-                    yAxes: [{
+                    y: {
                         gridLines: 0,
                         gridLines: {
                             zeroLineColor: "transparent",
                             drawBorder: false
                         }
-                    }],
-                    xAxes: [{
+                    },
+                    x: {
                         display: 0,
                         gridLines: 0,
                         ticks: {
@@ -447,7 +458,7 @@ demo = {
                             display: false,
                             drawBorder: false
                         }
-                    }]
+                    }
                 },
                 layout: {
                     padding: {
