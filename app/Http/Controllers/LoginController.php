@@ -390,9 +390,7 @@ class LoginController extends Controller
                     'status' =>  'success',
                     'msg' => 'success',
                     'error_msg' => '',
-                    'data' =>[ 'user_info' => $request->user() ],
-
-
+                    'data' =>[ 'user_info' => $request->user(),'user_detail'=> UserDetail::where('user_id',$request->user()->id)->first() ],
                 ]);
                 //return response()->json(Auth::user(), 200);
             } else {
