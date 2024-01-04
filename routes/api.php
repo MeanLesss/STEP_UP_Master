@@ -45,3 +45,4 @@ Route::post('/service/confirm-agreement/',[ServiceOrderController::class,'confir
 Route::post('/service/purchase',[ServiceOrderController::class,'store'])->middleware('auth:sanctum');
 Route::get('/service/ordered/freelancer',[ServiceOrderController::class,'showOrdersForFreelancer'])->middleware('auth:sanctum');
 
+Route::get('/my-service/view',[ServiceController::class ,'showAllMyService'])->middleware('auth:sanctum') ;

@@ -40,6 +40,26 @@ class MasterController extends Controller
         }
         return $stringStatus;
     }
+    public function checkMyServiceStatus(int $status){
+        $stringStatus = '';
+        switch ($status) {
+            case -1:
+                $stringStatus = 'Expired';
+                break;
+            case 0:
+                $stringStatus = 'Pending';
+                break;
+            case 1:
+                $stringStatus = 'Active';
+                break;
+            case 2:
+                $stringStatus = 'Cancel';
+                break;
+            default:
+                $stringStatus = 'Unknown';
+        }
+        return $stringStatus;
+    }
     /**
      * Show the form for creating a new resource.
      */

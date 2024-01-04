@@ -193,13 +193,13 @@ class ServiceController extends Controller
         if(isset($orderCheck)){
             $masterController = new MasterController();
             $stringStatus = $masterController->checkServiceStatus($orderCheck->order_status);
-            $orderCheck->status = $stringStatus;
+            $orderCheck->stringStatus = $stringStatus;
+            $orderCheck->isReadOnly  = true;
             return response()->json([
                 'verified' => false,
                 'status' =>  'warning',
                 'msg' => "You're already bought the service and still in progress !",
                 'data'=>$orderCheck,
-                'isReadOnly'=> true
             ]);
         }
         $result = Service::where('id',$id)->increment('view');
@@ -211,15 +211,70 @@ class ServiceController extends Controller
             $attachment = asset('storage/'.$attachment);
         }
         $result->attachments = $attachments;
+        $result->isReadOnly  = false;
         return response()->json([
             'verified' => true,
             'status' =>  'success',
             'msg' => '',
             'data'=>$result,
-            'isReadOnly'=> false
         ]);
     }
+    public function showAllMyService()
+    {
+         //check if the service is already purchase  and in progress
+        //  $orderCheck = ServiceOrder::where('service_id',$request->service_id)
+        try{
+            $result = Service::where('created_by',Auth::user()->id)->get();
 
+            $masterController = new MasterController();
+            $result->transform(function ($item) use ($masterController) {
+                $stringStatus = $masterController->checkMyServiceStatus($item->status);
+                $item->stringStatus = $stringStatus;
+                // $item->statusString = $stringStatus;
+
+                $attachments = json_decode($item->attachments);
+                foreach($attachments as &$attachment){
+                    // $attachment = env('APP_URL').$attachment;
+                    $attachment = asset('storage/'.$attachment);
+                }
+                $item->attachments = $attachments;
+
+                return $item;
+            });
+
+            // foreach($result as $item){
+            //     $stringStatus = $masterController->checkMyServiceStatus($item->status);
+            //     $item->status = $stringStatus;
+
+            //     $attachments = json_decode($item->attachments);
+            //     foreach($attachments as &$attachment){
+            //         $attachment = asset('storage/'.$attachment);
+            //     }
+            //     $item->attachments = $attachments;
+            // }
+
+            if(count($result)>0){
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => '',
+                    'data'=>$result,
+                ],200);
+            }
+            return response()->json([
+                'verified' => true,
+                'status' =>  'success',
+                'msg' => 'Not service created yet, Try create some.😊',
+                'data'=>$result,
+            ],401);
+        }catch(Exception $ex){
+            return response()->json([
+                'verified' => true,
+                'status' =>  'success',
+                'msg' => $ex->getMessage(),
+            ],500);
+        }
+    }
 
     /**
      * Show the form for editing the specified resource.

@@ -36,7 +36,7 @@ class Handler extends ExceptionHandler
                 'verified' => false,
                 'status'=>'error',
                 'error_msg' => 'Opps something wrong ! Please try login again.',
-            ], 200);
+            ], 401);
         }
 
         return parent::render($request, $exception);
