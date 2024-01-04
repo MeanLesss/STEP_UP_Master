@@ -33,13 +33,13 @@ class ServiceOrderController extends Controller
                 'status' =>  'success',
                 'msg' => 'Success',
                 'data'=>$result
-            ]);
+            ],200);
         }else{
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
                 'msg' => 'Please Login to view purchase!',
-            ]);
+            ],401);
 
         }
     }
@@ -55,13 +55,13 @@ class ServiceOrderController extends Controller
                 'verified' => true,
                 'status' =>  'success',
                 'msg' => 'Proceed!',
-            ]);
+            ],200);
         }else{
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
                 'msg' => 'Please Login or Create a new account for purchasing!',
-            ]);
+            ],401);
 
         }
     }
@@ -85,7 +85,7 @@ class ServiceOrderController extends Controller
 
         - If there is no response from the freelancer within 7 days of purchasing the product, a full refund will be issued. Please confirm the agreement before proceed.',
 
-        ]);
+        ],200);
     }
 
     public function confirmAgreement(Request $request){
@@ -97,14 +97,14 @@ class ServiceOrderController extends Controller
                     'verified' => true,
                     'status' =>  'cancel',
                     'msg' => 'The purchase is cancelled!',
-                ]);
+                ],200);
             }
         }else{
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
                 'msg' => 'Please Login or Create a new account!',
-            ]);
+            ],401);
 
         }
     }
@@ -130,7 +130,7 @@ class ServiceOrderController extends Controller
                     'status' =>  'error',
                     'msg' =>  'Please input all the required field!',
                     // 'error_msg' => $validator->errors(),
-                ]);
+                ],401);
             }
 
             if(Auth::user()->tokenCan('service:purchase')){
@@ -143,7 +143,7 @@ class ServiceOrderController extends Controller
                             'verified' => false,
                             'status' =>  'error',
                             'msg' => 'Insufficiant balance for this purchase. Please refill your balance!',
-                        ]);
+                        ],401);
                     }
 
                     $service = Service::where('id',$request->service_id)->first();
@@ -152,7 +152,7 @@ class ServiceOrderController extends Controller
                             'verified' => false,
                             'status' =>  'error',
                             'msg' => 'Service not found! Invalid Service! You can contact our support if it still occur.',
-                        ]);
+                        ],401);
                     }
 
                     $taxRate = 0.10; // 10% tax
@@ -162,7 +162,7 @@ class ServiceOrderController extends Controller
                             'verified' => false,
                             'status' =>  'error',
                             'msg' => 'Insufficiant balance for this purchase. Please top up your balance!',
-                        ]);
+                        ],401);
                     }
 
                     $userDetail->balance -= $priceWithTax;
@@ -193,7 +193,7 @@ class ServiceOrderController extends Controller
                         'verified' => false,
                         'status' =>  'error',
                         'msg' =>  Str::limit($e->getMessage(), 150, '...'),
-                    ]);
+                    ],500);
                 }
                 $serviceOrder->freelancer_id = $service->created_by;
                 $serviceOrder->isAgreementAgreed = 1;
@@ -210,7 +210,7 @@ class ServiceOrderController extends Controller
                     'status' =>  'success',
                     'msg' => 'Order successfully! 🎊 Waiting for confirmation from freelancer! After 1 week ordered without confirmation or cancel by freelancer a fully refund will be issued automatically!',
                     // 'error_msg' => '',
-                ]);
+                ],200);
             }
             /**
              * If the user have no authorization for the action.
@@ -219,13 +219,13 @@ class ServiceOrderController extends Controller
                 'verified' => false,
                 'status' =>  'error',
                 'msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
-            ]);
+            ],401);
         }catch(Exception $e){
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
                 'msg' =>  Str::limit($e->getMessage(), 150, '...'),
-            ]);
+            ],500);
         }
     }
 
