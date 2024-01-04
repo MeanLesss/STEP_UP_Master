@@ -35,7 +35,7 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'verified' => false,
                 'status'=>'error',
-                'error_msg' => 'Opps something wrong ! Please try login again.',
+                'msg' => 'Opps something wrong ! Please try login again.',
             ], 401);
         }
 
