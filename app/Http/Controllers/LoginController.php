@@ -69,14 +69,13 @@ class LoginController extends Controller
         }
     }
 
-    public function login(Request $request)
-    // public function login($email,$password)
+    public function login(Request $request) // public function login($email,$password)
     {
         try{
             $validator = Validator::make($request->all(), [
                     'email' => 'required|email',
                     'password' => 'required',
-                ],200);
+                ]);
 
             if ($validator->fails()) {
                 return response()->json([
