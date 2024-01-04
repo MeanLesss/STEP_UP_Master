@@ -32,15 +32,13 @@ class ServiceOrderController extends Controller
                 'verified' => true,
                 'status' =>  'success',
                 'msg' => 'Success',
-                'error_msg' => "",
                 'data'=>$result
             ]);
         }else{
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' => '',
-                'error_msg' => "Please Login to view purchase!",
+                'msg' => 'Please Login to view purchase!',
             ]);
 
         }
@@ -57,14 +55,12 @@ class ServiceOrderController extends Controller
                 'verified' => true,
                 'status' =>  'success',
                 'msg' => 'Proceed!',
-                'error_msg' => "",
             ]);
         }else{
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' => '',
-                'error_msg' => "Please Login or Create a new account for purchasing!",
+                'msg' => 'Please Login or Create a new account for purchasing!',
             ]);
 
         }
@@ -88,7 +84,7 @@ class ServiceOrderController extends Controller
         - If a project is not completed and the freelancer is found to have attempted to defraud or deliver a faulty product or service, you will receive a full refund and the freelancer will face penalties.
 
         - If there is no response from the freelancer within 7 days of purchasing the product, a full refund will be issued. Please confirm the agreement before proceed.',
-            'error_msg' => ''
+
         ]);
     }
 
@@ -100,16 +96,14 @@ class ServiceOrderController extends Controller
                 return response()->json([
                     'verified' => true,
                     'status' =>  'cancel',
-                    'msg' => '',
-                    'error_msg' => "The purchase is cancelled!",
+                    'msg' => 'The purchase is cancelled!',
                 ]);
             }
         }else{
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' => '',
-                'error_msg' => "Please Login or Create a new account!",
+                'msg' => 'Please Login or Create a new account!',
             ]);
 
         }
@@ -134,9 +128,9 @@ class ServiceOrderController extends Controller
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' =>  '',
-                    'error_msg' => $validator->errors(),
-                ], 400);
+                    'msg' =>  'Please input all the required field!',
+                    // 'error_msg' => $validator->errors(),
+                ]);
             }
 
             if(Auth::user()->tokenCan('service:purchase')){
@@ -148,8 +142,7 @@ class ServiceOrderController extends Controller
                         return response()->json([
                             'verified' => false,
                             'status' =>  'error',
-                            'msg' => '',
-                            'error_msg' => 'Insufficiant balance for this purchase. Please refill your balance!',
+                            'msg' => 'Insufficiant balance for this purchase. Please refill your balance!',
                         ]);
                     }
 
@@ -158,8 +151,7 @@ class ServiceOrderController extends Controller
                         return response()->json([
                             'verified' => false,
                             'status' =>  'error',
-                            'msg' => '',
-                            'error_msg' => 'Service not found! Invalid Service! You can contact our support if it still occur.',
+                            'msg' => 'Service not found! Invalid Service! You can contact our support if it still occur.',
                         ]);
                     }
 
@@ -169,8 +161,7 @@ class ServiceOrderController extends Controller
                         return response()->json([
                             'verified' => false,
                             'status' =>  'error',
-                            'msg' => '',
-                            'error_msg' => 'Insufficiant balance for this purchase. Please top up your balance!',
+                            'msg' => 'Insufficiant balance for this purchase. Please top up your balance!',
                         ]);
                     }
 
@@ -201,8 +192,7 @@ class ServiceOrderController extends Controller
                     return response()->json([
                         'verified' => false,
                         'status' =>  'error',
-                        'msg' =>  '',
-                        'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                        'msg' =>  Str::limit($e->getMessage(), 150, '...'),
                     ]);
                 }
                 $serviceOrder->freelancer_id = $service->created_by;
@@ -219,7 +209,7 @@ class ServiceOrderController extends Controller
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => 'Order successfully! 🎊 Waiting for confirmation from freelancer! After 1 week ordered without confirmation or cancel by freelancer a fully refund will be issued automatically!',
-                    'error_msg' => '',
+                    // 'error_msg' => '',
                 ]);
             }
             /**
@@ -228,15 +218,13 @@ class ServiceOrderController extends Controller
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' => '',
-                'error_msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
+                'msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
             ]);
         }catch(Exception $e){
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' =>  '',
-                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                'msg' =>  Str::limit($e->getMessage(), 150, '...'),
             ]);
         }
     }

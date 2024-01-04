@@ -52,14 +52,12 @@ class LoginController extends Controller
                     'verified' => true,
                     'status' =>  'success',
                     'msg' =>  'User logged out',
-                    'error_msg' => '',
                 ]);
             } catch (Exception $e) {
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' =>  '',
-                    'error_msg' => $e->getMessage(),
+                    'msg' =>  $e->getMessage(),
                 ]);
             }
         } else {
@@ -67,7 +65,6 @@ class LoginController extends Controller
                 'verified' => false,
                 'status' =>  'error',
                 'msg' =>  'No user is authenticated',
-                'error_msg' => '',
             ]);
         }
     }
@@ -85,9 +82,9 @@ class LoginController extends Controller
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' =>  '',
-                    'error_msg' => $validator->errors(),
-                ], 400);
+                    'msg' =>  'Invalid Credential',
+                    // 'error_msg' => $validator->errors(),
+                ]);
             }
 
             if (!Auth::attempt($request->only('email', 'password'))) {
@@ -100,16 +97,14 @@ class LoginController extends Controller
                         return response()->json([
                             'verified' => false,
                             'status' =>  'error',
-                            'msg' =>  '',
-                            'error_msg' => 'Too many attempts, please reset your password!',
+                            'msg' =>  'Too many attempts, please reset your password!',
                         ]);
                     }
                 }
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' =>  '',
-                    'error_msg' => 'The provided credentials are incorrect.',
+                    'msg' =>  'The provided credentials are incorrect.',
                 ]);
             }
 
@@ -161,15 +156,13 @@ class LoginController extends Controller
                 'verified' => true,
                 'status' =>  'success',
                 'msg' => 'Login Successfully',
-                'error_msg' => '',
                 'data' =>['user_token' => $user_token],
             ]);
         }catch(Exception $e){
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' =>  '',
-                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
             ]);
         }
     }
@@ -203,9 +196,9 @@ class LoginController extends Controller
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' =>  '',
-                'error_msg' => $validator->errors(),
-            ], 400);
+                'msg' =>  'Please input all the required fields!',
+                // 'error_msg' => $validator->errors(),
+            ]);
         }
 
         try{
@@ -228,7 +221,6 @@ class LoginController extends Controller
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => 'Sign up as guest Successfully',
-                    'error_msg' => '',
                     'data' =>[ 'user_token' => $user->createToken('token')->plainTextToken,],
                 ]);
             }else{
@@ -241,7 +233,6 @@ class LoginController extends Controller
                                 'verified' => true,
                                 'status' =>  'success',
                                 'msg' => 'Successfully become a freelaner, let begin the journey!',
-                                'error_msg' => '',
                                 // 'data' =>['user_token' => $user->createToken('token')->plainTextToken, ],
                             ]);
                         }else{
@@ -257,8 +248,7 @@ class LoginController extends Controller
                         return response()->json([
                             'verified' => false,
                             'status' =>  'error',
-                            'msg' =>  '',
-                            'error_msg' => 'Sorry try other credential!',
+                            'msg' =>  'Sorry try other credential!',
                         ], 200);
                     }
                 }
@@ -286,15 +276,13 @@ class LoginController extends Controller
                         'verified' => true,
                         'status' =>  'success',
                         'msg' => 'Sign up Successfully',
-                        'error_msg' => '',
                         'data' =>['user_token' => $user->createToken('token')->plainTextToken, ],
                     ]);
                 }else{
                     return response()->json([
                         'verified' => false,
                         'status' =>  'error',
-                        'msg' => 'Sign up failed!',
-                        'error_msg' => 'The password does not match!' ,
+                        'msg' => 'The password does not match!',
                     ]);
                 }
             }
@@ -302,8 +290,7 @@ class LoginController extends Controller
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' => 'Sign up failed!',
-                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                'msg' =>  Str::limit($e->getMessage(), 150, '...'),
             ]);
         }
     }
@@ -317,9 +304,9 @@ class LoginController extends Controller
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' =>  '',
-                'error_msg' => $validator->errors(),
-            ], 400);
+                'msg' =>  'Name or Email Cannot be empty!',
+                // 'error_msg' => $validator->errors(),
+            ]);
         }
 
         try{
@@ -331,9 +318,8 @@ class LoginController extends Controller
                         return response()->json([
                             'verified' => false,
                             'status' =>  'error',
-                            'msg' =>  '',
-                            'error_msg' => 'Sorry please try other credential!',
-                        ], 200);
+                            'msg' =>  'Sorry please try other credential!',
+                        ]);
                     }
                 }
                 if($user->tokenCan('guest:update')){
@@ -382,7 +368,7 @@ class LoginController extends Controller
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => 'Update Successfully!',
-                    'error_msg' => '',
+                    // 'error_msg' => '',
                 ]);
             } else {
                 // If the user is not authenticated, return a custom message
@@ -392,8 +378,7 @@ class LoginController extends Controller
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' => 'Sign up failed!',
-                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                'msg' => Str::limit($e->getMessage(), 150, '...'),
             ]);
         }
     }
@@ -413,7 +398,6 @@ class LoginController extends Controller
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => 'success',
-                    'error_msg' => '',
                     'data' =>[ 'user_info' => $request->user(),'user_detail'=> UserDetail::where('user_id',$request->user()->id)->first() ],
                 ]);
                 //return response()->json(Auth::user(), 200);
@@ -425,8 +409,7 @@ class LoginController extends Controller
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' => '',
-                'error_msg' => Str::limit($e->getMessage(), 150, '...'),
+                'msg' =>  Str::limit($e->getMessage(), 150, '...'),
             ]);
         }
     }

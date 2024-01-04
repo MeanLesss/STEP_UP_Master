@@ -47,9 +47,9 @@ class ServiceController extends Controller
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' =>  '',
-                    'error_msg' => $validator->errors(),
-                ], 400);
+                    'msg' =>  'Please check the range and page field!',
+                    // 'error_msg' => $validator->errors(),
+                ]);
             }
 
             $page = $request->get('page', 1);
@@ -82,15 +82,13 @@ class ServiceController extends Controller
                 'verified' => true,
                 'status' =>  'success',
                 'msg' => 'Enjoy!',
-                'error_msg' => "",
                 'data'=> $result
             ]);
         }catch(Exception $e){
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' =>  '',
-                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                'msg' =>  Str::limit($e->getMessage(), 150, '...'),
             ]);
         }
     }
@@ -115,9 +113,9 @@ class ServiceController extends Controller
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' =>  '',
-                    'error_msg' => $validator->errors(),
-                ], 400);
+                    'msg' =>  'Please input all the required fields!',
+                    // 'error_msg' => $validator->errors(),
+                ]);
             }
 
             if(Auth::user()->tokenCan('service:create')){
@@ -146,8 +144,7 @@ class ServiceController extends Controller
                     return response()->json([
                         'verified' => false,
                         'status' =>  'error',
-                        'msg' =>  '',
-                        'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                        'msg' =>    Str::limit($e->getMessage(), 150, '...') ,
                     ]);
                 }
 
@@ -161,7 +158,6 @@ class ServiceController extends Controller
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => 'Your service created successfully',
-                    'error_msg' => '',
                 ]);
             }
             /**
@@ -170,15 +166,13 @@ class ServiceController extends Controller
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' => '',
-                'error_msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
+                'msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
             ]);
         }catch(Exception $e){
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' =>  '',
-                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
             ]);
         }
     }
@@ -204,7 +198,6 @@ class ServiceController extends Controller
                 'verified' => false,
                 'status' =>  'warning',
                 'msg' => "You're already bought the service and still in progress !",
-                'error_msg' => '',
                 'data'=>$orderCheck,
                 'isReadOnly'=> true
             ]);
@@ -222,7 +215,6 @@ class ServiceController extends Controller
             'verified' => true,
             'status' =>  'success',
             'msg' => '',
-            'error_msg' => "",
             'data'=>$result,
             'isReadOnly'=> false
         ]);
@@ -258,9 +250,9 @@ class ServiceController extends Controller
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' =>  '',
-                    'error_msg' => $validator->errors(),
-                ], 400);
+                    'msg' =>  'Please input all of the required fields!',
+                    // 'error_msg' => $validator->errors(),
+                ]);
             }
 
             if(Auth::user()->tokenCan('service:update')){
@@ -290,8 +282,7 @@ class ServiceController extends Controller
                     return response()->json([
                         'verified' => false,
                         'status' =>  'error',
-                        'msg' =>  '',
-                        'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                        'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
                     ]);
                 }
 
@@ -299,7 +290,6 @@ class ServiceController extends Controller
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => 'Your service updated successfully',
-                    'error_msg' => '',
                 ]);
             }
             /**
@@ -308,15 +298,13 @@ class ServiceController extends Controller
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' => '',
-                'error_msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
+                'msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
             ]);
         }catch(Exception $e){
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' =>  '',
-                'error_msg' => Str::limit($e->getMessage(), 150, '...') ,
+                'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
             ]);
         }
     }

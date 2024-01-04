@@ -16,6 +16,9 @@ use App\Http\Controllers\ServiceOrderController;
 |
 */
 
+Route::get('/', function(){
+    return view('login');
+});
 // Login API
 Route::post('/login', [LoginController::class,'login'])->name('login');
 // Route::get('/login/{email}/{password}', [LoginController::class,'login'])->name('signin');
