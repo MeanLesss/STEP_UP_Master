@@ -7,6 +7,7 @@ use App\Models\UserDetail;
 use App\Models\ServiceOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -236,10 +237,26 @@ class ServiceOrderController extends Controller
     {
         //View specific ordered service
         if(Auth::user()->tokenCan('serviceOrder:view')){
-            $orderCheck = ServiceOrder::where('service_id',$id)
-            ->where('order_by',Auth::user()->id)
-            // ->whereIn('order_status', [0, 1, 2])
-            ->first();
+            if(Auth::user()->role == 100){
+
+                $orderCheck = ServiceOrder::where('service_id',$id)
+                ->where('service_id',$id)
+                ->where('freelancer_id',Auth::user()->id)
+                // ->whereIn('order_status', [0, 1, 2])
+                ->first();
+            }else if(Auth::user()->role == 101){
+                $orderCheck = ServiceOrder::where('service_id',$id)
+                ->where('service_id',$id)
+                ->where('order_by',Auth::user()->id)
+                // ->whereIn('order_status', [0, 1, 2])
+                ->first();
+            }else if(Auth::user()->role == 1000){
+                $orderCheck = ServiceOrder::where('service_id',$id)
+                ->where('service_id',$id)
+                ->where('freelancer_id',Auth::user()->id)
+                // ->whereIn('order_status', [0, 1, 2])
+                ->first();
+            }
 
             if(isset($orderCheck)){
                 $masterController = new MasterController();
@@ -252,6 +269,14 @@ class ServiceOrderController extends Controller
                     $attachment = asset('storage/'.$attachment);
                 }
                 $orderCheck->order_attachments = $attachments;
+                //Get current service detail
+                $orderCheck->service = Service::select('title','description','price','requirement','discount')
+                ->where('id',$orderCheck->service_id)
+                ->first();
+                //Get client detail
+                $orderCheck->client = User::select('name','email')
+                ->where('id',$orderCheck->order_by)
+                ->first();
                 // $orderCheck->isReadOnly  = true;
                 return response()->json([
                     'verified' => true,
@@ -259,6 +284,12 @@ class ServiceOrderController extends Controller
                     'msg' => "success",
                     'data'=>$orderCheck,
                 ],200);
+            }else{
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' => "Sorry nothing found!",
+                ],401);
             }
         }else{
             return response()->json([
