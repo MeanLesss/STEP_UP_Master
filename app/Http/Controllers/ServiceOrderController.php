@@ -234,7 +234,40 @@ class ServiceOrderController extends Controller
      */
     public function show(string $id)
     {
-        //
+        //View specific ordered service
+        if(Auth::user()->tokenCan('serviceOrder:view')){
+            $orderCheck = ServiceOrder::where('service_id',$id)
+            ->where('order_by',Auth::user()->id)
+            // ->whereIn('order_status', [0, 1, 2])
+            ->first();
+
+            if(isset($orderCheck)){
+                $masterController = new MasterController();
+                $stringStatus = $masterController->checkServiceStatus($orderCheck->order_status);
+                $orderCheck->stringStatus = $stringStatus;
+
+                $attachments = json_decode($orderCheck->order_attachments);
+                foreach($attachments as &$attachment){
+                    // $attachment = env('APP_URL').$attachment;
+                    $attachment = asset('storage/'.$attachment);
+                }
+                $orderCheck->order_attachments = $attachments;
+                // $orderCheck->isReadOnly  = true;
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => "success",
+                    'data'=>$orderCheck,
+                ],200);
+            }
+        }else{
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' => "Ops! Look like you don't have enough permission.",
+            ],401);
+        }
+
     }
 
     /**

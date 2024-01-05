@@ -46,3 +46,5 @@ Route::post('/service/purchase',[ServiceOrderController::class,'store'])->middle
 Route::get('/service/ordered/freelancer',[ServiceOrderController::class,'showOrdersForFreelancer'])->middleware('auth:sanctum');
 
 Route::get('/my-service/view',[ServiceController::class ,'showAllMyService'])->middleware('auth:sanctum') ;
+
+Route::get('/order-service/{id}/view',[ServiceOrderController::class ,'show'])->middleware('auth:sanctum') ;
