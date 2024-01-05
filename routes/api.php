@@ -48,3 +48,4 @@ Route::get('/service/ordered/freelancer',[ServiceOrderController::class,'showOrd
 Route::get('/my-service/view',[ServiceController::class ,'showAllMyService'])->middleware('auth:sanctum') ;
 
 Route::get('/order-service/{id}/view',[ServiceOrderController::class ,'show'])->middleware('auth:sanctum') ;
+Route::post('/order-service/{id}/accept',[ServiceOrderController::class ,'accept'])->middleware('auth:sanctum') ;

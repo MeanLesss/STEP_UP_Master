@@ -119,6 +119,7 @@ class LoginController extends Controller
                     'service:view',
                     'service:ban',
                     'serviceOrder:view',
+                    'serviceOrder:accept',
                     'user:status',
                     'service:purchase',
                     'self:update'])->plainTextToken;

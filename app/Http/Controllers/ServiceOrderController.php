@@ -233,26 +233,23 @@ class ServiceOrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id) //$id is serviceOrder id
     {
         //View specific ordered service
         if(Auth::user()->tokenCan('serviceOrder:view')){
             if(Auth::user()->role == 100){
 
-                $orderCheck = ServiceOrder::where('service_id',$id)
-                ->where('service_id',$id)
+                $orderCheck = ServiceOrder::where('id',$id)
                 ->where('freelancer_id',Auth::user()->id)
                 // ->whereIn('order_status', [0, 1, 2])
                 ->first();
             }else if(Auth::user()->role == 101){
-                $orderCheck = ServiceOrder::where('service_id',$id)
-                ->where('service_id',$id)
+                $orderCheck = ServiceOrder::where('id',$id)
                 ->where('order_by',Auth::user()->id)
                 // ->whereIn('order_status', [0, 1, 2])
                 ->first();
             }else if(Auth::user()->role == 1000){
-                $orderCheck = ServiceOrder::where('service_id',$id)
-                ->where('service_id',$id)
+                $orderCheck = ServiceOrder::where('id',$id)
                 ->where('freelancer_id',Auth::user()->id)
                 // ->whereIn('order_status', [0, 1, 2])
                 ->first();
@@ -298,6 +295,56 @@ class ServiceOrderController extends Controller
                 'msg' => "Ops! Look like you don't have enough permission.",
             ],401);
         }
+
+    }
+    public function accept(Request $request,string $id)
+    {
+        //is accept
+        $validator = Validator::make($request->all(), [
+            'isAccept' => 'required',
+            // 'attachment_files.*' => 'file|max:3032'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  'Invalid Request try again! If the issue still occur please contact our support.',
+                // 'error_msg' => $validator->errors(),
+            ],401);
+        }
+        if(Auth::user()->tokenCan('serviceOrder:accept')){
+
+            $orderCheck = ServiceOrder::where('id',$id)
+            ->where('freelancer_id',Auth::user()->id)
+            // ->whereIn('order_status', [0, 1, 2])
+            ->first();
+            if(isset($orderCheck)){
+
+                $status = $request->isAccept ? 1 : -1;
+                $message = $request->isAccept ? 'The order has been accepted ! You can start now.': 'The order has been cancel!';
+                $orderCheck->update(['order_status'=>$status]);
+                // $orderCheck->isReadOnly  = true;
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => $message,
+                ],200);
+            }else{
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' => "Sorry nothing found!",
+                ],401);
+            }
+        }else{
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' => "Ops! Look like you don't have enough permission.",
+            ],401);
+        }
+        //$id is service id
 
     }
 
