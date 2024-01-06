@@ -273,12 +273,33 @@ class LoginController extends Controller
                     $userDetail->created_at = Carbon::now();
                     $userDetail->updated_at = Carbon::now();
                     $userDetail->save();
+                    $user->sendEmailVerificationNotification();
+
                     return response()->json([
                         'verified' => true,
                         'status' =>  'success',
                         'msg' => 'Sign up Successfully',
-                        'data' =>['user_token' => $user->createToken('token')->plainTextToken, ],
+                        'data' =>['user_token' => $user->createToken('token',$request->freelancer ?[
+                            'service:create',
+                            'service:update',
+                            'service:delete',
+                            'service:cancel',
+                            'service:read',
+                            'service:view',
+                            'serviceOrder:view',
+                            'serviceOrder:accept',
+                            'service:purchase',
+                            'free:update']
+                            :
+                            [
+                            'service:read',
+                            'service:view',
+                            'service:cancel',
+                            'service:purchase',
+                            'serviceOrder:view',
+                            'client:update'])->plainTextToken, ],
                     ]);
+
                 }else{
                     return response()->json([
                         'verified' => false,

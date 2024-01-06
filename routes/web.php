@@ -24,6 +24,10 @@ Route::get('/', function () {
 });
 Route::get('/index1', [MasterController::class,'index'])->name('master');
 // Route::get('/index', [MasterController::class,'index'])->name('home');
+Route::get('/email-verified', function(){
+    return view('email.VerifyEmail');
+})->name('email-verified');
+
 Route::get('/index', function(){return view('home');})->name('home');
 // Route::get('/index2', [MasterController::class,'index'])->name('profile.edit');
 Route::get('/index2', function(){return view('profile.edit');})->name('profile.edit');

@@ -2,9 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ServiceOrderController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,6 +30,33 @@ Route::post('/signup', [LoginController::class,'store'])->name('signup');
 Route::post('/user/update', [LoginController::class,'userUpdate'])->middleware('auth:sanctum')->name('userUpdate');
 // Get user part
 Route::get('/user', [LoginController::class,'show'])->middleware('auth:sanctum');
+// Route::get('/verify-email', [EmailController::class,'index'])->middleware('auth:sanctum');
+// Email verification notice route
+Route::get('/email/verify', function () {
+    return view('auth.verify');
+})->middleware('auth:sanctum')->name('verification.notice');
+
+// Email verification handler route
+// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+
+    // Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//     $request->fulfill();
+//     EmailController::verify($request, $id, $hash)
+//     return redirect('email-verified');
+// })->name('verification.verify');
+Route::get('/email/verify/{id}/{hash}', [EmailController::class,'verify'])->name('verification.verify');
+
+// Resend email verification link route
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return response()->json([
+        'verified'=>true,
+        'status'=>'success',
+        'msg'=>'Verify Email Sent Successfully! Please check you mail🚀!'
+    ], 200);
+})->middleware(['auth:sanctum','throttle:6,1'])->name('verification.send');
+
+
 
 // Service part
 Route::post('/service/create',[ServiceController::class,'store'])->middleware('auth:sanctum');
