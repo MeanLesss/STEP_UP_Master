@@ -166,6 +166,23 @@ class ServiceOrderController extends Controller
                         ],401);
                     }
 
+                    $orderCheck = ServiceOrder::where('service_id',$request->service_id)
+                    ->where('order_by',Auth::user()->id)
+                    ->whereIn('order_status', [0, 1, 2])
+                    ->first();
+                    if(isset($orderCheck)){
+                        $masterController = new MasterController();
+                        $stringStatus = $masterController->checkServiceStatus($orderCheck->order_status);
+                        $orderCheck->stringStatus = $stringStatus;
+                        $orderCheck->isReadOnly  = true;
+                        return response()->json([
+                            'verified' => false,
+                            'status' =>  'warning',
+                            'msg' => "You're already bought the service and still in progress !",
+                            'data'=>$orderCheck,
+                        ],401);
+                    }
+
                     $userDetail->balance -= $priceWithTax;
                     $userDetail->update(['balance'=>$userDetail->balance]);
 
@@ -207,19 +224,19 @@ class ServiceOrderController extends Controller
                 $service->increment('service_ordered_count');
                 $emailController = new EmailController();
                 // Send alert email (Turn back on when linode approve)
-                // $subject = 'Order Success';
-                // $content = 'Dear Customer,' . "\n\n" .
-                // 'Your order has been successfully placed and is currently awaiting acceptance from the freelancer.' . "\n\n" .
-                // 'Order Details:' . "\n" .
-                // 'Order ID: ' . $serviceOrder->id . "\n" .
-                // 'Service ID: ' . $service->id . "\n" .
-                // 'Service Title: ' . $service->title . "\n" .
-                // 'Price: $' . $service->price . "\n\n" .
-                // 'This amount has been deducted from your balance. We will notify you as soon as the freelancer accepts your order.' . "\n\n" .
-                // 'A full refund will be made within 7days if freelancer is not accept the order.' . "\n\n" .
-                // 'Thank you for choosing our services.';
+                $subject = 'Order Success';
+                $content = 'Dear Customer,' . "\n\n" .
+                'Your order has been successfully placed and is currently awaiting acceptance from the freelancer.' . "\n\n" .
+                'Order Details:' . "\n" .
+                'Order ID: ' . $serviceOrder->id . "\n" .
+                'Service ID: ' . $service->id . "\n" .
+                'Service Title: ' . $service->title . "\n" .
+                'Price: $' . $service->price . "\n\n" .
+                'This amount has been deducted from your balance. We will notify you as soon as the freelancer accepts your order.' . "\n\n" .
+                'A full refund will be made within 7days if freelancer is not accept the order.' . "\n\n" .
+                'Thank you for choosing our services.';
 
-                // $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
+                $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
 
                 return response()->json([
                     'verified' => true,
