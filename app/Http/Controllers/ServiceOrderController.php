@@ -206,19 +206,20 @@ class ServiceOrderController extends Controller
                 $serviceOrder->save();
                 $service->increment('service_ordered_count');
                 $emailController = new EmailController();
-                $subject = 'Order Success';
-                $content = 'Dear Customer,' . "\n\n" .
-                'Your order has been successfully placed and is currently awaiting acceptance from the freelancer.' . "\n\n" .
-                'Order Details:' . "\n" .
-                'Order ID: ' . $serviceOrder->id . "\n" .
-                'Service ID: ' . $service->id . "\n" .
-                'Service Title: ' . $service->title . "\n" .
-                'Price: $' . $service->price . "\n\n" .
-                'This amount has been deducted from your balance. We will notify you as soon as the freelancer accepts your order.' . "\n\n" .
-                'A full refund will be made within 7days if freelancer is not accept the order.' . "\n\n" .
-                'Thank you for choosing our services.';
+                // Send alert email (Turn back on when linode approve)
+                // $subject = 'Order Success';
+                // $content = 'Dear Customer,' . "\n\n" .
+                // 'Your order has been successfully placed and is currently awaiting acceptance from the freelancer.' . "\n\n" .
+                // 'Order Details:' . "\n" .
+                // 'Order ID: ' . $serviceOrder->id . "\n" .
+                // 'Service ID: ' . $service->id . "\n" .
+                // 'Service Title: ' . $service->title . "\n" .
+                // 'Price: $' . $service->price . "\n\n" .
+                // 'This amount has been deducted from your balance. We will notify you as soon as the freelancer accepts your order.' . "\n\n" .
+                // 'A full refund will be made within 7days if freelancer is not accept the order.' . "\n\n" .
+                // 'Thank you for choosing our services.';
 
-                $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
+                // $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
 
                 return response()->json([
                     'verified' => true,

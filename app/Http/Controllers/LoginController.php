@@ -273,7 +273,7 @@ class LoginController extends Controller
                     $userDetail->created_at = Carbon::now();
                     $userDetail->updated_at = Carbon::now();
                     $userDetail->save();
-                    $user->sendEmailVerificationNotification();
+                    // $user->sendEmailVerificationNotification();
 
                     return response()->json([
                         'verified' => true,
