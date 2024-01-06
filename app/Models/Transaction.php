@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Transaction
- * 
+ *
  * @property int $id
  * @property int $user_id
  * @property int $order_id
@@ -50,6 +50,7 @@ class Transaction extends Model
 		'freelancer_status',
 		'isComplain',
 		'rate',
+		'tranc_attachments',
 		'tranc_status',
 		'created_by',
 		'updated_by'

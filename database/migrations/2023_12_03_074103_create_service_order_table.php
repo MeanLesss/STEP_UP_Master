@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('order_title');
             $table->text('order_description');
             $table->integer('order_status')->default(0)->comment('-1 :Declined,0 :pending, 1 :in progress ,2 :In Review,3 :Success, 4 :Fail');
+            $table->json('completed_attachments')->default(DB::raw('(JSON_ARRAY())'))->nullable()->comment('[{0 :"Path1"},{ 1 :"path2"}]');
             $table->json('order_attachments')->default(DB::raw('(JSON_ARRAY())'))->nullable()->comment('[{0 :"Path1"},{ 1 :"path2"}]');
             $table->date('expected_expand_date')->nullable()->comment('this will send the notification to the client for the date expand than will update expand_due_date');
             $table->date('expand_end_date')->nullable()->comment('Only when the freelancer requested and accepted by user expand time on project');

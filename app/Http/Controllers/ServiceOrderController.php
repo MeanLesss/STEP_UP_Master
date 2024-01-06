@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Validator;
 
 class ServiceOrderController extends Controller
@@ -136,7 +137,6 @@ class ServiceOrderController extends Controller
 
             if(Auth::user()->tokenCan('service:purchase')){
                 try{
-
                     //check user balance
                     $userDetail = UserDetail::where('user_id',Auth::user()->id)->first();
                     if(isset($userDetail) && $userDetail->balance <= 0 ){
@@ -205,6 +205,20 @@ class ServiceOrderController extends Controller
                 $serviceOrder->updated_at = Carbon::now();
                 $serviceOrder->save();
                 $service->increment('service_ordered_count');
+                $emailController = new EmailController();
+                $subject = 'Order Success';
+                $content = 'Dear Customer,' . "\n\n" .
+                'Your order has been successfully placed and is currently awaiting acceptance from the freelancer.' . "\n\n" .
+                'Order Details:' . "\n" .
+                'Order ID: ' . $serviceOrder->id . "\n" .
+                'Service ID: ' . $service->id . "\n" .
+                'Service Title: ' . $service->title . "\n" .
+                'Price: $' . $service->price . "\n\n" .
+                'This amount has been deducted from your balance. We will notify you as soon as the freelancer accepts your order.' . "\n\n" .
+                'A full refund will be made within 7days if freelancer is not accept the order.' . "\n\n" .
+                'Thank you for choosing our services.';
+
+                $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
 
                 return response()->json([
                     'verified' => true,

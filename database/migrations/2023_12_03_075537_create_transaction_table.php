@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('freelancer_status')->default(0)->comment('0:pending,1:failed,2:accepted');
             $table->boolean('isComplain')->default(0)->comment('use required if is cancel');
             $table->integer('rate')->nullable()->comment('1 -> 5');
+            $table->json('tranc_attachments')->default(DB::raw('(JSON_ARRAY())'))->nullable();
             $table->integer('tranc_status')->default(0)->comment('0:pending,1:failed,2:accepted');
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by');

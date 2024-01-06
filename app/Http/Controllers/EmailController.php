@@ -20,6 +20,16 @@ class EmailController extends Controller
     {
 
     }
+    public function sendTextEmail(string $emailSendTo, string $subject, string $content)
+    {
+        $content = nl2br(e($content));
+        $data = ['content' => $content];
+
+        Mail::send('email.NotifyTemplate', $data, function ($message) use ($emailSendTo, $subject) {
+            $message->to($emailSendTo)
+                    ->subject($subject);
+        });
+    }
     public function verifyEmail(Request $request)
     {
         if ($request->user()->hasVerifiedEmail()) {

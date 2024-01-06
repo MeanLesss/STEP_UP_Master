@@ -70,6 +70,7 @@ class ServiceOrder extends Model
 		'order_title',
 		'order_description',
 		'order_status',
+		'completed_attachments',
 		'order_attachments',
 		'expected_expand_date',
 		'expand_end_date',
