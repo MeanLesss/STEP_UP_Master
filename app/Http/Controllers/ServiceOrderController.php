@@ -131,7 +131,7 @@ class ServiceOrderController extends Controller
 
                 $taxRate = 0.10; // 10% tax
                 $priceWithTax = $service->price * (1 + $taxRate);
-                $serviceOrder->tax = '10%';
+                $serviceOrder->tax = '10% Tax will be included.';
                 $serviceOrder->price = '$'.$service->price;
                 $serviceOrder->totalPrice = '$'.$priceWithTax;
 
