@@ -75,8 +75,7 @@ class ServiceOrderController extends Controller
         return response()->json([
             'verified' => true,
             'status' => 'success',
-            'msg' => 'Terms and Agreement:
-
+            'msg' => '
         - Should you cancel the purchase of any service after the freelancer has confirmed the order, a 30% fee will be deducted from your refund to compensate our freelancer.
 
         - If you cancel before our freelancer confirms the order, you will receive a full refund with no fees deducted.
@@ -90,10 +89,58 @@ class ServiceOrderController extends Controller
         ],200);
     }
 
-    public function confirmAgreement(Request $request){
+// This will be store when click create service
+    public function confirmPurchase(Request $request){
         if(Auth::user()->tokenCan('service:purchase')){
             if($request->isAgreementAgreed == 1){
-                return $this->store($request);
+                 return $this->store($request);
+            }else{
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'cancel',
+                    'msg' => 'The purchase is cancelled!',
+                ],200);
+            }
+        }else{
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' => 'Please Login or Create a new account!',
+            ],401);
+
+        }
+    }
+    public function ShowSummary(Request $request){
+        if(Auth::user()->tokenCan('service:purchase')){
+            if($request->isAgreementAgreed == 1){
+                // return $this->store($request);
+                $service = Service::where('id',$request->service_id)->first();
+                $serviceOrder = new ServiceOrder($request->all());
+
+                if($request->hasFile('attachment_files')) {
+                    $fileNames = array();
+                    // Check if 'attachment_files' is an array of files or a single file
+                    $files = is_array($request->file('attachment_files')) ? $request->file('attachment_files') : [$request->file('attachment_files')];
+                    foreach ($files as $file) {
+                        $originalName = $file->getClientOriginalName();
+                        $fileNames[] = $originalName;
+                    }
+                    $fileNames= json_encode($fileNames);
+                    $serviceOrder->order_attachments= json_decode($fileNames, true);
+                }
+
+                $taxRate = 0.10; // 10% tax
+                $priceWithTax = $service->price * (1 + $taxRate);
+                $serviceOrder->tax = '10%';
+                $serviceOrder->price = '$'.$service->price;
+                $serviceOrder->totalPrice = '$'.$priceWithTax;
+
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => 'Summary',
+                    'data'=> $serviceOrder
+                ],200);
             }else{
                 return response()->json([
                     'verified' => true,
@@ -111,8 +158,12 @@ class ServiceOrderController extends Controller
         }
     }
 
+
+
     /**
      * Store a newly created resource in storage.
+     *
+     *
      */
     public function store(Request $request)
     {

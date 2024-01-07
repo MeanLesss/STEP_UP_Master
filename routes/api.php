@@ -70,7 +70,8 @@ Route::get('/test/{id}', function (int $id) {
 Route::get('/service/{id}/view',[ServiceController::class ,'show'])->middleware('auth:sanctum') ;
 
 Route::get('/service/agreement',[ServiceOrderController::class,'showAgreement']);
-Route::post('/service/confirm-agreement/',[ServiceOrderController::class,'confirmAgreement'])->middleware('auth:sanctum');
+Route::post('/service/purchase-summary/',[ServiceOrderController::class,'ShowSummary'])->middleware('auth:sanctum');
+Route::post('/service/confirm-purchase/',[ServiceOrderController::class,'confirmPurchase'])->middleware('auth:sanctum');
 Route::post('/service/purchase',[ServiceOrderController::class,'store'])->middleware('auth:sanctum');
 Route::get('/service/ordered/freelancer',[ServiceOrderController::class,'showOrdersForFreelancer'])->middleware('auth:sanctum');
 

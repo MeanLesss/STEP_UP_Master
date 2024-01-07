@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\MasterController;
 
@@ -153,6 +154,20 @@ class ServiceController extends Controller
                 $service->updated_by = Auth::user()->id;
                 $service->updated_at = Carbon::now();
                 $service->save();
+                $emailController = new EmailController();
+                // Send alert email (Turn back on when linode approve)
+                //$subject = 'Order Success';
+                //$content = 'Dear Customer,' . "\n\n" .
+                // 'Your order has been successfully placed and is currently awaiting acceptance from the freelancer.' . "\n\n" .
+                // 'Order Details:' . "\n" .
+                // 'Order ID: ' . $serviceOrder->id . "\n" .
+                // 'Service ID: ' . $service->id . "\n" .
+                // 'Service Title: ' . $service->title . "\n" .
+                // 'Price: $' . $service->price . "\n\n" .
+                // 'This amount has been deducted from your balance. We will notify you as soon as the freelancer accepts your order.' . "\n\n" .
+                // 'A full refund will be made within 7days if freelancer is not accept the order.' . "\n\n" .
+                // 'Thank you for choosing our services.';
+                // $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
 
                 return response()->json([
                     'verified' => true,
