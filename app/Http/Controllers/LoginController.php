@@ -120,6 +120,7 @@ class LoginController extends Controller
                     'service:ban',
                     'serviceOrder:view',
                     'serviceOrder:accept',
+                    'tranc:top-up',
                     'user:status',
                     'service:purchase',
                     'self:update'])->plainTextToken;
@@ -134,6 +135,7 @@ class LoginController extends Controller
                     'service:view',
                     'serviceOrder:view',
                     'serviceOrder:accept',
+                    'tranc:top-up',
                     'service:purchase',
                     'free:update'])->plainTextToken;
             }
@@ -143,6 +145,7 @@ class LoginController extends Controller
                     'service:view',
                     'service:cancel',
                     'service:purchase',
+                    'tranc:top-up',
                     'serviceOrder:view',
                     'client:update'])->plainTextToken;
             }
@@ -288,6 +291,7 @@ class LoginController extends Controller
                             'service:view',
                             'serviceOrder:view',
                             'serviceOrder:accept',
+                            'tranc:top-up',
                             'service:purchase',
                             'free:update']
                             :
@@ -296,6 +300,7 @@ class LoginController extends Controller
                             'service:view',
                             'service:cancel',
                             'service:purchase',
+                            'tranc:top-up',
                             'serviceOrder:view',
                             'client:update'])->plainTextToken, ],
                     ]);

@@ -276,7 +276,7 @@ class ServiceOrderController extends Controller
                 $emailController = new EmailController();
                 // Send alert email (Turn back on when linode approve)
                 $subject = 'Order Success';
-                $content = 'Dear Customer,' . "\n\n" .
+                $content = 'Dear '.Auth::user()->name.',' . "\n\n" .
                 'Your order has been successfully placed and is currently awaiting acceptance from the freelancer.' . "\n\n" .
                 'Order Details:' . "\n" .
                 'Order ID: ' . $serviceOrder->id . "\n" .

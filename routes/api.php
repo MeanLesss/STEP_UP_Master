@@ -6,6 +6,7 @@ use App\Http\Controllers\EmailController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ServiceOrderController;
+use App\Http\Controllers\TrancsactionController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 /*
 |--------------------------------------------------------------------------
@@ -36,14 +37,7 @@ Route::get('/email/verify', function () {
     return view('auth.verify');
 })->middleware('auth:sanctum')->name('verification.notice');
 
-// Email verification handler route
-// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
 
-    // Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-//     $request->fulfill();
-//     EmailController::verify($request, $id, $hash)
-//     return redirect('email-verified');
-// })->name('verification.verify');
 Route::get('/email/verify/{id}/{hash}', [EmailController::class,'verify'])->name('verification.verify');
 
 // Resend email verification link route
@@ -69,6 +63,8 @@ Route::get('/test/{id}', function (int $id) {
 
 Route::get('/service/{id}/view',[ServiceController::class ,'show'])->middleware('auth:sanctum') ;
 
+
+//Service Order
 Route::get('/service/agreement',[ServiceOrderController::class,'showAgreement']);
 Route::post('/service/purchase-summary/',[ServiceOrderController::class,'ShowSummary'])->middleware('auth:sanctum');
 Route::post('/service/confirm-purchase/',[ServiceOrderController::class,'confirmPurchase'])->middleware('auth:sanctum');
@@ -79,3 +75,8 @@ Route::get('/my-service/view',[ServiceController::class ,'showAllMyService'])->m
 
 Route::get('/order-service/{id}/view',[ServiceOrderController::class ,'show'])->middleware('auth:sanctum') ;
 Route::post('/order-service/{id}/accept',[ServiceOrderController::class ,'accept'])->middleware('auth:sanctum') ;
+
+
+//Transaction part
+Route::post('/balance/top-up',[TrancsactionController::class ,'topUpBalance'])->middleware('auth:sanctum') ;
+
