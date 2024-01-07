@@ -34,7 +34,7 @@ class ServiceOrderController extends Controller
                 'verified' => true,
                 'status' =>  'success',
                 'msg' => 'Success',
-                'data'=>$result
+                'data'=>['result'=>$result],
             ],200);
         }else{
             return response()->json([
@@ -139,7 +139,7 @@ class ServiceOrderController extends Controller
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => 'Summary',
-                    'data'=> $serviceOrder
+                    'data'=> ['resuilt'=>$serviceOrder]
                 ],200);
             }else{
                 return response()->json([
@@ -230,7 +230,7 @@ class ServiceOrderController extends Controller
                             'verified' => false,
                             'status' =>  'warning',
                             'msg' => "You're already bought the service and still in progress !",
-                            'data'=>$orderCheck,
+                            'data'=>['result'=>$orderCheck],
                         ],401);
                     }
 
@@ -362,7 +362,7 @@ class ServiceOrderController extends Controller
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => "success",
-                    'data'=>$orderCheck,
+                    'data'=>['result'=>$orderCheck]
                 ],200);
             }else{
                 return response()->json([

@@ -83,7 +83,7 @@ class ServiceController extends Controller
                 'verified' => true,
                 'status' =>  'success',
                 'msg' => 'Enjoy!',
-                'data'=> $result
+                'data'=> ['result'=>$result],
             ],200);
         }catch(Exception $e){
             return response()->json([
@@ -214,7 +214,7 @@ class ServiceController extends Controller
                 'verified' => false,
                 'status' =>  'warning',
                 'msg' => "You're already bought the service and still in progress !",
-                'data'=>$orderCheck,
+                'data'=>['result'=>$orderCheck],
             ],401);
         }
         $result = Service::where('id',$id)->increment('view');
@@ -231,7 +231,7 @@ class ServiceController extends Controller
             'verified' => true,
             'status' =>  'success',
             'msg' => '',
-            'data'=>$result,
+            'data'=>['result'=>$result],
         ],200);
     }
     public function showAllMyService()
@@ -262,14 +262,14 @@ class ServiceController extends Controller
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => '',
-                    'data'=>$result,
+                    'data' =>  ['result'=>$result],
                 ],200);
             }
             return response()->json([
                 'verified' => true,
                 'status' =>  'success',
                 'msg' => 'No service created yet, Try create some.😊',
-                'data'=>$result,
+                'data'=> ['result'=>$result],
             ],401);
         }catch(Exception $ex){
             return response()->json([
