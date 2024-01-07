@@ -29,7 +29,7 @@
             border: 3px solid #FAFF00;
             padding: 20px;
             margin-top: 20px;
-            text-align: center;
+            text-align: start;
             width: 100%;
             box-sizing: border-box;
         }

@@ -99,6 +99,7 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
+        $masterController = new MasterController();
         try{
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
@@ -156,18 +157,23 @@ class ServiceController extends Controller
                 $service->save();
                 $emailController = new EmailController();
                 // Send alert email (Turn back on when linode approve)
-                //$subject = 'Order Success';
-                //$content = 'Dear Customer,' . "\n\n" .
-                // 'Your order has been successfully placed and is currently awaiting acceptance from the freelancer.' . "\n\n" .
-                // 'Order Details:' . "\n" .
-                // 'Order ID: ' . $serviceOrder->id . "\n" .
-                // 'Service ID: ' . $service->id . "\n" .
-                // 'Service Title: ' . $service->title . "\n" .
-                // 'Price: $' . $service->price . "\n\n" .
-                // 'This amount has been deducted from your balance. We will notify you as soon as the freelancer accepts your order.' . "\n\n" .
-                // 'A full refund will be made within 7days if freelancer is not accept the order.' . "\n\n" .
-                // 'Thank you for choosing our services.';
-                // $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
+                $subject = 'Service Creation';
+                $content = 'Dear '.Auth::user()->name.',' . "\n\n" .
+                'Your service has been successfully created and is ready for orders.' . "\n\n" .
+                'Service Details:' . "\n" .
+                'Service ID: ' . $service->id . "\n" .
+                'Service Title: ' . $service->id . "\n" .
+                'Service Description: ' . $service->description . "\n" .
+                'Service Type: ' . $service->service_type . "\n\n" .
+                'Service Requirement: ' . $service->requirement . "\n" .
+                'Service Start Date: ' . $service->start_date . "\n" .
+                'Service End Date: ' . $service->end_date . "\n" .
+                'Status: ' . $masterController->checkMyServiceStatus($service->status) . "\n\n" .
+                'Discount: ' . $service->discount . "%\n\n" .
+                'Price: $' . $service->price . "\n\n" .
+                'This amount will be display without tax included. We will notify you as soon as the service is approved.' . "\n\n" .
+                'Thank you for choosing our platform.';
+                $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
 
                 return response()->json([
                     'verified' => true,
@@ -199,13 +205,13 @@ class ServiceController extends Controller
     {
          //check if the service is already purchase  and in progress
         //  $orderCheck = ServiceOrder::where('service_id',$request->service_id)
-
         $orderCheck = ServiceOrder::where('service_id',$id)
         ->where('order_by',Auth::user()->id)
         ->whereIn('order_status', [0, 1, 2])
         ->first();
 
         if(isset($orderCheck)){
+
             $masterController = new MasterController();
             $stringStatus = $masterController->checkServiceStatus($orderCheck->order_status);
             $orderCheck->stringStatus = $stringStatus;
