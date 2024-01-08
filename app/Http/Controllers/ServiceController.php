@@ -59,6 +59,8 @@ class ServiceController extends Controller
             });
             if(isset($request->service_type)){
                 $result = Service::where('service_type',$request->service_type)->paginate($request->range);
+            }elseif ($request->has($request->status) && isset($request->status)){
+                $result = Service::where('service_type',$request->service_type)->where('status',$request->status)->get();
             }else{
                 //$result = Service::paginate($request->range);
                 $result = Service::paginate($request->range);

@@ -62,7 +62,7 @@ class TrancsactionController extends Controller
                         $topUpLog->save();
 
                         $newBalance = $result->balance + $request->balance;
-                        $result->update(['balance'=>$newBalance]);
+                        $result->update(['balance'=>$newBalance,'updated_at'=>Carbon::now(),'updated_by'=>Auth::user()->id]);
                         $result->save();
                     }else{
                         return response()->json([

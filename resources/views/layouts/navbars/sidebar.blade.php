@@ -20,14 +20,20 @@
             </li>
             <li>
                 <a data-toggle="collapse" href="#laravelExamples">
-                    <i class="fab fa-laravel"></i>
+                    <i class="now-ui-icons loader_gear"></i>
                     <p>
-                        {{ __('Laravel Examples') }}
+                        {{ __('Management') }}
                         <b class="caret"></b>
                     </p>
                 </a>
                 <div class="collapse show" id="laravelExamples">
                     <ul class="nav">
+                        <li class="@if ($activePage == 'services') active @endif">
+                            <a href="{{ route('service.management') }}">
+                                <i class="now-ui-icons files_single-copy-04"></i>
+                                <p> {{ __('Service Management') }} </p>
+                            </a>
+                        </li>
                         <li class="@if ($activePage == 'profile') active @endif">
                             <a href="{{ route('profile.edit') }}">
                                 <i class="now-ui-icons users_single-02"></i>

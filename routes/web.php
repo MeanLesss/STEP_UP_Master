@@ -38,4 +38,9 @@ Route::get('/index2password', function(){return view('profile.edit');})->name('p
 Route::get('/index3',function(){return view('users.index');})->name('user.index');
 Route::get('/page/{page}', [PageController::class,'index'])->name('page.index');
 
+//Service management
+Route::get('/service/management',function(){return view('services.manage');})->name('service.management');
+Route::post('/service/management/pending', [ServiceController::class,'getAllServices'])->name('service.pending');
+
+
 
