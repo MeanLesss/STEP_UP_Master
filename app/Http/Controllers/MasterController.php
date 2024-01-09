@@ -44,7 +44,7 @@ class MasterController extends Controller
         $stringStatus = '';
         switch ($status) {
             case -1:
-                $stringStatus = 'Expired';
+                $stringStatus = 'Expired/Declined';
                 break;
             case 0:
                 $stringStatus = 'Pending';

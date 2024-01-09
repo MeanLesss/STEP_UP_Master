@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
 use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\MasterController;
@@ -36,6 +37,50 @@ class ServiceController extends Controller
 
     }
 
+    public function getAllServicesWeb(Request $request){
+        try{
+            // $result = Service::query();
+            if(isset($request->service_type)){
+                $result= Service::where('service_type', $request->service_type)->get();
+            } elseif($request->has('status') && isset($request->status)){
+                $result=Service::where('status', $request->status)->get();
+            } elseif(isset($request->service_type) && isset($request->status)){
+                $result = Service::where('service_type', $request->service_type)
+                      ->where('status', $request->status)->orderby('status','asc')->get();
+            }else{
+                $result = Service::all();
+            }
+
+            // return var_dump($result);
+            $masterController = new MasterController();
+            $result->transform(function ($item) use ($masterController) {
+                // $stringStatus = $masterController->checkMyServiceStatus($item->status);
+                // $item->stringStatus = $stringStatus;
+                // $item->statusString = $stringStatus;
+
+                $attachments = json_decode($item->attachments);
+                if($attachments){
+
+                    foreach($attachments as &$attachment){
+                        // $attachment = env('APP_URL').$attachment;
+                        $attachment = asset('storage/'.$attachment);
+                    }
+                    $item->attachments = $attachments;
+
+                }
+                return $item;
+            });
+
+            return DataTables::of($result)
+            ->make(true);
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  Str::limit($e->getMessage(), 150, '...'),
+            ],500);
+        }
+    }
     public function getAllServices(Request $request){
         try{
 
@@ -58,12 +103,10 @@ class ServiceController extends Controller
                 return $page;
             });
             if(isset($request->service_type)){
-                $result = Service::where('service_type',$request->service_type)->paginate($request->range);
-            }elseif ($request->has($request->status) && isset($request->status)){
-                $result = Service::where('service_type',$request->service_type)->where('status',$request->status)->get();
-            }else{
+                $result = Service::where('service_type',$request->service_type)->where('status',1)->paginate($request->range);
+            } else{
                 //$result = Service::paginate($request->range);
-                $result = Service::paginate($request->range);
+                $result = Service::where('status',1)->paginate($request->range);
             }
 
             $transformedCollection = $result->getCollection()->transform(function ($item, $key) {
@@ -375,7 +418,56 @@ class ServiceController extends Controller
             ],500);
         }
     }
+    public function serviceApproval(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'service_id' => 'required',
+                'isApprove' => 'required',
+            ]);
 
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  'Oops somthing not right!',
+                    // 'error_msg' => $validator->errors(),
+                ],401);
+            }
+
+            // if(Auth::user()->tokenCan('service:approval')){
+                try{
+                    $service = Service::find($request->service_id);
+                    $service->update(['updated_at' => Carbon::now(),'updated_by'=>Auth::user()->id,'status'=>$request->isApprove ? 1 : -1]);
+                }catch(Exception $e){
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
+                    ],500);
+                }
+
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => 'The service updated successfully',
+                ]);
+            // }
+            /**
+             * If the user have no authorization for the action.
+             */
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
+            ],401);
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
+            ],500);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      */

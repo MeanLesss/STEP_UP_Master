@@ -24,7 +24,8 @@
     <!-- CSS Files -->
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> --}}
-    <link href="{{ asset('plugins') }}/js/core/bootstrap.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="{{ asset('plugins') }}/css/sweetalert2.css ">
+        <link href="{{ asset('plugins') }}/js/core/bootstrap.min.css" rel="stylesheet" />
     <link href="{{ asset('plugins') }}/css/now-ui-dashboard.css?v=1.3.0" rel="stylesheet" />
     {{-- Data Table css --}}
     <link href="{{ asset('plugins') }}/js/DataTable/datatables.min.css" rel="stylesheet" />
@@ -60,8 +61,9 @@
     </script>
     {{-- <script src="{{ asset('plugins') }}/js/core/jquery.min.js"></script> --}}
     <script src="{{ asset('plugins') }}/js/core/popper.min.js"></script>
-    {{-- <script src="{{ asset('plugins') }}/js/core/bootstrap.min.js"></script> --}}
+    <script src="{{ asset('plugins') }}/js/core/bootstrap.min.js"></script>
     <script src="{{ asset('plugins') }}/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <script src="{{ asset('plugins/js/sweetalert2.all.min.js') }}"></script>
     <!--  Google Maps Plugin    -->
     {{-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script> --}}
     <!-- Chart JS -->
@@ -75,6 +77,7 @@
     <script src="{{ asset('plugins') }}/demo/demo.js"></script>
     {{-- dataTable --}}
     <script src="{{ asset('plugins') }}/js/DataTable/datatables.min.js"></script>
+    <script src="{{ asset('plugins') }}/js/DataTable/Responsive/responsive.dataTables.min.js"></script>
     <script src="{{ asset('plugins') }}/js/DataTable/DataTable/jquery.dataTables.min.js"></script>
     <script src="{{ asset('plugins') }}/js/DataTable/DataTable/dataTables.bootstrap5.min.js"></script>
     <script src="{{ asset('plugins') }}/js/DataTable/Button/js/dataTables.buttons.min.js"></script>
@@ -87,7 +90,6 @@
     <script src="{{ asset('plugins') }}/js/DataTable/Responsive/dataTables.responsive.min.js"></script>
     <script src="{{ asset('plugins') }}/js/DataTable/Responsive/responsive.bootstrap5.min.js"></script>
     <script src="{{ asset('plugins') }}/js/DataTable/Select/select.bootstrap5.min.js"></script>
-
 
 
     @stack('js')

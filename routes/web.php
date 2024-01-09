@@ -40,7 +40,8 @@ Route::get('/page/{page}', [PageController::class,'index'])->name('page.index');
 
 //Service management
 Route::get('/service/management',function(){return view('services.manage');})->name('service.management');
-Route::post('/service/management/pending', [ServiceController::class,'getAllServices'])->name('service.pending');
+Route::post('/service/management/pending', [ServiceController::class,'getAllServicesWeb'])->name('service.web');
+Route::post('/service/management/approval', [ServiceController::class,'serviceApproval'])->name('service.approval');
 
 
 

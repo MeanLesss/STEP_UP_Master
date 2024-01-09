@@ -117,6 +117,7 @@ class LoginController extends Controller
                     'service:cancel',
                     'service:read',
                     'service:view',
+                    'service:approval',
                     'service:ban',
                     'serviceOrder:view',
                     'serviceOrder:accept',

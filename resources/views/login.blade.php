@@ -105,7 +105,7 @@
                             Swal.fire({
                                 icon: response.status,
                                 title: "Error",
-                                text: response.error_msg,
+                                text: response.msg,
                             });
                             return;
                         }
