@@ -39,17 +39,15 @@ class ServiceController extends Controller
 
     public function getAllServicesWeb(Request $request){
         try{
-            // $result = Service::query();
-            if(isset($request->service_type)){
-                $result= Service::where('service_type', $request->service_type)->get();
-            } elseif($request->has('status') && isset($request->status)){
-                $result=Service::where('status', $request->status)->get();
-            } elseif(isset($request->service_type) && isset($request->status)){
-                $result = Service::where('service_type', $request->service_type)
-                      ->where('status', $request->status)->orderby('status','asc')->get();
-            }else{
-                $result = Service::all();
+            $query = Service::query();
+
+            if (isset($request->service)) {
+                $query->where('service_type', $request->service);
             }
+            if (isset($request->status)) {
+                $query->where('status', $request->status);
+            }
+            $result = $query->get();
 
             // return var_dump($result);
             $masterController = new MasterController();

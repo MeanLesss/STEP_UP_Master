@@ -184,17 +184,29 @@ class LoginController extends Controller
      */
     public function store(Request $request)
     {
+        // $validator = Validator::make($request->all(), [
+
+        //     'guest' => 'required|boolean',
+        //     'freelancer' => 'required|boolean',
+        //     'name' => 'required_if:guest,false',
+        //     'email' => 'required_if:guest,false|email',
+        //     'password' => 'required_if:guest,false',
+        //     'confirm_password' => 'required_if:guest,false',
+        //     'phone_number' => 'required_if:guest,false',
+        //     'id_number' => 'required_if:guest,false',
+        //     'job_type' => 'required_if:guest,false'
+
+        // ]);
         $validator = Validator::make($request->all(), [
             'guest' => 'required|boolean',
             'freelancer' => 'required|boolean',
-            'name' => 'required_if:guest,false',
-            'email' => 'required_if:guest,false|email',
-            'password' => 'required_if:guest,false',
-            'confirm_password' => 'required_if:guest,false',
-            'phone_number' => 'required_if:guest,false',
-            'id_number' => 'required_if:guest,false',
-            'job_type' => 'required_if:guest,false'
-
+            'name' => 'required_if:guest,false|required_if:freelancer,true',
+            'email' => 'required_if:guest,false|required_if:freelancer,true|email',
+            'password' => 'required_if:guest,false|required_if:freelancer,true',
+            'confirm_password' => 'required_if:guest,false|required_if:freelancer,true',
+            'phone_number' => 'required_if:guest,false|required_if:freelancer,true',
+            'id_number' => 'required_if:guest,false|required_if:freelancer,true',
+            'job_type' => 'required_if:guest,false|required_if:freelancer,true'
         ]);
 
         if ($validator->fails()) {

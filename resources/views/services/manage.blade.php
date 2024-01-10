@@ -22,6 +22,42 @@
                         <h5 class="title">{{ __('All Services') }}</h5>
                     </div>
                     <div class="card-body">
+                        <div class="card-body" style="border: 3px solid #161A3A; border-radius: 25px;">
+                            <div class="col">
+                                <div class="col-md-12">
+                                    <h5>Filtering</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 col-lg-3">
+                                        <h6>Status</h6>
+                                        <select id="search-status" placeholder="Status" class="form-control my-3">
+                                            <option value="">Choose..</option>
+                                            <option value="-1">Expired / Declined</option>
+                                            <option value="0">Pending</option>
+                                            <option value="1">Active</option>
+                                            <option value="2">Cancel</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 col-lg-3">
+                                        <h6>Service</h6>
+                                        <select id="search-service" placeholder="Service" class="form-control my-3">
+                                            <option value="">Choose..</option>
+                                            <option value="Software Developement">Software Developement</option>
+                                            <option value="Graphic Design">Graphic Design</option>
+                                        </select>
+                                    </div>
+                                    {{-- <div class="col-md-3 col-lg-3">
+                                        <h6>Search Text</h6>
+                                        <input type="text" id="search-input" placeholder="Search something"
+                                            class="form-control my-3" />
+                                    </div>
+                                    <div class="col-md-3 col-lg-3">
+                                        <h6>Action</h6>
+                                        <button class="btn btn-primary btn-round my-1" id="btn-search">Serach</button>
+                                    </div> --}}
+                                </div>
+                            </div>
+                        </div>
                         <table id="master-service-table" class="table table-striped " style="width:100%;">
                         </table>
                     </div>
@@ -54,55 +90,11 @@
     </div>
     <script>
         $(document).ready(function() {
+            filterService();
 
-            var data = [{
-                    "Name": "Tiger Nixon",
-                    "Position": "System Architect",
-                    "Office": "Edinburgh",
-                    "Age": "61",
-                    "Start date": "2011/04/25",
-                    "Salary": "$320,800"
-                },
-                {
-                    "Name": "Garrett Winters",
-                    "Position": "Accountant",
-                    "Office": "Tokyo",
-                    "Age": "63",
-                    "Start date": "2011/07/25",
-                    "Salary": "$170,750"
-                },
-                {
-                    "Name": "Ashton Cox",
-                    "Position": "Junior Technical Author",
-                    "Office": "San Francisco",
-                    "Age": "66",
-                    "Start date": "2009/01/12",
-                    "Salary": "$86,000"
-                },
-                // More data...
-            ];
-            ServiceTable('master-service-table', ["id",
-                "title",
-                "description",
-                "status",
-                "attachments",
-                "requirement",
-                "price",
-                "discount",
-                "service_type",
-                "start_date",
-                "end_date",
-                "created_by",
-                "updated_by",
-                "created_at",
-                "updated_at",
-                "view",
-                "service_rate",
-                "service_ordered_count"
-            ]);
         });
 
-        function ServiceTable(elementId, headers, status, service_type) {
+        function ServiceTable(elementId, headers, data, status, service_type) {
             // Convert data array to DataTable format
             // Initialize DataTable
             $(document).ready(function() {
@@ -144,7 +136,8 @@
                                         if (data.hasOwnProperty(key)) {
                                             // images += "- " + key + "<br>";
                                             console.log(data[key]['jpg']);
-                                            images += `<img src="${data[key]['jpg']}" alt="${key}" style="width: auto; height: 100px;">`;
+                                            images +=
+                                                `<img src="${data[key]['jpg']}" alt="${key}" style="width: auto; height: 100px;">`;
                                         }
                                     }
                                 }
@@ -174,22 +167,7 @@
                                         '<td>' + col.data + '</td>' +
                                         '</tr>';
                                     console.log(col.data);
-                                    if (col.title == "attachments") {
-                                        // for (var key in col.data) {
-                                        //     if (col.data.hasOwnProperty(key)) {
-                                        //         console.log(col.data.value,key);
-                                        //         if(key != 0 && key != 1 && key != 2 && key != ''){
 
-                                        //             var value = col.data[key];
-                                        //             console.log(value);
-                                        //             columnData += `<tr data-dt-row="${col.rowIndex }" data-dt-column="${col.columnIndex}">
-                                        //                 <td>${key}:</td>
-                                        //                 <td><img src="${value}" alt="${key}"></td>
-                                        //                 </tr>`;
-                                        //         }
-                                        //     }
-                                        // }
-                                    }
                                     if (col.title == "id") id = col.data;
 
                                     if (col.title == 'status' && col.data.includes('Pending')) {
@@ -207,7 +185,6 @@
                                 return data ? $('<table/>').append(data) : false;
                             }
                         },
-
                     },
                     fixedHeader: true,
                     select: true,
@@ -217,10 +194,12 @@
                         ['10 rows', '25 rows', '50 rows', 'Show all']
                     ],
                     buttons: [{
-                            extend: 'pageLength'
+                            extend: 'pageLength',
+                            className: "btn-round btn-primary btn",
                         },
                         {
                             extend: 'excelHtml5',
+                            className: "btn-round btn-primary btn",
                             customize: function(xlsx) {
                                 var sheet = xlsx.xl.worksheets['sheet1.xml'];
 
@@ -234,35 +213,40 @@
                             },
                         },
                         {
-                            extend: 'pdf'
+                            extend: 'pdf',
+                            className: "btn-round btn-primary btn",
                         },
                         {
                             text: 'Reload',
+                            className: "btn-round btn-primary btn",
                             action: function(e, dt, node, config) {
-                                dt.ajax.reload();
+                                // dt.ajax.reload();
+                                filterService();
                             }
-                        },
+                        }
+
                     ],
                     bDestroy: true,
                     processing: true,
                     fixedHeader: true,
                     fixedColumn: true,
                     paging: true,
-                    searching: false,
+                    searching: true,
                     columnDefs: [{
                         className: 'dtr_control'
                     }],
-                    serverSide: true,
-                    ajax: {
-                        url: "{{ url('/service/management/pending') }}",
-                        type: 'POST',
-                        dataType: 'JSON',
-                        data: {
-                            '_token': "<?= csrf_token() ?>",
-                            service_type: service_type,
-                            status: status
-                        }
-                    }
+                    data: data,
+                    // serverSide: true,
+                    // ajax: {
+                    //     url: "{{ url('/service/management/pending') }}",
+                    //     type: 'POST',
+                    //     dataType: 'JSON',
+                    //     data: {
+                    //         '_token': "<?= csrf_token() ?>",
+                    //         service_type: service_type,
+                    //         status: status
+                    //     }
+                    // }
                 });
             });
         }
@@ -314,5 +298,71 @@
                 ]);
             });
         }
+
+        function filterService(status = '', service = '' ) {
+            var settings = {
+                "url": "{{ url('/service/management/pending') }}",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + "{{ session('user_token') }}"
+                },
+                "data": JSON.stringify({
+                    '_token': "<?= csrf_token() ?>",
+                    "status": status,
+                    "service": service,
+                }),
+                "success": function(response) {
+                    if (response != null && response.msg != null && response.msg != '') {
+                        Swal.fire({
+                            icon: response.status,
+                            title: "Error",
+                            text: response.msg,
+                        });
+                    } else {
+                        ServiceTable('master-service-table', ["id",
+                            "title",
+                            "description",
+                            "status",
+                            "attachments",
+                            "requirement",
+                            "price",
+                            "discount",
+                            "service_type",
+                            "start_date",
+                            "end_date",
+                            "created_by",
+                            "updated_by",
+                            "created_at",
+                            "updated_at",
+                            "view",
+                            "service_rate",
+                            "service_ordered_count"
+                        ], response.data);
+                    }
+                }
+            };
+
+            $.ajax(settings).done(function(response) {
+
+            });
+        }
+    </script>
+    {{-- // UI Action Script --}}
+    <script>
+        $('#search-status').change(function() {
+            var status =  $('#search-status').val();
+            var service =  $('#search-service').val();
+            console.log(status,service);
+            filterService(status,service);
+        });
+        $('#search-service').change(function() {
+            var status =  $('#search-status').val();
+            var service =  $('#search-service').val();
+            console.log(status,service);
+            filterService(status,service);
+
+        });
     </script>
 @endsection
