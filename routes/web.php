@@ -20,7 +20,7 @@ use App\Http\Controllers\ServiceController;
 Route::get('/login_app', [LoginController::class,'index'])->name('login_app');
 Route::post('/login_submit', [LoginController::class,'web_login'])->name('login_submit');
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 Route::get('/index1', [MasterController::class,'index'])->name('master');
 // Route::get('/index', [MasterController::class,'index'])->name('home');
