@@ -97,15 +97,20 @@ class ServiceController extends Controller
             }
 
             $page = $request->get('page', 1);
+            $query = Service::query();
             Paginator::currentPageResolver(function () use ($page) {
                 return $page;
             });
             if(isset($request->service_type)){
-                $result = Service::where('service_type',$request->service_type)->where('status',1)->paginate($request->range);
-            } else{
-                //$result = Service::paginate($request->range);
-                $result = Service::where('status',1)->paginate($request->range);
+                $query->where('service_type',$request->service_type);
             }
+            if($request->has('price') && isset($request->price)){
+                //$result = Service::paginate($request->range);
+                $query->where('price',$request->price);
+            }
+
+            $query->where('status', 1);
+            $result = $query->paginate($request->range);
 
             $transformedCollection = $result->getCollection()->transform(function ($item, $key) {
                 $attachments = json_decode($item->attachments, true);
