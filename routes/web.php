@@ -43,5 +43,6 @@ Route::get('/service/management',function(){return view('services.manage');})->n
 Route::post('/service/management/pending', [ServiceController::class,'getAllServicesWeb'])->name('service.web');
 Route::post('/service/management/approval', [ServiceController::class,'serviceApproval'])->name('service.approval');
 
+Route::get('/service/management/getAllComplain', [ServiceController::class,'serviceApproval'])->name('service.order.complain');
 
 

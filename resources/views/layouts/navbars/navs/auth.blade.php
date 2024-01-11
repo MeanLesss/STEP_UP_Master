@@ -72,21 +72,54 @@
     </div>
 </nav>
 <script>
-    $('#btn_logout').on('click', '#btn_logout', function() {
-        var settings = {
-            "url": "/api/logout",
-            "method": "GET",
-            "timeout": 0,
-            "headers": {
-                "Authorization": "Bearer " + "{{ session('user_token') }}"
-            },
-        };
+    $(document).ready(function() {
+        $('#btn_logout').click(function() {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#161A3A",
+                confirmButtonTextColor: "#FAFF00",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, Log out!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var settings = {
+                        "url": "/api/logout",
+                        "method": "GET",
+                        "timeout": 0,
+                        "headers": {
+                            "Authorization": "Bearer " + "{{ session('user_token') }}"
+                        },
+                        "success": function(response) {
+                            if (response.verified) {
+                                Swal.fire({
+                                    icon:'success',
+                                    title: "Logged Out Success!",
+                                    confirmButtonText: "Okay",
+                                }).then((result) => {
+                                    /* Read more about isConfirmed, isDenied below */
+                                    if (result.isConfirmed) {
+                                        console.log(response);
+                                        sessionStorage.removeItem('user_token');
+                                        // Redirect to a logout confirmation page or the homepage
+                                        window.location.href = '/login_app';
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Log out failed!",
+                                    icon: 'error'
+                                });
+                            }
+                        }
+                    };
 
-        $.ajax(settings).done(function(response) {
-            console.log(response);
-            sessionStorage.removeItem('user_token');
-            // Redirect to a logout confirmation page or the homepage
-            window.location.href = '/login_app';
+                    $.ajax(settings).done(function(response) {});
+
+                }
+            });
         });
     });
 </script>
