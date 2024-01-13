@@ -198,6 +198,7 @@ class ServiceController extends Controller
                     ],500);
                 }
 
+                $service->status = 0;
                 $service->created_by = Auth::user()->id;
                 $service->created_at = Carbon::now();
                 $service->updated_by = Auth::user()->id;
