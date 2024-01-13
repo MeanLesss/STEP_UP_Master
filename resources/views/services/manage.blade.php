@@ -89,13 +89,13 @@
         </div>
     </div>
     <script>
-        var status =  '';
+        var status = '';
         var service = '';
         $(document).ready(function() {
             var status = $('#search-status').val();
             var service = $('#search-service').val();
 
-            filterService(status,service);
+            filterService(status, service);
 
         });
 
@@ -143,7 +143,8 @@
                                             var value = data[key];
                                             // Check if value is an object
                                             if (typeof value !== 'object' && value !== null && !
-                                                Array.isArray(value) && typeof value === 'string') {
+                                                Array.isArray(value) && typeof value ===
+                                                'string') {
                                                 // If it is an object, access the 'jpg' property
                                                 // images +=
                                                 //     `<img src="${value['jpg']}" alt="${key}" style="width: auto; height: 100px;">`;
@@ -237,7 +238,7 @@
                             className: "btn-round btn-primary btn",
                             action: function(e, dt, node, config) {
                                 // dt.ajax.reload();
-                                filterService(status,service);
+                                filterService(status, service);
                             }
                         }
 
@@ -287,15 +288,33 @@
                             icon: response.status,
                             title: "Success",
                             text: response.msg,
-                        }).then(function(){
-                            filterService(status,service);
+                        }).then(function() {
+                            filterService(status, service);
                         });
                     }
                 }
             };
 
-            $.ajax(settings).done(function(response) {
 
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax(settings).done(function(response) {});
+
+                }else{
+                    Swal.fire({
+                        title: "Cacneled!",
+                        text: "The process has been canceled.",
+                        icon: "error"
+                    });
+                }
             });
         }
 
