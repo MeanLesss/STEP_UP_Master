@@ -352,14 +352,14 @@
     {{-- // UI Action Script --}}
     <script>
         $('#search-status').change(function() {
-            // var status = $('#search-status').val();
-            // var service = $('#search-service').val();
+            status = $('#search-status').val();
+            service = $('#search-service').val();
             console.log(status, service);
             filterService(status, service);
         });
         $('#search-service').change(function() {
-            // var status = $('#search-status').val();
-            // var service = $('#search-service').val();
+            status = $('#search-status').val();
+            service = $('#search-service').val();
             console.log(status, service);
             filterService(status, service);
 
