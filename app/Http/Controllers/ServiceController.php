@@ -208,7 +208,7 @@ class ServiceController extends Controller
                 // Send alert email (Turn back on when linode approve)
                 $subject = 'Service Creation';
                 $content = 'Dear '.Auth::user()->name.',' . "\n\n" .
-                'Your service has been successfully created and is ready for orders.' . "\n\n" .
+                'Your service has been successfully created and will be ready for order soon.' . "\n\n" .
                 'Service Details:' . "\n" .
                 'Service ID: ' . $service->id . "\n" .
                 'Service Title: ' . $service->id . "\n" .

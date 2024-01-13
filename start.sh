@@ -23,6 +23,7 @@ if [ -d "/var/www/html/public" ]; then
 fi
 
 chown -R $USER:www-data /var/www/html/public
+chmod -R 775 /var/www/html/public
 
 /usr/local/bin/php artisan config:clear
 /usr/local/bin/php artisan cache:clear
