@@ -89,8 +89,13 @@
         </div>
     </div>
     <script>
+        var status =  '';
+        var service = '';
         $(document).ready(function() {
-            filterService();
+            var status = $('#search-status').val();
+            var service = $('#search-service').val();
+
+            filterService(status,service);
 
         });
 
@@ -232,7 +237,7 @@
                             className: "btn-round btn-primary btn",
                             action: function(e, dt, node, config) {
                                 // dt.ajax.reload();
-                                filterService();
+                                filterService(status,service);
                             }
                         }
 
@@ -282,31 +287,15 @@
                             icon: response.status,
                             title: "Success",
                             text: response.msg,
+                        }).then(function(){
+                            filterService(status,service);
                         });
                     }
                 }
             };
 
             $.ajax(settings).done(function(response) {
-                ServiceTable('master-service-table', ["id",
-                    "title",
-                    "description",
-                    "status",
-                    "attachments",
-                    "requirement",
-                    "price",
-                    "discount",
-                    "service_type",
-                    "start_date",
-                    "end_date",
-                    "created_by",
-                    "updated_by",
-                    "created_at",
-                    "updated_at",
-                    "view",
-                    "service_rate",
-                    "service_ordered_count"
-                ]);
+
             });
         }
 
@@ -363,14 +352,14 @@
     {{-- // UI Action Script --}}
     <script>
         $('#search-status').change(function() {
-            var status = $('#search-status').val();
-            var service = $('#search-service').val();
+            // var status = $('#search-status').val();
+            // var service = $('#search-service').val();
             console.log(status, service);
             filterService(status, service);
         });
         $('#search-service').change(function() {
-            var status = $('#search-status').val();
-            var service = $('#search-service').val();
+            // var status = $('#search-status').val();
+            // var service = $('#search-service').val();
             console.log(status, service);
             filterService(status, service);
 
