@@ -63,10 +63,21 @@ class ServiceController extends Controller
                         // $attachment = env('APP_URL').$attachment;
                         $attachment = asset('storage/'.$attachment);
                     }
+
+                    // foreach($attachments as $key => &$attachment){
+                    //     if(is_array($attachment)){
+                    //         foreach($attachment as $subKey => &$subAttachment){
+                    //             $subAttachment = asset('storage/'.$subAttachment);
+                    //         }
+                    //     } else {
+                    //         $attachment = asset('storage/'.$attachment);
+                    //     }
+                    // }
                     $item->attachments = $attachments;
 
                 }
                 return $item;
+                // return var_dump($item);
             });
 
             return DataTables::of($result)

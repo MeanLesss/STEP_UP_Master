@@ -343,7 +343,7 @@ class ServiceOrderController extends Controller
                 $stringStatus = $masterController->checkServiceStatus($orderCheck->order_status);
                 $orderCheck->stringStatus = $stringStatus;
 
-                $attachments = json_decode($orderCheck->order_attachments);
+                $attachments = json_decode($orderCheck->order_attachments,true);
                 foreach($attachments as &$attachment){
                     // $attachment = env('APP_URL').$attachment;
                     $attachment = asset('storage/'.$attachment);

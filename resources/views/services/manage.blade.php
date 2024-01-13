@@ -133,13 +133,24 @@
                                     // data = data.replace(/&quot;/g, '\"');
                                     // var array = JSON.parse(data);
                                     for (var key in data) {
+                                        console.log(data);
                                         if (data.hasOwnProperty(key)) {
-                                            // images += "- " + key + "<br>";
-                                            console.log(data[key]['jpg']);
-                                            images +=
-                                                `<img src="${data[key]['jpg']}" alt="${key}" style="width: auto; height: 100px;">`;
+                                            var value = data[key];
+                                            // Check if value is an object
+                                            if (typeof value !== 'object' && value !== null && !
+                                                Array.isArray(value) && typeof value === 'string') {
+                                                // If it is an object, access the 'jpg' property
+                                                // images +=
+                                                //     `<img src="${value['jpg']}" alt="${key}" style="width: auto; height: 100px;">`;
+
+                                                // If it's a string, handle it as before
+                                                images +=
+                                                    `<img src="${value}" alt="${key}" style="width: auto; height: 100px;">`;
+                                            }
                                         }
                                     }
+
+
                                 }
                                 return images;
                             }
@@ -299,7 +310,7 @@
             });
         }
 
-        function filterService(status = '', service = '' ) {
+        function filterService(status = '', service = '') {
             var settings = {
                 "url": "{{ url('/service/management/pending') }}",
                 "method": "POST",
@@ -352,16 +363,16 @@
     {{-- // UI Action Script --}}
     <script>
         $('#search-status').change(function() {
-            var status =  $('#search-status').val();
-            var service =  $('#search-service').val();
-            console.log(status,service);
-            filterService(status,service);
+            var status = $('#search-status').val();
+            var service = $('#search-service').val();
+            console.log(status, service);
+            filterService(status, service);
         });
         $('#search-service').change(function() {
-            var status =  $('#search-status').val();
-            var service =  $('#search-service').val();
-            console.log(status,service);
-            filterService(status,service);
+            var status = $('#search-status').val();
+            var service = $('#search-service').val();
+            console.log(status, service);
+            filterService(status, service);
 
         });
     </script>
