@@ -55,16 +55,16 @@ class ServiceController extends Controller
                 // $stringStatus = $masterController->checkMyServiceStatus($item->status);
                 // $item->stringStatus = $stringStatus;
                 // $item->statusString = $stringStatus;
-
-                $attachments = json_decode($item->attachments);
-                if($attachments){
-
-                    foreach($attachments as &$attachment){
-                        // $attachment = env('APP_URL').$attachment;
-                        $attachment = asset('storage/'.$attachment);
+                if(isset($item->attachments) ){
+                    $attachments = json_decode($item->attachments, true);
+                    if(is_array($attachments) && count($attachments) > 0){
+                        foreach($attachments as &$attachment){
+                            $attachment = asset('storage/'.$attachment);
+                        }
+                        $item->attachments = $attachments;
+                    }else{
+                        $item->attachments = [];
                     }
-                    $item->attachments = $attachments;
-
                 }
                 return $item;
             });
@@ -113,14 +113,17 @@ class ServiceController extends Controller
             $result = $query->paginate($request->range);
 
             $transformedCollection = $result->getCollection()->transform(function ($item, $key) {
-                $attachments = json_decode($item->attachments, true);
-                if(isset($attachments)){
-                    foreach($attachments as &$attachment){
-                        // $attachment = env('APP_URL').$attachment;
-                        $attachment = asset('storage/'.$attachment);
+                if(isset($item->attachments) ){
+                    $attachments = json_decode($item->attachments, true);
+                    if(is_array($attachments) && count($attachments) > 0){
+                        foreach($attachments as &$attachment){
+                            $attachment = asset('storage/'.$attachment);
+                        }
+                        $item->attachments = $attachments;
+                    }else{
+                        $item->attachments = [];
                     }
                 }
-                $item->attachments = $attachments;
                 return $item;
             });
 

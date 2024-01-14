@@ -44,15 +44,16 @@ class ServiceOrderController extends Controller
                 $masterController = new MasterController();
                 $result->transform(function ($item) use ($masterController) {
 
-                    $attachments = json_decode($item->order_attachments);
-                    if($attachments){
-
-                        foreach($attachments as &$attachment){
-                            // $attachment = env('APP_URL').$attachment;
-                            $attachment = asset('storage/'.$attachment);
+                    if(isset($item->attachments) ){
+                        $attachments = json_decode($item->attachments, true);
+                        if(is_array($attachments) && count($attachments) > 0){
+                            foreach($attachments as &$attachment){
+                                $attachment = asset('storage/'.$attachment);
+                            }
+                            $item->attachments = $attachments;
+                        }else{
+                            $item->attachments = [];
                         }
-                        $item->attachments = $attachments;
-
                     }
                     return $item;
                 });
