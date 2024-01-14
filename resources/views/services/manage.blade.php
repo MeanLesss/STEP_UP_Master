@@ -92,8 +92,8 @@
         var status = '';
         var service = '';
         $(document).ready(function() {
-            var status = $('#search-status').val();
-            var service = $('#search-service').val();
+            status = $('#search-status').val();
+            service = $('#search-service').val();
 
             filterService(status, service);
 
@@ -238,6 +238,8 @@
                             className: "btn-round btn-primary btn",
                             action: function(e, dt, node, config) {
                                 // dt.ajax.reload();
+                                status = $('#search-status').val();
+                                service = $('#search-service').val();
                                 filterService(status, service);
                             }
                         }
@@ -282,7 +284,18 @@
                     "service_id": service_id,
                     "isApprove": isApprove
                 }),
+                "beforeSend": function() {
+                    Swal.fire({
+                        title: 'Please wait...',
+                        allowOutsideClick: false,
+                        timerProgressBar: true,
+                        onBeforeOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                },
                 "success": function(response) {
+                    Swal.close();
                     if (response != null && response.verified) {
                         Swal.fire({
                             icon: response.status,
@@ -290,6 +303,16 @@
                             text: response.msg,
                         }).then(function() {
                             filterService(status, service);
+                        });
+                    }
+                },
+                "error": function(jqXHR, textStatus, errorThrown) {
+                    Swal.close();
+                    if (jqXHR.status == 401) {
+                        Swal.fire({
+                            icon: jqXHR.responseJSON.status,
+                            title: "Error",
+                            text: jqXHR.responseJSON.msg,
                         });
                     }
                 }
@@ -308,7 +331,7 @@
                 if (result.isConfirmed) {
                     $.ajax(settings).done(function(response) {});
 
-                }else{
+                } else {
                     Swal.fire({
                         title: "Cacneled!",
                         text: "The process has been canceled.",
@@ -359,6 +382,17 @@
                             "service_rate",
                             "service_ordered_count"
                         ], response.data);
+                    }
+                },
+                "error": function(jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    if (jqXHR.status == 401) {
+                        // Handle the 401 error here
+                        Swal.fire({
+                            icon: jqXHR.responseJSON.status,
+                            title: "Error",
+                            text: jqXHR.responseJSON.msg,
+                        });
                     }
                 }
             };

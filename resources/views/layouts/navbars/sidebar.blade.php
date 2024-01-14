@@ -34,9 +34,9 @@
                                 <p> {{ __('Service Management') }} </p>
                             </a>
                         </li>
-                        <li class="@if ($activePage == 'services') active @endif">
-                            <a href="{{ route('service.management') }}">
-                                <i class="now-ui-icons files_single-copy-04"></i>
+                        <li class="@if ($activePage == 'service_order') active @endif">
+                            <a href="{{ route('service.order.management') }}">
+                                <i class="now-ui-icons education_paper"></i>
                                 <p> {{ __('Service Order Management') }} </p>
                             </a>
                         </li>

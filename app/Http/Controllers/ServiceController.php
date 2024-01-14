@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Service;
 use Illuminate\Support\Str;
 use App\Models\ServiceOrder;
@@ -446,9 +447,57 @@ class ServiceController extends Controller
             }
 
             // if(Auth::user()->tokenCan('service:approval')){
+            if(Auth::user()->role == 1000){
                 try{
                     $service = Service::find($request->service_id);
                     $service->update(['updated_at' => Carbon::now(),'updated_by'=>Auth::user()->id,'status'=>$request->isApprove ? 1 : -1]);
+                    $masterController = new MasterController();
+
+                    $creator = User::where('id',$service->created_by)->first();
+                    if($creator){
+                        $emailController = new EmailController();
+                        $subject = 'Service Approval';
+                        if($request->isApprove){
+                            $content = 'Dear '.$creator->name.',' . "\n\n" .
+                            'Your service has been approved will be ready for order.' . "\n\n" .
+                            'Service Details:' . "\n" .
+                            'Service ID: ' . $service->id . "\n" .
+                            'Service Title: ' . $service->id . "\n" .
+                            'Service Description: ' . $service->description . "\n" .
+                            'Service Type: ' . $service->service_type . "\n\n" .
+                            'Service Requirement: ' . $service->requirement . "\n" .
+                            'Service Start Date: ' . $service->start_date . "\n" .
+                            'Service End Date: ' . $service->end_date . "\n" .
+                            'Status: ' . $masterController->checkMyServiceStatus($service->status) . "\n\n" .
+                            'Discount: ' . $service->discount . "%\n\n" .
+                            'Price: $' . $service->price . "\n\n" .
+                            'Note : This amount will be display without tax included.' . "\n\n" .
+                            'Thank you for choosing our platform.';
+                        }else{
+                            $content = 'Dear '.$creator->name.',' . "\n\n" .
+                            'Unfortunately, your service submission did not meet our established criteria or conditions. We appreciate your understanding and encourage you to review our guidelines for future submissions.' . "\n\n" .
+                            'Service Details:' . "\n" .
+                            'Service ID: ' . $service->id . "\n" .
+                            'Service Title: ' . $service->id . "\n" .
+                            'Service Description: ' . $service->description . "\n" .
+                            'Service Type: ' . $service->service_type . "\n\n" .
+                            'Service Requirement: ' . $service->requirement . "\n" .
+                            'Service Start Date: ' . $service->start_date . "\n" .
+                            'Service End Date: ' . $service->end_date . "\n" .
+                            'Status: ' . $masterController->checkMyServiceStatus($service->status) . "\n\n" .
+                            'Discount: ' . $service->discount . "%\n\n" .
+                            'Price: $' . $service->price . "\n\n" .
+                            'Note : This amount will be display without tax included.' . "\n\n" .
+                            'Thank you for choosing our platform.';
+                        }
+                        $emailController->sendTextEmail($creator->email, $subject, $content);
+                    }
+
+                    return response()->json([
+                        'verified' => true,
+                        'status' =>  'success',
+                        'msg' => 'The service updated successfully',
+                    ]);
                 }catch(Exception $e){
                     return response()->json([
                         'verified' => false,
@@ -456,21 +505,16 @@ class ServiceController extends Controller
                         'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
                     ],500);
                 }
-
+            }else{
+                /**
+                 * If the user have no authorization for the action.
+                 */
                 return response()->json([
-                    'verified' => true,
-                    'status' =>  'success',
-                    'msg' => 'The service updated successfully',
-                ]);
-            // }
-            /**
-             * If the user have no authorization for the action.
-             */
-            return response()->json([
-                'verified' => false,
-                'status' =>  'error',
-                'msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
-            ],401);
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
+                ],401);
+            }
         }catch(Exception $e){
             return response()->json([
                 'verified' => false,
