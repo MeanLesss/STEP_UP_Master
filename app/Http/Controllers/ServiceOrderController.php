@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\User;
 use App\Models\Service;
 use App\Models\UserDetail;
 use App\Models\ServiceOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Controllers\EmailController;
@@ -80,17 +80,53 @@ class ServiceOrderController extends Controller
     public function showOrdersForFreelancer(){
         if(Auth::user()->tokenCan( 'serviceOrder:view')){
             $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
-            $masterController = new MasterController();
-            foreach( $result as $data ){
-                $stringStatus = $masterController->checkServiceStatus($data->order_status);
-                $data->status = $stringStatus;
+            if($result){
+                // $order_by = User::select('name')->where('id',$result->order_by)->first();
+                // $request->merge(['order_by_name' => Carbon::now()]);
+                // foreach( $result as $data ){
+                    // }
+                $result->transform(function ($item, $key) {
+                    $masterController = new MasterController();
+                    $status = $masterController->checkServiceStatus($item->order_status);
+                    $item->stringStatus = $status;
+                    if(isset($item->order_attachments) ){
+                        $attachments = json_decode($item->order_attachments, true);
+                        if(is_array($attachments) && count($attachments) > 0){
+                            foreach($attachments as &$attachment){
+                                $attachment = asset('storage/'.$attachment);
+                            }
+                            $item->order_attachments = $attachments;
+                        }else{
+                            $item->order_attachments = [];
+                        }
+                    }
+                    if(isset($item->completed_attachments) ){
+                        $attachments = json_decode($item->completed_attachments, true);
+                        if(is_array($attachments) && count($attachments) > 0){
+                            foreach($attachments as &$attachment){
+                                $attachment = asset('storage/'.$attachment);
+                            }
+                            $item->completed_attachments = $attachments;
+                        }else{
+                            $item->completed_attachments = [];
+                        }
+                    }
+                    return $item;
+                });
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => 'Success',
+                    'data'=>['result'=>$result],
+                ],200);
+            }else{
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' => 'Retrive failed! Nothing found!',
+                    // 'data'=>['result'=>$result],
+                ],401);
             }
-            return response()->json([
-                'verified' => true,
-                'status' =>  'success',
-                'msg' => 'Success',
-                'data'=>['result'=>$result],
-            ],200);
         }else{
             return response()->json([
                 'verified' => false,
@@ -182,6 +218,7 @@ class ServiceOrderController extends Controller
                     }
                     $fileNames= json_encode($fileNames);
                     $serviceOrder->order_attachments= json_decode($fileNames, true);
+
                 }
 
                 $taxRate = 0.10; // 10% tax
@@ -304,12 +341,20 @@ class ServiceOrderController extends Controller
                             $nameWithoutExtension = str_replace("." . $extension, "", $originalName);
                             $encryptedName = base64_encode($nameWithoutExtension);
                             $encryptedNameWithExtension = $encryptedName . '.' . $extension;
-                            $path = 'order_uploads/'. Auth::user()->id;
+                            $path = 'orderUploads/'. Auth::user()->id;
                             $file->storeAs('storage/'.$path, $encryptedNameWithExtension);
-
                             $filePaths[$originalName] = $path . '/' . $encryptedNameWithExtension;
                         }
-                        $serviceOrder->order_attachments = json_encode($filePaths);
+
+                        // $array = array(
+                        //     "array.jpg" => "orderUploads/16/YXJyYXk=.jpg",
+                        //     "Capture.PNG" => "orderUploads/16/Q2FwdHVyZQ==.PNG"
+                        // );
+                        // $json = json_encode($array,JSON_UNESCAPED_SLASHES);
+                        // $array = json_decode($json, true);
+                        // return var_dump($array);
+                        $serviceOrder->order_attachments = json_encode($filePaths,JSON_UNESCAPED_SLASHES);
+                        // $serviceOrder->order_attachments = json_encode($filePaths);
                     }
 
                 }catch(Exception $e){
