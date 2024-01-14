@@ -274,7 +274,7 @@ class ServiceController extends Controller
                 'status' =>  'warning',
                 'msg' => "You're already bought the service and still in progress !",
                 'data'=>['result'=>$orderCheck],
-            ],401);
+            ],200);
         }
         $result = Service::where('id',$id)->increment('view');
         $result = Service::where('id',$id)->first();

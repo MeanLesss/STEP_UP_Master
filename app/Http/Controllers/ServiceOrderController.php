@@ -323,7 +323,7 @@ class ServiceOrderController extends Controller
                             'status' =>  'warning',
                             'msg' => "You're already bought the service and still in progress !",
                             'data'=>['result'=>$orderCheck],
-                        ],401);
+                        ],200);
                     }
 
                     $userDetail->balance -= $priceWithTax;
