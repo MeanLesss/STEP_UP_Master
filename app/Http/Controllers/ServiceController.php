@@ -308,6 +308,8 @@ class ServiceController extends Controller
                             $attachment = asset('storage/'.$attachment);
                         }
                         $item->attachments = $attachments;
+                    }else{
+                        $item->attachments = [];
                     }
                 }
 
