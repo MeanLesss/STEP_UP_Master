@@ -364,6 +364,7 @@ class ServiceOrderController extends Controller
                         'msg' =>  Str::limit($e->getMessage(), 150, '...'),
                     ],500);
                 }
+                $serviceOrder->service_order = $service->service_type;
                 $serviceOrder->freelancer_id = $service->created_by;
                 $serviceOrder->isAgreementAgreed = 1;
                 $serviceOrder->order_by = Auth::user()->id;
