@@ -269,6 +269,38 @@ class ServiceController extends Controller
             $stringStatus = $masterController->checkServiceStatus($orderCheck->order_status);
             $orderCheck->stringStatus = $stringStatus;
             $orderCheck->isReadOnly  = true;
+            $attachments = json_decode($orderCheck->order_attachments);
+            //Convert Order_attachment
+            if(isset($orderCheck->order_attachments) ){
+                $attachments = json_decode($orderCheck->order_attachments, true);
+                if(is_array($attachments) && count($attachments) > 0){
+                    foreach($attachments as &$attachment){
+                        $attachment = asset('storage/'.$attachment);
+                    }
+                    $orderCheck->order_attachments = $attachments;
+                }else{
+                    $orderCheck->order_attachments = [];
+                }
+            }else{
+                $orderCheck->order_attachments = [];
+            }
+
+            //Convert Complete_Attachment
+            if(isset($orderCheck->completed_attachments) ){
+                $attachments2 = json_decode($orderCheck->completed_attachments, true);
+                if(is_array($attachments2) && count($attachments2) > 0){
+                    foreach($attachments2 as &$attachment){
+                        $attachment = asset('storage/'.$attachment);
+                    }
+                    $orderCheck->completed_attachments = $attachments2;
+                }else{
+                    $orderCheck->completed_attachments = [];
+                }
+            }else{
+
+                $orderCheck->completed_attachments = [];
+            }
+            $orderCheck->completed_attachments = $attachments2;
             return response()->json([
                 'verified' => false,
                 'status' =>  'warning',
