@@ -5,6 +5,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ServiceOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,10 @@ Route::get('/service/management',function(){return view('services.manage');})->n
 Route::post('/service/management/pending', [ServiceController::class,'getAllServicesWeb'])->name('service.web');
 Route::post('/service/management/approval', [ServiceController::class,'serviceApproval'])->name('service.approval');
 
-Route::get('/service/management/getAllComplain', [ServiceController::class,'serviceApproval'])->name('service.order.complain');
+
+//Service order management
+Route::get('/service/order/management',function(){return view('service_order.manage');})->name('service.order.management');
+Route::post('/service/order/data', [ServiceOrderController::class,'showOrdersForWeb'])->name('service.order.data');
+// Route::get('/service/order/getAllComplain', [ServiceOrderController::class,'serviceApproval'])->name('service.order.complain');
 
 

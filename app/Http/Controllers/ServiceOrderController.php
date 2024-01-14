@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Service;
 use App\Models\UserDetail;
 use App\Models\ServiceOrder;
@@ -9,8 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Facades\DataTables;
 use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\MasterController;
 
 class ServiceOrderController extends Controller
 {
@@ -20,6 +23,57 @@ class ServiceOrderController extends Controller
     public function index()
     {
         //
+    }
+    public function showOrdersForWeb(Request $request){
+        try{
+            if(Auth::user()->tokenCan('serviceOrder:view')){
+                $query = ServiceOrder::query();
+
+                if (isset($request->service)) {
+                    $query->where('service_type', $request->service);
+                }
+                if (isset($request->status)) {
+                    $query->where('order_status', $request->status);
+                }
+                if (isset($request->input_email)) {
+                    $query->join('users as u','u.id','=','ServiceOrder.order_by')
+                    ->where('u.email', $request->input_email);
+                }
+
+                $result = $query->get();
+                $masterController = new MasterController();
+                $result->transform(function ($item) use ($masterController) {
+
+                    $attachments = json_decode($item->order_attachments);
+                    if($attachments){
+
+                        foreach($attachments as &$attachment){
+                            // $attachment = env('APP_URL').$attachment;
+                            $attachment = asset('storage/'.$attachment);
+                        }
+                        $item->attachments = $attachments;
+
+                    }
+                    return $item;
+                });
+
+                return DataTables::of($result)
+                ->make(true);
+            }else{
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' => 'Please Login to view orders!',
+                ],401);
+
+            }
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  Str::limit($e->getMessage(), 150, '...'),
+            ],500);
+        }
     }
 
     public function showOrdersForFreelancer(){

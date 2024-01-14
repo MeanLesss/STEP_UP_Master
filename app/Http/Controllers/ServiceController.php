@@ -63,21 +63,10 @@ class ServiceController extends Controller
                         // $attachment = env('APP_URL').$attachment;
                         $attachment = asset('storage/'.$attachment);
                     }
-
-                    // foreach($attachments as $key => &$attachment){
-                    //     if(is_array($attachment)){
-                    //         foreach($attachment as $subKey => &$subAttachment){
-                    //             $subAttachment = asset('storage/'.$subAttachment);
-                    //         }
-                    //     } else {
-                    //         $attachment = asset('storage/'.$attachment);
-                    //     }
-                    // }
                     $item->attachments = $attachments;
 
                 }
                 return $item;
-                // return var_dump($item);
             });
 
             return DataTables::of($result)
@@ -312,18 +301,20 @@ class ServiceController extends Controller
                 $stringStatus = $masterController->checkMyServiceStatus($item->status);
                 $item->stringStatus = $stringStatus;
                 // $item->statusString = $stringStatus;
-
-                $attachments = json_decode($item->attachments);
-                foreach($attachments as &$attachment){
-                    // $attachment = env('APP_URL').$attachment;
-                    $attachment = asset('storage/'.$attachment);
+                if(isset($item->attachments) ){
+                    $attachments = json_decode($item->attachments, true);
+                    if(is_array($attachments) && count($attachments) > 0){
+                        foreach($attachments as &$attachment){
+                            $attachment = asset('storage/'.$attachment);
+                        }
+                        $item->attachments = $attachments;
+                    }
                 }
-                $item->attachments = $attachments;
 
                 return $item;
             });
 
-            if(count($result)>0){
+            if(isset($result) && count($result)>0){
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
