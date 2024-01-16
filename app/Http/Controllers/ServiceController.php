@@ -263,51 +263,45 @@ class ServiceController extends Controller
         ->whereIn('order_status', [0, 1, 2])
         ->first();
 
-        if(isset($orderCheck)){
+        // if(isset($orderCheck)){
 
-            $masterController = new MasterController();
-            $stringStatus = $masterController->checkServiceStatus($orderCheck->order_status);
-            $orderCheck->stringStatus = $stringStatus;
-            $orderCheck->isReadOnly  = true;
-            $attachments = json_decode($orderCheck->order_attachments);
-            //Convert Order_attachment
-            if(isset($orderCheck->order_attachments) ){
-                $attachments = json_decode($orderCheck->order_attachments, true);
-                if(is_array($attachments) && count($attachments) > 0){
-                    foreach($attachments as &$attachment){
-                        $attachment = asset('storage/'.$attachment);
-                    }
-                    $orderCheck->order_attachments = $attachments;
-                }else{
-                    $orderCheck->order_attachments = [];
-                }
-            }else{
-                $orderCheck->order_attachments = [];
-            }
+        //     $masterController = new MasterController();
+        //     $stringStatus = $masterController->checkServiceStatus($orderCheck->order_status);
+        //     $orderCheck->stringStatus = $stringStatus;
+        //     $attachments = json_decode($orderCheck->order_attachments);
+        //     //Convert Order_attachment
+        //     if(isset($orderCheck->order_attachments) ){
+        //         $attachments = json_decode($orderCheck->order_attachments, true);
+        //         if(is_array($attachments) && count($attachments) > 0){
+        //             foreach($attachments as &$attachment){
+        //                 $attachment = asset('storage/'.$attachment);
+        //             }
+        //             $orderCheck->order_attachments = $attachments;
+        //         }else{
+        //             $orderCheck->order_attachments = [];
+        //         }
+        //     }else{
+        //         $orderCheck->order_attachments = [];
+        //     }
 
-            //Convert Complete_Attachment
-            if(isset($orderCheck->completed_attachments) ){
-                $attachments2 = json_decode($orderCheck->completed_attachments, true);
-                if(is_array($attachments2) && count($attachments2) > 0){
-                    foreach($attachments2 as &$attachment){
-                        $attachment = asset('storage/'.$attachment);
-                    }
-                    $orderCheck->completed_attachments = $attachments2;
-                }else{
-                    $orderCheck->completed_attachments = [];
-                }
-            }else{
+        //     //Convert Complete_Attachment
+        //     if(isset($orderCheck->completed_attachments) ){
+        //         $attachments2 = json_decode($orderCheck->completed_attachments, true);
+        //         if(is_array($attachments2) && count($attachments2) > 0){
+        //             foreach($attachments2 as &$attachment){
+        //                 $attachment = asset('storage/'.$attachment);
+        //             }
+        //             $orderCheck->completed_attachments = $attachments2;
+        //         }else{
+        //             $orderCheck->completed_attachments = [];
+        //         }
+        //     }else{
 
-                $orderCheck->completed_attachments = [];
-            }
-            $orderCheck->completed_attachments = $attachments2;
-            return response()->json([
-                'verified' => false,
-                'status' =>  'warning',
-                'msg' => "You're already bought the service and still in progress !",
-                'data'=>['result'=>$orderCheck],
-            ],200);
-        }
+        //         $orderCheck->completed_attachments = [];
+        //     }
+        //     $orderCheck->completed_attachments = $attachments2;
+
+        // }
         $result = Service::where('id',$id)->increment('view');
         $result = Service::where('id',$id)->first();
 
@@ -318,6 +312,18 @@ class ServiceController extends Controller
         }
         $result->attachments = $attachments;
         $result->isReadOnly  = false;
+       /* The above code is incomplete and does not have any logic or condition specified within the if
+       statement. Therefore, it is not possible to determine what the code is intended to do without
+       further information. */
+        if(isset($orderCheck)){
+            $result->isReadOnly  = true;
+            return response()->json([
+                'verified' => false,
+                'status' =>  'warning',
+                'msg' => "You're already bought the service and still in progress !",
+                'data'=>['result'=>$result],
+            ],200);
+        }
         return response()->json([
             'verified' => true,
             'status' =>  'success',
