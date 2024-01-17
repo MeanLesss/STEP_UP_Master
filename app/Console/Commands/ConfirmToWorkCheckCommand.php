@@ -43,6 +43,7 @@ class ConfirmToWorkCheckCommand extends Command
 
         foreach( $service_order as $order){
             $order->order_status = 4;
+            $order->cancel_desc = 'Cancelled by the system, due to freelancer not accepted on time.';
             $order->cancel_at = Carbon::now();
             $order->cancel_by = 1;
             $order->save();
@@ -53,7 +54,7 @@ class ConfirmToWorkCheckCommand extends Command
                 //Send Email Part
                 $this->sendCancellationEmail($user, $service, $order);
                 //Refund part
-                UserDetail::where('user_id', $user->user_id)->increment('balance', $service->price);
+                UserDetail::where('user_id', $user->id)->increment('balance', $service->price);
             }
 
         }
