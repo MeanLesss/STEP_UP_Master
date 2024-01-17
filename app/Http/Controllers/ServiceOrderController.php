@@ -393,7 +393,7 @@ class ServiceOrderController extends Controller
                 $serviceOrder->save();
                 $service->increment('service_ordered_count');
                 $emailController = new EmailController();
-                // Send alert email (Turn back on when linode approve)
+                // Send alert email to client
                 $subject = 'Order Success';
                 $content = 'Dear '.Auth::user()->name.',' . "\n\n" .
                 'Your order has been successfully placed and is currently awaiting acceptance from the freelancer.' . "\n\n" .
@@ -407,6 +407,27 @@ class ServiceOrderController extends Controller
                 'Thank you for choosing our services.';
 
                 $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
+
+
+                //Send email to freelancer
+
+                $emailController = new EmailController();
+                $freelancer = User::where('id',$service->created_by)->first();
+                $subject2 = 'New Order';
+                $content2 = 'Dear '. $freelancer->name.',' . "\n\n" .
+                Auth::user()->name .' has place an order on your service.'. $service->title . "\n\n" .
+                'Order Details:' . "\n" .
+                'Order ID: ' . $serviceOrder->id . "\n" .
+                'Service ID: ' . $service->id . "\n" .
+                'Service Title: ' . $service->title . "\n" .
+                'Price: $' . $service->price . "\n\n" .
+                'A full refund will be made within 7days if you did not accept the order.' . "\n\n" .
+                'Thank you for choosing our services.';
+
+                $emailController->sendTextEmail($freelancer->email, $subject2, $content2);
+
+
+
 
                 return response()->json([
                     'verified' => true,
