@@ -202,6 +202,19 @@ class ServiceOrderController extends Controller
         }
     }
     public function ShowSummary(Request $request){
+        $validator = Validator::make($request->all(), [
+            'service_id' => 'required',
+            'isAgreementAgreed' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  'Something wrong with the field!',
+                // 'error_msg' => $validator->errors(),
+            ],401);
+        }
         if(Auth::user()->tokenCan('service:purchase')){
             if($request->isAgreementAgreed == 1){
                 // return $this->store($request);
@@ -226,12 +239,13 @@ class ServiceOrderController extends Controller
                 $serviceOrder->tax = '10% Tax will be included.';
                 $serviceOrder->price = '$'.$service->price;
                 $serviceOrder->totalPrice = '$'.$priceWithTax;
+                $serviceOrder->taxAmount = '$'.$priceWithTax-$service->price;
 
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
                     'msg' => 'Summary',
-                    'data'=> ['resuilt'=>$serviceOrder]
+                    'data'=> ['result'=>$serviceOrder]
                 ],200);
             }else{
                 return response()->json([
@@ -249,8 +263,6 @@ class ServiceOrderController extends Controller
 
         }
     }
-
-
 
     /**
      * Store a newly created resource in storage.
