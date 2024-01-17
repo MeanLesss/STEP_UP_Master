@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use stdClass;
 use App\Models\User;
 use App\Models\Service;
 use Illuminate\Support\Str;
@@ -64,7 +65,7 @@ class ServiceController extends Controller
                         }
                         $item->attachments = $attachments;
                     }else{
-                        $item->attachments = [];
+                        $item->attachments = new stdClass;
                     }
                 }
                 return $item;
@@ -122,7 +123,7 @@ class ServiceController extends Controller
                         }
                         $item->attachments = $attachments;
                     }else{
-                        $item->attachments = [];
+                        $item->attachments = new stdClass;
                     }
                 }
                 return $item;
@@ -262,7 +263,6 @@ class ServiceController extends Controller
         ->where('order_by',Auth::user()->id)
         ->whereIn('order_status', [0, 1, 2])
         ->first();
-
         // if(isset($orderCheck)){
 
         //     $masterController = new MasterController();
@@ -278,10 +278,10 @@ class ServiceController extends Controller
         //             }
         //             $orderCheck->order_attachments = $attachments;
         //         }else{
-        //             $orderCheck->order_attachments = [];
+        //             $orderCheck->order_attachments = new stdClass;
         //         }
         //     }else{
-        //         $orderCheck->order_attachments = [];
+        //         $orderCheck->order_attachments = new stdClass;
         //     }
 
         //     //Convert Complete_Attachment
@@ -293,11 +293,11 @@ class ServiceController extends Controller
         //             }
         //             $orderCheck->completed_attachments = $attachments2;
         //         }else{
-        //             $orderCheck->completed_attachments = [];
+        //             $orderCheck->completed_attachments = new stdClass;
         //         }
         //     }else{
 
-        //         $orderCheck->completed_attachments = [];
+        //         $orderCheck->completed_attachments = new stdClass;
         //     }
         //     $orderCheck->completed_attachments = $attachments2;
 
@@ -351,7 +351,7 @@ class ServiceController extends Controller
                         }
                         $item->attachments = $attachments;
                     }else{
-                        $item->attachments = [];
+                        $item->attachments = new stdClass;
                     }
                 }
 

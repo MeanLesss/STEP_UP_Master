@@ -14,6 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\MasterController;
+use stdClass;
 
 class ServiceOrderController extends Controller
 {
@@ -52,7 +53,7 @@ class ServiceOrderController extends Controller
                             }
                             $item->attachments = $attachments;
                         }else{
-                            $item->attachments = [];
+                            $item->attachments = new stdClass;
                         }
                     }
                     return $item;
@@ -78,68 +79,77 @@ class ServiceOrderController extends Controller
     }
 
     public function showOrdersForAll(){
-        if(Auth::user()->tokenCan( 'serviceOrder:view')){
-            if(Auth::user()->role == 100){
-                $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
-            }else if(Auth::user()->role == 101){
-                $result = ServiceOrder::where('order_by',Auth::user()->id)->get();
-            }else if(Auth::user()->role == 1000){
-                $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
-            }
-            if($result){
-                // $order_by = User::select('name')->where('id',$result->order_by)->first();
-                // $request->merge(['order_by_name' => Carbon::now()]);
-                // foreach( $result as $data ){
-                    // }
-                $result->transform(function ($item, $key) {
-                    $masterController = new MasterController();
-                    $status = $masterController->checkServiceStatus($item->order_status);
-                    $item->stringStatus = $status;
-                    if(isset($item->order_attachments) ){
-                        $attachments = json_decode($item->order_attachments, true);
-                        if(is_array($attachments) && count($attachments) > 0){
-                            foreach($attachments as &$attachment){
-                                $attachment = asset('storage/'.$attachment);
+        try{
+
+            if(Auth::user()->tokenCan( 'serviceOrder:view')){
+                if(Auth::user()->role == 100){
+                    $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
+                }else if(Auth::user()->role == 101){
+                    $result = ServiceOrder::where('order_by',Auth::user()->id)->get();
+                }else if(Auth::user()->role == 1000){
+                    $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
+                }
+                if($result){
+                    // $order_by = User::select('name')->where('id',$result->order_by)->first();
+                    // $request->merge(['order_by_name' => Carbon::now()]);
+                    // foreach( $result as $data ){
+                        // }
+                    $result->transform(function ($item, $key) {
+                        $masterController = new MasterController();
+                        $status = $masterController->checkServiceStatus($item->order_status);
+                        $item->stringStatus = $status;
+                        if(isset($item->order_attachments) ){
+                            $attachments = json_decode($item->order_attachments, true);
+                            if(is_array($attachments) && count($attachments) > 0){
+                                foreach($attachments as &$attachment){
+                                    $attachment = asset('storage/'.$attachment);
+                                }
+                                $item->order_attachments = $attachments;
+                            }else{
+                                $item->order_attachments= new stdClass;
                             }
-                            $item->order_attachments = $attachments;
-                        }else{
-                            $item->order_attachments = [];
                         }
-                    }
-                    if(isset($item->completed_attachments) ){
-                        $attachments = json_decode($item->completed_attachments, true);
-                        if(is_array($attachments) && count($attachments) > 0){
-                            foreach($attachments as &$attachment){
-                                $attachment = asset('storage/'.$attachment);
+                        if(isset($item->completed_attachments) ){
+                            $attachments = json_decode($item->completed_attachments, true);
+                            if(is_array($attachments) && count($attachments) > 0){
+                                foreach($attachments as &$attachment){
+                                    $attachment = asset('storage/'.$attachment);
+                                }
+                                $item->completed_attachments = $attachments;
+                            }else{
+                                $item->completed_attachments= new stdClass;
                             }
-                            $item->completed_attachments = $attachments;
-                        }else{
-                            $item->completed_attachments = [];
                         }
-                    }
-                    return $item;
-                });
-                return response()->json([
-                    'verified' => true,
-                    'status' =>  'success',
-                    'msg' => 'Success',
-                    'data'=>['result'=>$result],
-                ],200);
+                        return $item;
+                    });
+                    return response()->json([
+                        'verified' => true,
+                        'status' =>  'success',
+                        'msg' => 'Success',
+                        'data'=>['result'=>$result],
+                    ],200);
+                }else{
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' => 'Retrive failed! Nothing found!',
+                        // 'data'=>['result'=>$result],
+                    ],401);
+                }
             }else{
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' => 'Retrive failed! Nothing found!',
-                    // 'data'=>['result'=>$result],
+                    'msg' => 'Please Login to view purchase!',
                 ],401);
+
             }
-        }else{
+        }catch(Exception $ex){
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' => 'Please Login to view purchase!',
-            ],401);
-
+                'msg' =>  Str::limit($ex->getMessage(), 150, '...'),
+            ],500);
         }
     }
 
@@ -548,6 +558,23 @@ class ServiceOrderController extends Controller
                 $message = $request->isAccept ? 'The order has been accepted ! You can start now.': 'The order has been cancel!';
                 $orderCheck->update(['order_status'=>$status]);
                 // $orderCheck->isReadOnly  = true;
+
+                $emailController = new EmailController();
+                // Send alert email to client
+                $client = User::where('id',$orderCheck->order_by)->first();
+                $subject = 'Order Confrimation';
+                $content = 'Dear '.$user->name.',' . "\n\n" .
+                'Your order has been'. $request->isAccept ? ' accepted ': 'cancelled' .' by the freelancer.' . "\n\n" .
+                'Order Details:' . "\n" .
+                'Order ID: ' . $orderCheck->id . "\n" .
+                'Service ID: ' . $orderCheck->service_id . "\n" .
+                'Order Title: ' . $orderCheck->order_title . "\n" .
+                'Order Description: ' . $orderCheck->order_description . "\n" .
+
+                'Thank you for choosing our services.';
+
+                $emailController->sendTextEmail($user->email, $subject, $content);
+
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
