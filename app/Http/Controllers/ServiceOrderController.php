@@ -77,9 +77,15 @@ class ServiceOrderController extends Controller
         }
     }
 
-    public function showOrdersForFreelancer(){
+    public function showOrdersForAll(){
         if(Auth::user()->tokenCan( 'serviceOrder:view')){
-            $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
+            if(Auth::user()->role == 100){
+                $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
+            }else if(Auth::user()->role == 101){
+                $result = ServiceOrder::where('order_by',Auth::user()->id)->get();
+            }else if(Auth::user()->role == 1000){
+                $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
+            }
             if($result){
                 // $order_by = User::select('name')->where('id',$result->order_by)->first();
                 // $request->merge(['order_by_name' => Carbon::now()]);
