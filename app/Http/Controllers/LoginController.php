@@ -196,18 +196,6 @@ class LoginController extends Controller
             'job_type' => 'required_if:freelancer,true'
         ]);
 
-        // $validator = Validator::make($request->all(), [
-        //     'guest' => 'required|boolean',
-        //     'freelancer' => 'required|boolean',
-        //     'name' => 'required_if:guest,false|required_if:freelancer,true',
-        //     'email' => 'required_if:guest,false|required_if:freelancer,true|email',
-        //     'password' => 'required_if:guest,false|required_if:freelancer,true',
-        //     'confirm_password' => 'required_if:guest,false|required_if:freelancer,true',
-        //     'phone_number' => 'required_if:guest,false|required_if:freelancer,true',
-        //     'id_number' => 'required_if:guest,false|required_if:freelancer,true',
-        //     'job_type' => 'required_if:guest,false|required_if:freelancer,true'
-        // ]);
-
         if ($validator->fails()) {
             return response()->json([
                 'verified' => false,
