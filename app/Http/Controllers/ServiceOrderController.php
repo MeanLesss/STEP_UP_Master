@@ -80,7 +80,6 @@ class ServiceOrderController extends Controller
 
     public function showOrdersForAll($isOrder = false){ //True for my work and false for my order
         try{
-
             if(Auth::user()->tokenCan( 'serviceOrder:view')){
                 if(Auth::user()->role == 100){
                     if($isOrder){ //True for my work and false for my order
@@ -103,14 +102,16 @@ class ServiceOrderController extends Controller
                         $status = $masterController->checkServiceStatus($item->order_status);
                         $item->stringStatus = $status;
                         if(isset($item->order_attachments) ){
-                            $attachments = json_decode($item->order_attachments, true);
-                            if(is_array($attachments) && count($attachments) > 0){
-                                foreach($attachments as &$attachment){
-                                    $attachment = asset('storage/'.$attachment);
+                            if(is_string($item->order_attachments)){
+                                $attachments = json_decode($item->order_attachments, true);
+                                if(is_array($attachments) && count($attachments) > 0){
+                                    foreach($attachments as &$attachment){
+                                        $attachment = asset('storage/'.$attachment);
+                                    }
+                                    $item->order_attachments = $attachments;
+                                }else{
+                                    $item->order_attachments= new stdClass;
                                 }
-                                $item->order_attachments = $attachments;
-                            }else{
-                                $item->order_attachments= new stdClass;
                             }
                         }
                         if(isset($item->completed_attachments) ){
