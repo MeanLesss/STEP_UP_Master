@@ -78,12 +78,12 @@ class ServiceOrderController extends Controller
         }
     }
 
-    public function showOrdersForAll($isOrder = false){
+    public function showOrdersForAll($isOrder = false){ //True for my work and false for my order
         try{
 
             if(Auth::user()->tokenCan( 'serviceOrder:view')){
                 if(Auth::user()->role == 100){
-                    if($isOrder){
+                    if($isOrder){ //True for my work and false for my order
                         $result = ServiceOrder::where('order_by',Auth::user()->id)->get();
                     }else{
                         $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
