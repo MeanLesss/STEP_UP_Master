@@ -80,6 +80,7 @@ class ServiceOrderController extends Controller
 
     public function showOrdersForAll($isOrder = false){ //True for my work and false for my order
         try{
+            $isOrder = filter_var($isOrder, FILTER_VALIDATE_BOOLEAN);
             if(Auth::user()->tokenCan( 'serviceOrder:view')){
                 if(Auth::user()->role == 100){
                     if($isOrder){ //True for my work and false for my order
