@@ -389,6 +389,9 @@ class ServiceOrderController extends Controller
                         // return var_dump($array);
                         $serviceOrder->order_attachments = json_encode($filePaths,JSON_UNESCAPED_SLASHES);
                         // $serviceOrder->order_attachments = json_encode($filePaths);
+                    }else{
+                        $serviceOrder->order_attachments = json_encode(new stdClass);
+                        $serviceOrder->completed_attachments = json_encode(new stdClass);
                     }
 
                 }catch(Exception $e){

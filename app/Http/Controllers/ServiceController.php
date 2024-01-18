@@ -193,6 +193,8 @@ class ServiceController extends Controller
                             $filePaths[$originalName] = $path . '/' . $encryptedNameWithExtension;
                         }
                         $service->attachments = json_encode($filePaths);
+                    }else{
+                        $service->attachments = json_encode(new stdClass);
                     }
 
                 }catch(Exception $e){
