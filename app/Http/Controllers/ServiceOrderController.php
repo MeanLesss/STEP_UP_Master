@@ -243,6 +243,9 @@ class ServiceOrderController extends Controller
                 $service = Service::where('id',$request->service_id)->first();
                 $serviceOrder = new ServiceOrder($request->all());
 
+                if($service && $serviceOrder){
+
+
                 if($request->hasFile('attachment_files')) {
                     $fileNames = array();
                     // Check if 'attachment_files' is an array of files or a single file
@@ -269,6 +272,14 @@ class ServiceOrderController extends Controller
                     'msg' => 'Summary',
                     'data'=> ['result'=>$serviceOrder]
                 ],200);
+            }else{
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  'Service not found!',
+                    // 'error_msg' => $validator->errors(),
+                ],401);
+            }
             }else{
                 return response()->json([
                     'verified' => true,
