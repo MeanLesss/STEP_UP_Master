@@ -583,7 +583,7 @@ class ServiceOrderController extends Controller
                 // Send alert email to client
                 $client = User::where('id',$orderCheck->order_by)->first();
                 $subject = 'Order Confrimation';
-                $content = 'Dear '.$user->name.',' . "\n\n" .
+                $content = 'Dear '.$client->name.',' . "\n\n" .
                 'Your order has been'. $request->isAccept ? ' accepted ': 'cancelled' .' by the freelancer.' . "\n\n" .
                 'Order Details:' . "\n" .
                 'Order ID: ' . $orderCheck->id . "\n" .
@@ -593,7 +593,7 @@ class ServiceOrderController extends Controller
 
                 'Thank you for choosing our services.';
 
-                $emailController->sendTextEmail($user->email, $subject, $content);
+                $emailController->sendTextEmail($client->email, $subject, $content);
 
                 return response()->json([
                     'verified' => true,

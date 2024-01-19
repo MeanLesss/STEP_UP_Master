@@ -132,6 +132,8 @@ class TrancsactionController extends Controller
             $user = Auth::user();
 
             $order = ServiceOrder::where('service_id',$request->service_id)
+            ->where('order_status',1)
+            ->where('expected_end_date','>',Carbon::now())
             ->where('order_by',$user->id)
             ->first();
             if($order){
@@ -159,13 +161,13 @@ class TrancsactionController extends Controller
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
-                    'msg' => "Cancellation success! You will get 95% refund after the cancellation !",
+                    'msg' => "Cancellation success! You will get 50% refund after the cancellation !",
                 ],200);
             }else{
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' => "Sorry the not found ! You can try again later . If the issue still occur you can contact our support for help.",
+                    'msg' => "Sorry the action can not be made!",
                 ],401);
 
             }
