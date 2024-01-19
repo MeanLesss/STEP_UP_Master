@@ -182,54 +182,77 @@ class TrancsactionController extends Controller
     }
 // Freelancer Cancel before due date 100% refund 10 score deducteds
     public function freelancerCancelBeforeDueDate(Request $request){
+        try{
 
+            $validator = Validator::make($request->all(), [
+                'service_id' => 'required',
+                'cancel_desc' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  'Please input all of the required fields!',
+                    // 'error_msg' => $validator->errors(),
+                ],401);
+            }
+            $freelancer = Auth::user();
+
+            $order = ServiceOrder::where('service_id',$request->service_id)
+            ->where('order_status',1)
+            ->where('expected_end_date','>',Carbon::now())
+            ->where('freelancer_id',$freelancer->id)
+            ->first();
+            if($order){
+                $order->order_status = 4;
+                $order->cancel_desc = $request->cancel_desc;
+                $order->cancel_at = Carbon::now();
+                $order->cancel_by = $freelancer->id;
+                $order->save();
+                $service = Service::where('id',$order->service_id)->first();
+                $freelancer = User::where('id',$order->order_by)->first();
+                //service order cancel status is 4
+                if($freelancer && $service){
+                    //deduct freelancer score
+                    UserDetail::where('user_id', $freelancer->id)->decrement('credit_score', 5);
+                    //Send Email Freelancer Part
+                    $this->sendCancellationEmailFreelancer2($freelancer, $service, $order);
+
+                    //Refund part
+                    $user = User::where('id',$order->order_by)->first();
+                    //Send refund to client 100%
+                    UserDetail::where('user_id', $user->id)->increment('balance', $service->price);
+                    $this->sendCancellationEmailClient2($user, $service, $order);
+
+                }
+
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => "Cancellation success! You will get 5 credit score deducted!",
+                ],200);
+            }else{
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' => "Sorry the action can not be made!",
+                ],401);
+
+            }
+
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
+            ],500);
+        }
     }
 
 // After due date
 
 
-
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
     private function sendCancellationEmailClient($user, $service, $order)
     {
         $emailController = new EmailController();
@@ -250,6 +273,29 @@ class TrancsactionController extends Controller
                    'Discount: ' . $service->discount . "%\n\n" .
                    'Price: $' . $service->price . "\n\n" .
                    'This price amount will be refunded 50% ,due to cancellatation before the due date' . "\n\n" .
+                   'Thank you for choosing our platform.';
+        $emailController->sendTextEmail($user->email, $subject, $content);
+    }
+    private function sendCancellationEmailClient2($user, $service, $order)
+    {
+        $emailController = new EmailController();
+        $masterController = new MasterController();
+
+        $subject = 'Service Order Cancellation';
+        $content = 'Dear '.$user->name.',' . "\n\n" .
+                   'Your service order has been cancelled by the freelancer.' . "\n\n" .
+                   'Service Details:' . "\n" .
+                   'Service ID: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->id . "\n" .
+                   'Service Description: ' . $service->description . "\n" .
+                   'Service Type: ' . $service->service_type . "\n\n" .
+                   'Service Requirement: ' . $service->requirement . "\n" .
+                   'Service Start Date: ' . $service->start_date . "\n" .
+                   'Service End Date: ' . $service->end_date . "\n" .
+                   'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
+                   'Discount: ' . $service->discount . "%\n\n" .
+                   'Price: $' . $service->price . "\n\n" .
+                   'This price amount will be refunded 100% ,due to cancellatation before the due date the freelancer will get 5 credit score as penalty.' . "\n\n" .
                    'Thank you for choosing our platform.';
         $emailController->sendTextEmail($user->email, $subject, $content);
     }
@@ -275,6 +321,31 @@ class TrancsactionController extends Controller
                    'Cancel Description : ' . "\n\n" .
                     $order->cancel_desc . "\n\n" ."\n\n" .
                    'You will get 50% from the cancellation as your service charge.' . "\n\n" .
+                   'Thank you for choosing our platform.';
+        $emailController->sendTextEmail($user->email, $subject, $content);
+    }
+    private function sendCancellationEmailFreelancer2($user, $service, $order)
+    {
+        $emailController = new EmailController();
+        $masterController = new MasterController();
+
+        $subject = 'Service Order Cancellation';
+        $content = 'Dear '.$user->name.',' . "\n\n" .
+                   'You have cancelled an order.' . "\n\n" .
+                   'Service Details:' . "\n" .
+                   'Service ID: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->id . "\n" .
+                   'Service Description: ' . $service->description . "\n" .
+                   'Service Type: ' . $service->service_type . "\n\n" .
+                   'Service Requirement: ' . $service->requirement . "\n" .
+                   'Service Start Date: ' . $service->start_date . "\n" .
+                   'Service End Date: ' . $service->end_date . "\n" .
+                   'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
+                   'Discount: ' . $service->discount . "%\n\n" .
+                   'Price: $' . $service->price . "\n\n" .
+                   'Cancel Description : ' . "\n\n" .
+                    $order->cancel_desc . "\n\n" ."\n\n" .
+                   'You will get 5 credit score deducted from the cancellation as penalty.' . "\n\n" .
                    'Thank you for choosing our platform.';
         $emailController->sendTextEmail($user->email, $subject, $content);
     }
