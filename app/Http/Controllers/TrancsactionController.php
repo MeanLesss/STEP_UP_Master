@@ -118,6 +118,7 @@ class TrancsactionController extends Controller
         try{
 
             $validator = Validator::make($request->all(), [
+                'order_id' => 'required',
                 'service_id' => 'required',
                 'cancel_desc' => 'required',
             ]);
@@ -133,6 +134,7 @@ class TrancsactionController extends Controller
             $user = Auth::user();
 
             $order = ServiceOrder::where('service_id',$request->service_id)
+            ->where('id',$request->order_id)
             ->where('order_status',1)
             ->where('expected_end_date','>',Carbon::now())
             ->where('order_by',$user->id)
@@ -186,6 +188,7 @@ class TrancsactionController extends Controller
         try{
 
             $validator = Validator::make($request->all(), [
+                'order_id' => 'required',
                 'service_id' => 'required',
                 'cancel_desc' => 'required',
             ]);
@@ -201,6 +204,7 @@ class TrancsactionController extends Controller
             $freelancer = Auth::user();
 
             $order = ServiceOrder::where('service_id',$request->service_id)
+            ->where('id',$request->order_id)
             ->where('order_status',1)
             ->where('expected_end_date','>',Carbon::now())
             ->where('freelancer_id',$freelancer->id)
@@ -256,6 +260,7 @@ class TrancsactionController extends Controller
     {
         try{
             $validator = Validator::make($request->all(), [
+                'order_id' => 'required',
                 'service_id' => 'required',
                 'cancel_desc' => 'required',
             ]);
@@ -271,6 +276,7 @@ class TrancsactionController extends Controller
             $user = Auth::user();
 
             $order = ServiceOrder::where('service_id',$request->service_id)
+            ->where('id',$request->order_id)
             ->whereIn('order_status',[1,2,4])
             ->where('expected_end_date','<=',Carbon::now())
             ->where('order_by',$user->id)
@@ -328,6 +334,7 @@ class TrancsactionController extends Controller
         try{
 
             $validator = Validator::make($request->all(), [
+                'order_id' => 'required',
                 'service_id'=>'required',
                 'isExpand'=>'required | boolean',
                 'expand_start_date'=>'required_if:isExpand,true',
@@ -348,6 +355,7 @@ class TrancsactionController extends Controller
                     if($request->isExpand){
                         // check cant expand time anymore
                         $order = ServiceOrder::where('service_id',$request->service_id)
+                        ->where('id',$request->order_id)
                         // ->where('expected_expand_date', null)
                         // ->where('expand_end_date', null)
                         ->first();

@@ -84,7 +84,7 @@ class ServiceOrderController extends Controller
             if(Auth::user()->tokenCan( 'serviceOrder:view')){
                 if(Auth::user()->role == 100){
                     if($isOrder){ //True for my work and false for my order
-                        $result = ServiceOrder::where('order_by',Auth::user()->id)->get();
+                        $result = ServiceOrder::where('order_by',Auth::user()->id)->order('created_at','desc')->get();
                     }else{
                         $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
                     }
@@ -495,24 +495,20 @@ class ServiceOrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id) //$id is serviceOrder id
+    public function show(string $id, $isClient = false) //$id is serviceOrder id , true for client false for freelancer
     {
+        $isClient = filter_var($isClient, FILTER_VALIDATE_BOOLEAN);
         //View specific ordered service
         if(Auth::user()->tokenCan('serviceOrder:view')){
-            if(Auth::user()->role == 100){
+            if(!$isClient){
                 $orderCheck = ServiceOrder::where('id',$id)
                 ->where('freelancer_id',Auth::user()->id)
                 // ->whereIn('order_status', [0, 1, 2])
                 ->first();
                 // return var_dump([$id,Auth::user()->id,Auth::user()->name]);
-            }else if(Auth::user()->role == 101){
+            }else {
                 $orderCheck = ServiceOrder::where('id',$id)
                 ->where('order_by',Auth::user()->id)
-                // ->whereIn('order_status', [0, 1, 2])
-                ->first();
-            }else if(Auth::user()->role == 1000){
-                $orderCheck = ServiceOrder::where('id',$id)
-                ->where('freelancer_id',Auth::user()->id)
                 // ->whereIn('order_status', [0, 1, 2])
                 ->first();
             }
