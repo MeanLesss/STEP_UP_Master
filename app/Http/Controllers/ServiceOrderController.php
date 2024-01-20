@@ -530,10 +530,18 @@ class ServiceOrderController extends Controller
                 $orderCheck->service = Service::select('title','description','price','requirement','discount')
                 ->where('id',$orderCheck->service_id)
                 ->first();
-                //Get client detail
-                $orderCheck->client = User::select('name','email')
-                ->where('id',$orderCheck->order_by)
-                ->first();
+
+                //Get contact detail
+                if(!$isClient){
+                    $orderCheck->contact = User::select('name','email')
+                    ->where('id',$orderCheck->order_by)
+                    ->first();
+
+                }else{
+                    $orderCheck->contact = User::select('name','email')
+                    ->where('id',$orderCheck->freelancer_id)
+                    ->first();
+                }
                 // $orderCheck->isReadOnly  = true;
                 return response()->json([
                     'verified' => true,
