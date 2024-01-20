@@ -605,9 +605,10 @@ class ServiceOrderController extends Controller
                 $emailController = new EmailController();
                 // Send alert email to client
                 $client = User::where('id',$orderCheck->order_by)->first();
+                $emailStatus = $request->isAccept ? ' accepted ': 'cancelled' ;
                 $subject = 'Order Confrimation';
                 $content = 'Dear '.$client->name.',' . "\n\n" .
-                'Your order has been'. $request->isAccept ? ' accepted ': 'cancelled' .' by the freelancer.' . "\n\n" .
+                'Your order has been'. $emailStatus .' by the freelancer.' . "\n\n" .
                 'Order Details:' . "\n" .
                 'Order ID: ' . $orderCheck->id . "\n" .
                 'Service ID: ' . $orderCheck->service_id . "\n" .
