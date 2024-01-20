@@ -518,7 +518,7 @@ class ServiceController extends Controller
                             'Unfortunately, your service submission did not meet our established criteria or conditions. We appreciate your understanding and encourage you to review our guidelines for future submissions.' . "\n\n" .
                             'Service Details:' . "\n" .
                             'Service ID: ' . $service->id . "\n" .
-                            'Service Title: ' . $service->id . "\n" .
+                            'Service Title: ' . $service->title . "\n" .
                             'Service Description: ' . $service->description . "\n" .
                             'Service Type: ' . $service->service_type . "\n\n" .
                             'Service Requirement: ' . $service->requirement . "\n" .
