@@ -500,11 +500,12 @@ class ServiceOrderController extends Controller
         //View specific ordered service
         if(Auth::user()->tokenCan('serviceOrder:view')){
             if(Auth::user()->role == 100){
-
                 $orderCheck = ServiceOrder::where('id',$id)
                 ->where('freelancer_id',Auth::user()->id)
                 // ->whereIn('order_status', [0, 1, 2])
                 ->first();
+
+                // return var_dump([$id,Auth::user()->id,Auth::user()->name]);
             }else if(Auth::user()->role == 101){
                 $orderCheck = ServiceOrder::where('id',$id)
                 ->where('order_by',Auth::user()->id)
