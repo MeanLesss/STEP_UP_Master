@@ -2,12 +2,15 @@
 
 namespace App\Console\Commands;
 
+use stdClass;
 use App\Models\User;
 use App\Models\Service;
 use App\Models\UserDetail;
+use App\Models\Transaction;
 use App\Models\ServiceOrder;
 use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\MasterController;
@@ -40,6 +43,7 @@ class ConfirmToWorkCheckCommand extends Command
         $service_order = ServiceOrder::where('order_status', 0)
         ->where('created_at', '<=', Carbon::now()->subDays(7))
         ->get();
+        $collection_transaction = new Collection();
 
         foreach( $service_order as $order){
             $order->order_status = 4;
@@ -56,9 +60,26 @@ class ConfirmToWorkCheckCommand extends Command
                 //Refund part
                 UserDetail::where('user_id', $user->id)->increment('balance', $service->price);
             }
-
+            //Append transaction
+            $transaction = new Transaction();
+            $transaction->user_id = $user->id;
+            $transaction->order_id = $order->id;
+            $transaction->client_status = 0;
+            $transaction->freelancer_status = 1;
+            $transaction->isComplain = $order->cancel_desc;
+            $transaction->rate = 0;//service rate
+            $transaction->tranc_attachments = new stdClass;
+            $transaction->tranc_status = 0;
+            $transaction->created_by = 1;
+            $transaction->updated_by = 1;
+            $transaction->created_at = Carbon::now();
+            $transaction->updated_at = Carbon::now();
+            $collection_transaction->push($transaction);
         }
 
+        if(isset($collection_transaction) && count($collection_transaction) > 0){
+            Transaction::insert($collection_transaction->toArray());
+        }
 
         // return var_dump($service_order);
     }

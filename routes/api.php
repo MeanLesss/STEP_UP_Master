@@ -80,5 +80,6 @@ Route::post('/order-service/{id}/accept',[ServiceOrderController::class ,'accept
 //Transaction part
 Route::post('/balance/top-up',[TrancsactionController::class ,'topUpBalance'])->middleware('auth:sanctum') ;
 Route::post('/client/cancellationBeforeDueDate',[TrancsactionController::class ,'clientCancelBeforeDueDate'])->middleware('auth:sanctum') ;
+Route::post('/client/cancellationAfterDueDate',[TrancsactionController::class ,'ClientCancelAfterDueDate'])->middleware('auth:sanctum') ;
 Route::post('/freelancer/cancellationBeforeDueDate',[TrancsactionController::class ,'freelancerCancelBeforeDueDate'])->middleware('auth:sanctum') ;
 

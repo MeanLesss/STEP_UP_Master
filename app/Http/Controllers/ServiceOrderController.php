@@ -325,6 +325,22 @@ class ServiceOrderController extends Controller
 
             if(Auth::user()->tokenCan('service:purchase')){
                 try{
+                    $service = Service::where('id',$request->service_id)->first();
+                    if(!isset($service)){
+                        return response()->json([
+                            'verified' => false,
+                            'status' =>  'error',
+                            'msg' => 'Service not found! Invalid Service! You can contact our support if it still occur.',
+                        ],401);
+                    }
+                    if($service->created_by == Auth::user()->id){
+                        return response()->json([
+                            'verified' => false,
+                            'status' =>  'error',
+                            'msg' => 'Sorry you can not order your own service.',
+                        ],401);
+                    }
+
                     //check user balance
                     $userDetail = UserDetail::where('user_id',Auth::user()->id)->first();
                     if(isset($userDetail) && $userDetail->balance <= 0 ){
@@ -335,14 +351,6 @@ class ServiceOrderController extends Controller
                         ],401);
                     }
 
-                    $service = Service::where('id',$request->service_id)->first();
-                    if(!isset($service)){
-                        return response()->json([
-                            'verified' => false,
-                            'status' =>  'error',
-                            'msg' => 'Service not found! Invalid Service! You can contact our support if it still occur.',
-                        ],401);
-                    }
 
                     $taxRate = 0.10; // 10% tax
                     $priceWithTax = $service->price * (1 + $taxRate);
@@ -399,6 +407,7 @@ class ServiceOrderController extends Controller
                         // $array = json_decode($json, true);
                         // return var_dump($array);
                         $serviceOrder->order_attachments = json_encode($filePaths,JSON_UNESCAPED_SLASHES);
+                        $serviceOrder->completed_attachments = json_encode(new stdClass);
                         // $serviceOrder->order_attachments = json_encode($filePaths);
                     }else{
                         $serviceOrder->order_attachments = json_encode(new stdClass);
@@ -574,9 +583,21 @@ class ServiceOrderController extends Controller
             ->first();
             if(isset($orderCheck)){
 
+                if($orderCheck->status != 0){
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' => "Sorry you can not accept the order other than pending order!",
+                    ],401);
+                }
+
                 $status = $request->isAccept ? 1 : -1;
                 $message = $request->isAccept ? 'The order has been accepted ! You can start now.': 'The order has been cancel!';
-                $orderCheck->update(['order_status'=>$status]);
+                $orderCheck->update([
+                    'order_status'=>$status,
+                    'accepted_at' => Carbon::now(),
+                    'start_at' => Carbon::now()
+                ]);
                 // $orderCheck->isReadOnly  = true;
 
                 $emailController = new EmailController();
