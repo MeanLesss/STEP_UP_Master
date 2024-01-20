@@ -502,7 +502,7 @@ class ServiceController extends Controller
                             'Your service has been approved will be ready for order.' . "\n\n" .
                             'Service Details:' . "\n" .
                             'Service ID: ' . $service->id . "\n" .
-                            'Service Title: ' . $service->id . "\n" .
+                            'Service Title: ' . $service->title . "\n" .
                             'Service Description: ' . $service->description . "\n" .
                             'Service Type: ' . $service->service_type . "\n\n" .
                             'Service Requirement: ' . $service->requirement . "\n" .
