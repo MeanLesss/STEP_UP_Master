@@ -504,7 +504,6 @@ class ServiceOrderController extends Controller
                 ->where('freelancer_id',Auth::user()->id)
                 // ->whereIn('order_status', [0, 1, 2])
                 ->first();
-
                 // return var_dump([$id,Auth::user()->id,Auth::user()->name]);
             }else if(Auth::user()->role == 101){
                 $orderCheck = ServiceOrder::where('id',$id)
