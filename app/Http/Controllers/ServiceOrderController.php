@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use stdClass;
 use Exception;
 use App\Models\User;
 use App\Models\Service;
 use App\Models\UserDetail;
+use Illuminate\Support\Str;
 use App\Models\ServiceOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -14,7 +16,6 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\MasterController;
-use stdClass;
 
 class ServiceOrderController extends Controller
 {
