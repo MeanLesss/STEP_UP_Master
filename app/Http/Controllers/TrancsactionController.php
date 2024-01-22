@@ -113,6 +113,124 @@ class TrancsactionController extends Controller
         }
     }
 
+// Freelacner submit complete work
+    public function freelancerSubmitWork(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'order_id' => 'required',
+                'service_id'=>'required',
+                'attachment_files' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  'Please check the input fields!',
+                    'error_msg' => $validator->errors(),
+                ],401);
+            }
+            if(Auth::user()->tokenCan('serviceOrder:view') && Auth::user()->role == 100){
+                $order = ServiceOrder::where('id',$request->order_id)->where('service_id',$request->service_id)->first();
+                $service = Service::where('id',$request->service_id)->first();
+
+                if(!$order || !$service){
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' => 'Look like there something wrong with the order or the service. Contact our support for help!',
+                    ],401);
+                }
+
+                if($request->hasFile('attachment_files')) {
+                    $filePaths = array();
+                    // Check if 'attachment_files' is an array of files or a single file
+                    $files = is_array($request->file('attachment_files')) ? $request->file('attachment_files') : [$request->file('attachment_files')];
+                    foreach ($files as $file) {
+                        $originalName = $file->getClientOriginalName();
+                        $extension = $file->getClientOriginalExtension();
+                        $nameWithoutExtension = str_replace("." . $extension, "", $originalName);
+                        $encryptedName = base64_encode($nameWithoutExtension);
+                        $encryptedNameWithExtension = $encryptedName . '.' . $extension;
+                        $path = 'orderUploads/'. Auth::user()->id.'/completed';
+                        $file->storeAs('storage/'.$path, $encryptedNameWithExtension);
+
+                        $filePaths[$originalName] = $path . '/' . $encryptedNameWithExtension;
+                    }
+                    $request->merge(['completed_attachments' => json_encode($filePaths)]);
+                }
+                $request->merge([
+                    'order_status'=>2,
+                    'updated_at' => Carbon::now(),
+                    'updated_by'=>Auth::user()->id,
+                    'completed_at'=> Carbon::now()
+                ]);
+                $order->update($request->all());
+
+                $emailController = new EmailController();
+                $masterController = new MasterController();
+// Send to freelancer
+                $subject = 'Service Completion';
+                $content = 'Dear '.Auth::user()->name.',' . "\n\n" .
+                        'Your work has been completed.' . "\n\n" .
+                        'Service Details:' . "\n" .
+                        'Service ID: ' . $service->id . "\n" .
+                        'Service Title: ' . $service->title . "\n" .
+                        'Service Description: ' . $service->description . "\n" .
+                        'Service Type: ' . $service->service_type . "\n\n" .
+                        'Service Requirement: ' . $service->requirement . "\n" .
+                        'Service Start Date: ' . $service->start_date . "\n" .
+                        'Service End Date: ' . $service->end_date . "\n" .
+                        'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
+                        'Discount: ' . $service->discount . "%\n\n" .
+                        'Price: $' . $service->price . "\n\n" .
+                        'This price amount will be claimed ,After your client accept the work' . "\n\n" .
+                        'Thank you for choosing our platform.';
+                $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
+// Send to client
+                $user = User::where('id',$order->order_by)->first();
+                $subject = 'Service Completion';
+                $content = 'Dear '. $user->name.',' . "\n\n" .
+                        'Your service order has been completed.' . "\n\n" .
+                        'Service Details:' . "\n" .
+                        'Service ID: ' . $service->id . "\n" .
+                        'Service Title: ' . $service->title . "\n" .
+                        'Service Description: ' . $service->description . "\n" .
+                        'Service Type: ' . $service->service_type . "\n\n" .
+                        'Service Requirement: ' . $service->requirement . "\n" .
+                        'Service Start Date: ' . $service->start_date . "\n" .
+                        'Service End Date: ' . $service->end_date . "\n" .
+                        'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
+                        'Discount: ' . $service->discount . "%\n\n" .
+                        'Price: $' . $service->price . "\n\n" .
+                        'This price amount will be claimed by the freelancer,after you accept the work' . "\n\n" .
+                        'Thank you for choosing our platform.';
+                $emailController->sendTextEmail($user->email, $subject, $content);
+
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => 'Submit success we will alert the client to check out the work soon!',
+                ],200);
+
+            }else{
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' => 'Please Login submit work!',
+                ],401);
+            }
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  Str::limit($e->getMessage(), 150, '...'),
+            ],500);
+        }
+    }
+
+
+
 // Client Cancel before due date 95%
     public function clientCancelBeforeDueDate(Request $request){
         try{
@@ -433,7 +551,7 @@ class TrancsactionController extends Controller
                    'Your order has been expand the progress successfully.' . "\n\n" .
                    'Service Details:' . "\n" .
                    'Service ID: ' . $service->id . "\n" .
-                   'Service Title: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->title . "\n" .
                    'Service Description: ' . $service->description . "\n" .
                    'Service Type: ' . $service->service_type . "\n\n" .
                    'Service Requirement: ' . $service->requirement . "\n" .
@@ -449,8 +567,6 @@ class TrancsactionController extends Controller
         $emailController->sendTextEmail($user->email, $subject, $content);
     }
 
-
-
     // ---------------------->Cancellation emails
 
     private function sendCancellationEmailClient($user, $service, $order)
@@ -463,7 +579,7 @@ class TrancsactionController extends Controller
                    'Your service order has been cancelled successfully.' . "\n\n" .
                    'Service Details:' . "\n" .
                    'Service ID: ' . $service->id . "\n" .
-                   'Service Title: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->title . "\n" .
                    'Service Description: ' . $service->description . "\n" .
                    'Service Type: ' . $service->service_type . "\n\n" .
                    'Service Requirement: ' . $service->requirement . "\n" .
@@ -486,7 +602,7 @@ class TrancsactionController extends Controller
                    'Your service order has been cancelled by the freelancer.' . "\n\n" .
                    'Service Details:' . "\n" .
                    'Service ID: ' . $service->id . "\n" .
-                   'Service Title: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->title . "\n" .
                    'Service Description: ' . $service->description . "\n" .
                    'Service Type: ' . $service->service_type . "\n\n" .
                    'Service Requirement: ' . $service->requirement . "\n" .
@@ -509,7 +625,7 @@ class TrancsactionController extends Controller
                    'Your have cancelled you order after the due date.' . "\n\n" .
                    'Service Details:' . "\n" .
                    'Service ID: ' . $service->id . "\n" .
-                   'Service Title: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->title . "\n" .
                    'Service Description: ' . $service->description . "\n" .
                    'Service Type: ' . $service->service_type . "\n\n" .
                    'Service Requirement: ' . $service->requirement . "\n" .
@@ -532,7 +648,7 @@ class TrancsactionController extends Controller
                    'Your service order has been cancelled by the client.' . "\n\n" .
                    'Service Details:' . "\n" .
                    'Service ID: ' . $service->id . "\n" .
-                   'Service Title: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->title . "\n" .
                    'Service Description: ' . $service->description . "\n" .
                    'Service Type: ' . $service->service_type . "\n\n" .
                    'Service Requirement: ' . $service->requirement . "\n" .
@@ -557,7 +673,7 @@ class TrancsactionController extends Controller
                    'You have cancelled an order.' . "\n\n" .
                    'Service Details:' . "\n" .
                    'Service ID: ' . $service->id . "\n" .
-                   'Service Title: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->title . "\n" .
                    'Service Description: ' . $service->description . "\n" .
                    'Service Type: ' . $service->service_type . "\n\n" .
                    'Service Requirement: ' . $service->requirement . "\n" .
@@ -582,7 +698,7 @@ class TrancsactionController extends Controller
                    'Your client have cancel the order after the due date.' . "\n\n" .
                    'Service Details:' . "\n" .
                    'Service ID: ' . $service->id . "\n" .
-                   'Service Title: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->title . "\n" .
                    'Service Description: ' . $service->description . "\n" .
                    'Service Type: ' . $service->service_type . "\n\n" .
                    'Service Requirement: ' . $service->requirement . "\n" .

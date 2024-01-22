@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\UsersController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ServiceOrderController;
@@ -36,7 +37,8 @@ Route::get('/index2update', function(){return view('profile.edit');})->name('pro
 Route::get('/index2password', function(){return view('profile.edit');})->name('profile.password');
 
 // Route::get('/index3', [MasterController::class,'index'])->name('user.index');
-Route::get('/index3',function(){return view('users.index');})->name('user.index');
+// Route::get('/index3',function(){return view('users.index');})->name('user.index');
+Route::get('/users', [UsersController::class, 'index'])->name('users.index');
 Route::get('/page/{page}', [PageController::class,'index'])->name('page.index');
 
 //Service management
@@ -50,4 +52,5 @@ Route::get('/service/order/management',function(){return view('service_order.man
 Route::post('/service/order/data', [ServiceOrderController::class,'showOrdersForWeb'])->name('service.order.data');
 // Route::get('/service/order/getAllComplain', [ServiceOrderController::class,'serviceApproval'])->name('service.order.complain');
 
+Route::get('users/data', [UsersController::class, 'getData'])->name('users.data');
 
