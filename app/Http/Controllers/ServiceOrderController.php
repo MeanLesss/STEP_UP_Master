@@ -42,7 +42,7 @@ class ServiceOrderController extends Controller
                     ->where('u.email', $request->input_email);
                 }
 
-                $result = $query->get();
+                $result = $query->orderBy('created_at', 'desc')->get();
                 $masterController = new MasterController();
                 $result->transform(function ($item) use ($masterController) {
 
@@ -85,14 +85,14 @@ class ServiceOrderController extends Controller
             if(Auth::user()->tokenCan( 'serviceOrder:view')){
                 if(Auth::user()->role == 100){
                     if($isOrder){ //True for my work and false for my order
-                        $result = ServiceOrder::where('order_by',Auth::user()->id)->order('created_at','desc')->get();
+                        $result = ServiceOrder::where('order_by', Auth::user()->id)->orderBy('created_at', 'desc')->get();
                     }else{
-                        $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
+                        $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->orderBy('created_at', 'desc')->get();
                     }
                 }else if(Auth::user()->role == 101){
-                    $result = ServiceOrder::where('order_by',Auth::user()->id)->get();
+                    $result = ServiceOrder::where('order_by',Auth::user()->id)->orderBy('created_at', 'desc')->get();
                 }else if(Auth::user()->role == 1000){
-                    $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->get();
+                    $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->orderBy('created_at', 'desc')->get();
                 }
                 if($result){
                     // $order_by = User::select('name')->where('id',$result->order_by)->first();
