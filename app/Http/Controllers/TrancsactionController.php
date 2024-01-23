@@ -170,7 +170,13 @@ class TrancsactionController extends Controller
 
                 $client = User::where('id',$order->order_by)->first();
                 //Need to crate Transaction
-                $transaction = new Transaction();
+                $transaction = Transaction::where('free_id',Auth::user()->id)
+                ->where('client_id',$client->id)
+                ->where('order_id',$order->id)
+                ->first();
+                if(!$transaction){
+                    $transaction = new Transaction();
+                }
                 $transaction->client_id = $client->id;
                 $transaction->free_id = Auth::user()->id;
                 $transaction->order_id = $order->id;
