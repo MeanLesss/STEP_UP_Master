@@ -390,7 +390,7 @@ class TrancsactionController extends Controller
                     //send back refund
                     UserDetail::where('user_id', $user->id)->increment('balance', $service->price);
                     //Send Email Client Part
-                    $this->sendCancellationEmailClient($user, $service, $order);
+                    $this->sendCancellationEmailClient1($user, $service, $order);
 
                     $freelancer = User::where('id',$order->freelancer_id)->first();
                     //UserDetail::where('user_id', $freelancer->id)->increment('balance', $service->price);
@@ -407,7 +407,7 @@ class TrancsactionController extends Controller
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' => "Sorry the action can not be made!",
+                    'msg' => "Sorry order cannot be found the action can not be made!",
                 ],401);
 
             }
@@ -782,6 +782,29 @@ class TrancsactionController extends Controller
                    'Thank you for choosing our platform.';
         $emailController->sendTextEmail($user->email, $subject, $content);
     }
+    private function sendCancellationEmailClient1($user, $service, $order)
+    {
+        $emailController = new EmailController();
+        $masterController = new MasterController();
+
+        $subject = 'Service Order Cancellation';
+        $content = 'Dear '.$user->name.',' . "\n\n" .
+                   'Your service order has been cancelled successfully.' . "\n\n" .
+                   'Service Details:' . "\n" .
+                   'Service ID: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->title . "\n" .
+                   'Service Description: ' . $service->description . "\n" .
+                   'Service Type: ' . $service->service_type . "\n\n" .
+                   'Service Requirement: ' . $service->requirement . "\n" .
+                   'Service Start Date: ' . $service->start_date . "\n" .
+                   'Service End Date: ' . $service->end_date . "\n" .
+                   'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
+                   'Discount: ' . $service->discount . "%\n\n" .
+                   'Price: $' . $service->price . "\n\n" .
+                   'This price amount will be refunded 100%.' . "\n\n" .
+                   'Thank you for choosing our platform.';
+        $emailController->sendTextEmail($user->email, $subject, $content);
+    }
     private function sendCancellationEmailClient2($user, $service, $order)
     {
         $emailController = new EmailController();
@@ -850,6 +873,31 @@ class TrancsactionController extends Controller
                    'Cancel Description : ' . "\n\n" .
                     $order->cancel_desc . "\n\n" ."\n\n" .
                    'You will get 50% from the cancellation as your service charge.' . "\n\n" .
+                   'Thank you for choosing our platform.';
+        $emailController->sendTextEmail($user->email, $subject, $content);
+    }
+    private function sendCancellationEmailFreelancer1($user, $service, $order)
+    {
+        $emailController = new EmailController();
+        $masterController = new MasterController();
+
+        $subject = 'Service Order Cancellation';
+        $content = 'Dear '.$user->name.',' . "\n\n" .
+                   'Your service order has been cancelled by the client.' . "\n\n" .
+                   'Service Details:' . "\n" .
+                   'Service ID: ' . $service->id . "\n" .
+                   'Service Title: ' . $service->title . "\n" .
+                   'Service Description: ' . $service->description . "\n" .
+                   'Service Type: ' . $service->service_type . "\n\n" .
+                   'Service Requirement: ' . $service->requirement . "\n" .
+                   'Service Start Date: ' . $service->start_date . "\n" .
+                   'Service End Date: ' . $service->end_date . "\n" .
+                   'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
+                   'Discount: ' . $service->discount . "%\n\n" .
+                   'Price: $' . $service->price . "\n\n" .
+                   'Cancel Description : ' . "\n\n" .
+                    $order->cancel_desc . "\n\n" ."\n\n" .
+                   'You can check out other order.' . "\n\n" .
                    'Thank you for choosing our platform.';
         $emailController->sendTextEmail($user->email, $subject, $content);
     }
