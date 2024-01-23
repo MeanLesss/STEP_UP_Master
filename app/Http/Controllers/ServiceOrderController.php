@@ -527,6 +527,16 @@ class ServiceOrderController extends Controller
                     $attachment = asset('storage/'.$attachment);
                 }
                 $orderCheck->order_attachments = count($attachments) <= 0 ? new stdClass() : $attachments;
+
+                //order complete
+                $attachmentsString = $orderCheck->completed_attachments;
+                $attachments = json_decode($attachmentsString,true);
+                foreach($attachments as &$attachment){
+                    // $attachment = env('APP_URL').$attachment;
+                    $attachment = asset('storage/'.$attachment);
+                }
+                $orderCheck->completed_attachments = count($attachments) <= 0 ? new stdClass() : $attachments;
+
                 //Get current service detail
                 $orderCheck->service = Service::select('title','description','price','requirement','discount')
                 ->where('id',$orderCheck->service_id)
