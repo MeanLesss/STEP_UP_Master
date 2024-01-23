@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use stdClass;
 use App\Models\User;
 use App\Models\Service;
 use App\Models\TopUpLog;
@@ -181,7 +182,7 @@ class TrancsactionController extends Controller
                 $transaction->free_id = Auth::user()->id;
                 $transaction->order_id = $order->id;
                 $transaction->client_status = 0;
-                $transaction->freelancer_status = 1;
+                $transaction->freelancer_status = 2;
                 $transaction->isComplain = 0;
                 $transaction->tranc_attachments = $request->completed_attachments;
                 $transaction->tranc_status = 0;
@@ -189,6 +190,7 @@ class TrancsactionController extends Controller
                 $transaction->updated_by = Auth::user()->id;
                 $transaction->created_at = Carbon::now();
                 $transaction->updated_at = Carbon::now();
+                $transaction->save();
 
                 $emailController = new EmailController();
                 $masterController = new MasterController();
@@ -267,7 +269,7 @@ class TrancsactionController extends Controller
                     'error_msg' => $validator->errors(),
                 ],401);
             }
-            if(Auth::user()->tokenCan('serviceOrder:view') && Auth::user()->role == 100){
+            if(Auth::user()->tokenCan('serviceOrder:view') && Auth::user()->role == 101){
                 $order = ServiceOrder::where('id',$request->order_id)->where('service_id',$request->service_id)->first();
                 $service = Service::where('id',$request->service_id)->first();
 
@@ -278,10 +280,6 @@ class TrancsactionController extends Controller
                         'msg' => 'Look like there something wrong with the order or the service. Contact our support for help!',
                     ],401);
                 }
-
-
-
-
                 $request->merge([
                     'order_status'=>3,
                     'updated_at' => Carbon::now(),
@@ -289,6 +287,28 @@ class TrancsactionController extends Controller
                     'completed_at'=> Carbon::now()
                 ]);
                 $order->update($request->all());
+
+
+                //Need to crate Transaction
+                $transaction = Transaction::where('free_id',$order->freelancer_id)
+                ->where('client_id',Auth::user()->id)
+                ->where('order_id',$order->id)
+                ->first();
+                if(!$transaction){
+                    $transaction = new Transaction();
+                }
+                $transaction->client_id =Auth::user()->id ;
+                $transaction->free_id = $order->freelancer_id;
+                $transaction->order_id = $order->id;
+                $transaction->client_status = 2;
+                $transaction->isComplain = 0;
+                $transaction->tranc_status = 2;
+                $transaction->tranc_attachments = new stdClass();
+                $transaction->created_by = Auth::user()->id;
+                $transaction->updated_by = Auth::user()->id;
+                $transaction->created_at = Carbon::now();
+                $transaction->updated_at = Carbon::now();
+                $transaction->save();
 
                 //Email part
                 $emailController = new EmailController();
@@ -385,6 +405,28 @@ class TrancsactionController extends Controller
                 $order->save();
                 $service = Service::where('id',$order->service_id)->first();
                 $user = User::where('id',$order->order_by)->first();
+                //Need to crate Transaction
+                $transaction = Transaction::where('free_id',Auth::user()->id)
+                ->where('client_id',$user->id)
+                ->where('order_id',$order->id)
+                ->first();
+                if(!$transaction){
+                    $transaction = new Transaction();
+                }
+                $transaction->client_id = $user->id;
+                $transaction->free_id = $order->freelancer_id;
+                $transaction->order_id = $order->id;
+                $transaction->client_status = 2;
+                $transaction->freelancer_status = 0;
+                $transaction->isComplain = 0;
+                // $transaction->tranc_attachments = new stdClass();
+                $transaction->tranc_status = 1;
+                $transaction->created_by = Auth::user()->id;
+                $transaction->updated_by = Auth::user()->id;
+                $transaction->created_at = Carbon::now();
+                $transaction->updated_at = Carbon::now();
+                $transaction->save();
+
                 //service order cancel status is 4
                 if($user && $service){
                     //send back refund
@@ -394,7 +436,7 @@ class TrancsactionController extends Controller
 
                     $freelancer = User::where('id',$order->freelancer_id)->first();
                     //UserDetail::where('user_id', $freelancer->id)->increment('balance', $service->price);
-                    $this->sendCancellationEmailFreelancer($freelancer, $service, $order);
+                    $this->sendCancellationEmailFreelancer1($freelancer, $service, $order);
 
                 }
 
@@ -448,7 +490,8 @@ class TrancsactionController extends Controller
             ->where('expected_end_date','>',Carbon::now())
             ->where('order_by',$user->id)
             ->first();
-            if($order){
+            if($order)
+            {
                 $order->order_status = 4;
                 $order->cancel_desc = $request->cancel_desc;
                 $order->cancel_at = Carbon::now();
@@ -458,6 +501,29 @@ class TrancsactionController extends Controller
                 $user = User::where('id',$order->order_by)->first();
                 //service order cancel status is 4
                 if($user && $service){
+                    //Need to crate Transaction
+                    $transaction = Transaction::where('free_id',$order->freelancer_id)
+                    ->where('client_id',$user->id)
+                    ->where('order_id',$order->id)
+                    ->first();
+                    if(!$transaction){
+                        $transaction = new Transaction();
+                    }
+                    $transaction->client_id = $user->id;
+                    $transaction->free_id = $order->freelancer_id;
+                    $transaction->order_id = $order->id;
+                    $transaction->client_status = 1;
+                    $transaction->freelancer_status = 0;
+                    $transaction->isComplain = 0;
+                    // $transaction->tranc_attachments = new stdClass();
+                    $transaction->tranc_status = 1;
+                    $transaction->created_by = Auth::user()->id;
+                    $transaction->updated_by = Auth::user()->id;
+                    $transaction->created_at = Carbon::now();
+                    $transaction->updated_at = Carbon::now();
+                    $transaction->save();
+
+
                     //send back refund
                     UserDetail::where('user_id', $user->id)->increment('balance', $service->price * 0.50);
                     //Send Email Client Part
@@ -479,7 +545,7 @@ class TrancsactionController extends Controller
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' => "Sorry the action can not be made!",
+                    'msg' => "Sorry order not found the action can not be made!",
                 ],401);
 
             }
@@ -492,6 +558,7 @@ class TrancsactionController extends Controller
             ],500);
         }
     }
+
 // Freelancer Cancel before due date 100% refund 10 score deducteds
     public function freelancerCancelBeforeDueDate(Request $request){
         try{
@@ -528,6 +595,29 @@ class TrancsactionController extends Controller
                 $freelancer = User::where('id',$order->order_by)->first();
                 //service order cancel status is 4
                 if($freelancer && $service){
+                //Need to crate Transaction
+                $transaction = Transaction::where('free_id', $freelancer->id)
+                ->where('client_id',$order->order_by)
+                ->where('order_id',$order->id)
+                ->first();
+                if(!$transaction){
+                    $transaction = new Transaction();
+                }
+                $transaction->client_id = $order->order_by;
+                $transaction->free_id =  $freelancer->id;
+                $transaction->order_id = $order->id;
+                $transaction->client_status = 0;
+                $transaction->freelancer_status = 1;
+                $transaction->isComplain = 0;
+                // $transaction->tranc_attachments = new stdClass();
+                $transaction->tranc_status = 1;
+                $transaction->created_by = $freelancer->id;
+                $transaction->updated_by = $freelancer->id;
+                $transaction->created_at = Carbon::now();
+                $transaction->updated_at = Carbon::now();
+                $transaction->save();
+
+
                     //deduct freelancer score
                     UserDetail::where('user_id', $freelancer->id)->decrement('credit_score', 5);
                     //Send Email Freelancer Part
@@ -600,6 +690,29 @@ class TrancsactionController extends Controller
                 $user = User::where('id',$order->order_by)->first();
                 //service order cancel status is 4
                 if($user && $service){
+
+                    //Need to crate Transaction
+                    $transaction = Transaction::where('free_id',Auth::user()->id)
+                    ->where('client_id',$client->id)
+                    ->where('order_id',$order->id)
+                    ->first();
+                    if(!$transaction){
+                        $transaction = new Transaction();
+                    }
+                    $transaction->client_id = $user->id;
+                    $transaction->free_id = $order->freelancer_id;
+                    $transaction->order_id = $order->id;
+                    $transaction->client_status = 2;
+                    $transaction->freelancer_status = 0;
+                    $transaction->isComplain = 0;
+                    $transaction->tranc_attachments = new stdClass();
+                    $transaction->tranc_status = 1;
+                    $transaction->created_by = Auth::user()->id;
+                    $transaction->updated_by = Auth::user()->id;
+                    $transaction->created_at = Carbon::now();
+                    $transaction->updated_at = Carbon::now();
+                    $transaction->save();
+
                     //send back refund
                     UserDetail::where('user_id', $user->id)->increment('balance', $service->price * 0.95);
                     //Send Email Client Part
