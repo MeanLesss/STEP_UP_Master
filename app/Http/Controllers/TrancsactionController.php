@@ -190,7 +190,6 @@ class TrancsactionController extends Controller
                 $transaction->created_at = Carbon::now();
                 $transaction->updated_at = Carbon::now();
 
-
                 $emailController = new EmailController();
                 $masterController = new MasterController();
                 // Send to freelancer
@@ -350,6 +349,74 @@ class TrancsactionController extends Controller
                 'verified' => false,
                 'status' =>  'error',
                 'msg' =>  Str::limit($e->getMessage(), 150, '...'),
+            ],500);
+        }
+    }
+
+    //Client cancel while pending order
+    public function clientCancelWhilePending(Request $request){
+        try{
+
+            $validator = Validator::make($request->all(), [
+                'order_id' => 'required',
+                'service_id' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  'Please input all of the required fields!',
+                    // 'error_msg' => $validator->errors(),
+                ],401);
+            }
+            $user = Auth::user();
+
+            $order = ServiceOrder::where('service_id',$request->service_id)
+            ->where('id',$request->order_id)
+            ->where('order_status',0)
+            ->where('order_by',$user->id)
+            ->first();
+            if($order){
+                $order->order_status = 4;
+                $order->cancel_desc = "Cancel while pending";
+                $order->cancel_at = Carbon::now();
+                $order->cancel_by = Auth::user()->id;
+                $order->save();
+                $service = Service::where('id',$order->service_id)->first();
+                $user = User::where('id',$order->order_by)->first();
+                //service order cancel status is 4
+                if($user && $service){
+                    //send back refund
+                    UserDetail::where('user_id', $user->id)->increment('balance', $service->price);
+                    //Send Email Client Part
+                    $this->sendCancellationEmailClient($user, $service, $order);
+
+                    $freelancer = User::where('id',$order->freelancer_id)->first();
+                    //UserDetail::where('user_id', $freelancer->id)->increment('balance', $service->price);
+                    $this->sendCancellationEmailFreelancer($freelancer, $service, $order);
+
+                }
+
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => "Cancellation success! You will get 100% refund after the cancellation no tax include !",
+                ],200);
+            }else{
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' => "Sorry the action can not be made!",
+                ],401);
+
+            }
+
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
             ],500);
         }
     }
@@ -665,8 +732,7 @@ class TrancsactionController extends Controller
 
 
     // ----------------->Expand time email
-    private function sendExpandEmailClient($user, $service, $order)
-    {
+    private function sendExpandEmailClient($user, $service, $order){
         $emailController = new EmailController();
         $masterController = new MasterController();
 
