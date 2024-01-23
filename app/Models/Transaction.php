@@ -44,7 +44,8 @@ class Transaction extends Model
 	];
 
 	protected $fillable = [
-		'user_id',
+		'client_id',
+		'free_id',
 		'order_id',
 		'client_status',
 		'freelancer_status',

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Service;
 use App\Models\TopUpLog;
 use App\Models\UserDetail;
+use App\Models\Transaction;
 use App\Models\ServiceOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -167,9 +168,26 @@ class TrancsactionController extends Controller
                 ]);
                 $order->update($request->all());
 
+                $client = User::where('id',$order->order_by)->first();
+                //Need to crate Transaction
+                $transaction = new Transaction();
+                $transaction->client_id = $client->id;
+                $transaction->free_id = Auth::user()->id;
+                $transaction->order_id = $order->id;
+                $transaction->client_status = 0;
+                $transaction->freelancer_status = 1;
+                $transaction->isComplain = 0;
+                $transaction->tranc_attachments = $request->completed_attachments;
+                $transaction->tranc_status = 0;
+                $transaction->created_by = Auth::user()->id;
+                $transaction->updated_by = Auth::user()->id;
+                $transaction->created_at = Carbon::now();
+                $transaction->updated_at = Carbon::now();
+
+
                 $emailController = new EmailController();
                 $masterController = new MasterController();
-// Send to freelancer
+                // Send to freelancer
                 $subject = 'Service Completion';
                 $content = 'Dear '.Auth::user()->name.',' . "\n\n" .
                         'Your work has been completed.' . "\n\n" .
@@ -187,7 +205,108 @@ class TrancsactionController extends Controller
                         'This price amount will be claimed ,After your client accept the work' . "\n\n" .
                         'Thank you for choosing our platform.';
                 $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
-// Send to client
+                // Send to client
+                $subject = 'Service Completion';
+                $content = 'Dear '. $client->name.',' . "\n\n" .
+                        'Your service order has been completed.' . "\n\n" .
+                        'Service Details:' . "\n" .
+                        'Service ID: ' . $service->id . "\n" .
+                        'Service Title: ' . $service->title . "\n" .
+                        'Service Description: ' . $service->description . "\n" .
+                        'Service Type: ' . $service->service_type . "\n\n" .
+                        'Service Requirement: ' . $service->requirement . "\n" .
+                        'Service Start Date: ' . $service->start_date . "\n" .
+                        'Service End Date: ' . $service->end_date . "\n" .
+                        'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
+                        'Discount: ' . $service->discount . "%\n\n" .
+                        'Price: $' . $service->price . "\n\n" .
+                        'This price amount will be claimed by the freelancer,after you accept the work' . "\n\n" .
+                        'Thank you for choosing our platform.';
+                $emailController->sendTextEmail($client->email, $subject, $content);
+
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => 'Submit success we will alert the client to check out the work soon!',
+                ],200);
+
+            }else{
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' => 'Please Login to submit work!',
+                ],401);
+            }
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  Str::limit($e->getMessage(), 150, '...'),
+            ],500);
+        }
+    }
+
+    public function clientAcceptTheSubmitWork(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'order_id' => 'required',
+                'service_id'=>'required',
+                'rate' => 'numeric | min:0 | max :5',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  'Please check the input fields!',
+                    'error_msg' => $validator->errors(),
+                ],401);
+            }
+            if(Auth::user()->tokenCan('serviceOrder:view') && Auth::user()->role == 100){
+                $order = ServiceOrder::where('id',$request->order_id)->where('service_id',$request->service_id)->first();
+                $service = Service::where('id',$request->service_id)->first();
+
+                if(!$order || !$service){
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' => 'Look like there something wrong with the order or the service. Contact our support for help!',
+                    ],401);
+                }
+
+
+
+
+                $request->merge([
+                    'order_status'=>3,
+                    'updated_at' => Carbon::now(),
+                    'updated_by'=>Auth::user()->id,
+                    'completed_at'=> Carbon::now()
+                ]);
+                $order->update($request->all());
+
+                //Email part
+                $emailController = new EmailController();
+                $masterController = new MasterController();
+                // Send to freelancer
+                $subject = 'Service Completion';
+                $content = 'Dear '.Auth::user()->name.',' . "\n\n" .
+                        'Your work has been completed.' . "\n\n" .
+                        'Service Details:' . "\n" .
+                        'Service ID: ' . $service->id . "\n" .
+                        'Service Title: ' . $service->title . "\n" .
+                        'Service Description: ' . $service->description . "\n" .
+                        'Service Type: ' . $service->service_type . "\n\n" .
+                        'Service Requirement: ' . $service->requirement . "\n" .
+                        'Service Start Date: ' . $service->start_date . "\n" .
+                        'Service End Date: ' . $service->end_date . "\n" .
+                        'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
+                        'Discount: ' . $service->discount . "%\n\n" .
+                        'Price: $' . $service->price . "\n\n" .
+                        'This price amount will be claimed ,After your client accept the work' . "\n\n" .
+                        'Thank you for choosing our platform.';
+                $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
+                // Send to client
                 $user = User::where('id',$order->order_by)->first();
                 $subject = 'Service Completion';
                 $content = 'Dear '. $user->name.',' . "\n\n" .
@@ -217,7 +336,7 @@ class TrancsactionController extends Controller
                 return response()->json([
                     'verified' => false,
                     'status' =>  'error',
-                    'msg' => 'Please Login submit work!',
+                    'msg' => 'Please Login to submit work!',
                 ],401);
             }
         }catch(Exception $e){
@@ -228,7 +347,6 @@ class TrancsactionController extends Controller
             ],500);
         }
     }
-
 
 
 // Client Cancel before due date 95%

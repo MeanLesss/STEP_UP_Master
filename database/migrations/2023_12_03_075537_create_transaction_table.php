@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('transaction', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('free_id');
             $table->unsignedBigInteger('order_id');
             $table->integer('client_status')->default(0)->comment('0:pending,1:failed,2:accepted');;
             $table->integer('freelancer_status')->default(0)->comment('0:pending,1:failed,2:accepted');
