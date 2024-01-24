@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('view')->default(0);
             $table->integer('service_rate')->default(0);
             $table->integer('service_ordered_count')->default(0);
-            $table->json('attachments')->default('{}')->nullable();
+            $table->json('attachments')->default(DB::raw('(JSON_OBJECT())'))->nullable();
             $table->string('requirement')->nullable();
             $table->double('price')->default(5.00)->comment('Greater than $5');
             $table->double('discount')->default(0.00)->nullable();

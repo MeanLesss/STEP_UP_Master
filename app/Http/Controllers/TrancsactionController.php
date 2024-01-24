@@ -184,7 +184,7 @@ class TrancsactionController extends Controller
                 $transaction->client_status = 0;
                 $transaction->freelancer_status = 2;
                 $transaction->isComplain = 0;
-                $transaction->tranc_attachments = $request->completed_attachments;
+                $transaction->tranc_attachments = isset($request->completed_attachments) ? $request->completed_attachments : new stdClass() ;
                 $transaction->tranc_status = 0;
                 $transaction->created_by = Auth::user()->id;
                 $transaction->updated_by = Auth::user()->id;
@@ -303,7 +303,7 @@ class TrancsactionController extends Controller
                 $transaction->client_status = 2;
                 $transaction->isComplain = 0;
                 $transaction->tranc_status = 2;
-                $transaction->tranc_attachments = new stdClass();
+                // $transaction->tranc_attachments = new stdClass();
                 $transaction->created_by = Auth::user()->id;
                 $transaction->updated_by = Auth::user()->id;
                 $transaction->created_at = Carbon::now();
@@ -705,7 +705,7 @@ class TrancsactionController extends Controller
                     $transaction->client_status = 2;
                     $transaction->freelancer_status = 0;
                     $transaction->isComplain = 0;
-                    $transaction->tranc_attachments = new stdClass();
+                    // $transaction->tranc_attachments = new stdClass();
                     $transaction->tranc_status = 1;
                     $transaction->created_by = Auth::user()->id;
                     $transaction->updated_by = Auth::user()->id;
