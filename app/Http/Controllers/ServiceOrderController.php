@@ -526,6 +526,11 @@ class ServiceOrderController extends Controller
                 foreach($attachments as &$attachment){
                     // $attachment = env('APP_URL').$attachment;
                     $attachment = asset('storage/'.$attachment);
+                    // Download and store the attachment
+                    $url = $attachment;
+                    $contents = file_get_contents($url);
+                    $name = basename($url);
+                    Storage::put($name, $contents);
                 }
                 $orderCheck->order_attachments = count($attachments) <= 0 ? new stdClass() : $attachments;
 
