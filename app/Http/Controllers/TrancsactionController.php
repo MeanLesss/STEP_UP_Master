@@ -274,6 +274,7 @@ class TrancsactionController extends Controller
                         ->where('service_id',$request->service_id)
                         ->where('order_by',Auth::user()->id)
                         ->where('cancel_at',null)
+                        ->where('order_status',4)
                         ->first();
                 $service = Service::where('id',$request->service_id)->first();
 
