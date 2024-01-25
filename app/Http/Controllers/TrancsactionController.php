@@ -339,8 +339,9 @@ class TrancsactionController extends Controller
                 'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
                 'Discount: ' . $service->discount . "%" . "\n\n" .
                 'Tax: 10%'  . "\n\n" .
+                'Price : $' .$service->price . "\n\n" .
                 'Total : $' .$totalPrice . "\n\n" .
-                'This price amount will be claimed by the freelancer,after you accept the work' . "\n\n" .
+                'This price amount will be claimed by the freelancer.' . "\n\n" .
                 'Thank you for choosing our platform.';
                 $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
 
@@ -362,14 +363,15 @@ class TrancsactionController extends Controller
                         'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
                         'Discount: ' . $service->discount . "%" . "\n\n" .
                         'Tax: 10%'  . "\n\n" .
+                        'Price : $' .$service->price . "\n\n" .
                         'Total : $' .$totalPrice . "\n\n" .
-                        'This price amount will be claimed ,After your client accept the work' . "\n\n" .
+                        'This price amount will be claimed.' . "\n\n" .
                         'Thank you for choosing our platform.';
                 $emailController->sendTextEmail($user->email, $subject, $content);
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
-                    'msg' => 'Submit success we will alert the client to check out the work soon!',
+                    'msg' => 'Accepting success Thank you for choosing our platform!',
                 ],200);
 
             }else{
