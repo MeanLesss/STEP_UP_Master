@@ -285,6 +285,7 @@ class TrancsactionController extends Controller
                     ],401);
                 }
 
+                $service->increment('service_rate',$request->rate);
                 $request->merge([
                     'order_status'=>3,
                     'updated_at' => Carbon::now(),
