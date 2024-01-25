@@ -315,14 +315,15 @@ class TrancsactionController extends Controller
                 $transaction->created_at = Carbon::now();
                 $transaction->updated_at = Carbon::now();
                 $transaction->save();
-// Calculate total
+
+                // Calculate total
+                $masterController = new MasterController();
                 $taxRate = 0.10; // 10% tax
                 $priceWithTax =  $service->price * (1 + $taxRate);
                 $totalPrice = $masterController->calculateTotalAmount($priceWithTax, $service->discount);
 
                 //Email part
                 $emailController = new EmailController();
-                $masterController = new MasterController();
                 // Send to client
                 $subject = 'Service Completion';
                 $content = 'Dear '. Auth::user()->name.',' . "\n\n" .
