@@ -282,7 +282,7 @@ class TrancsactionController extends Controller
                     return response()->json([
                         'verified' => false,
                         'status' =>  'error',
-                        'msg' => 'Look like there something wrong with the order or the service. Contact our support for help!',
+                        'msg' => 'Look like there something wrong with the order. Contact our support for help with order ID!',
                     ],401);
                 }
 
@@ -294,7 +294,6 @@ class TrancsactionController extends Controller
                     'completed_at'=> Carbon::now()
                 ]);
                 $order->update($request->all());
-
 
                 //Need to crate Transaction
                 $transaction = Transaction::where('free_id',$order->freelancer_id)
@@ -374,7 +373,6 @@ class TrancsactionController extends Controller
                     'status' =>  'success',
                     'msg' => 'Accepting success Thank you for choosing our platform!',
                 ],200);
-
             }else{
                 return response()->json([
                     'verified' => false,
