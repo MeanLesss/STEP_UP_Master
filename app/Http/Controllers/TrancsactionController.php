@@ -314,6 +314,10 @@ class TrancsactionController extends Controller
                 $transaction->created_at = Carbon::now();
                 $transaction->updated_at = Carbon::now();
                 $transaction->save();
+// Calculate total
+                $taxRate = 0.10; // 10% tax
+                $priceWithTax =  $service->price * (1 + $taxRate);
+                $totalPrice = $masterController->calculateTotalAmount($priceWithTax, $service->discount);
 
                 //Email part
                 $emailController = new EmailController();
@@ -331,13 +335,16 @@ class TrancsactionController extends Controller
                 'Service Start Date: ' . $service->start_date . "\n" .
                 'Service End Date: ' . $service->end_date . "\n" .
                 'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
-                'Discount: ' . $service->discount . "%\n\n" .
-                'Price: $' . $service->price . "\n\n" .
+                'Discount: ' . $service->discount . "%" . "\n\n" .
+                'Tax: 10%'  . "\n\n" .
+                'Total : $' .$totalPrice . "\n\n" .
                 'This price amount will be claimed by the freelancer,after you accept the work' . "\n\n" .
                 'Thank you for choosing our platform.';
                 $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
 
                 $user = User::where('id',$order->freelancer_id)->first();
+                //neeed to udpate balance
+                UserDetail::where('user_id',$user->id)->update(['balance'=>$totalPrice]);
                 // Send to freelancer
                 $subject = 'Service Completion';
                 $content = 'Dear '.$user->name.',' . "\n\n" .
@@ -351,8 +358,9 @@ class TrancsactionController extends Controller
                         'Service Start Date: ' . $service->start_date . "\n" .
                         'Service End Date: ' . $service->end_date . "\n" .
                         'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
-                        'Discount: ' . $service->discount . "%\n\n" .
-                        'Price: $' . $service->price . "\n\n" .
+                        'Discount: ' . $service->discount . "%" . "\n\n" .
+                        'Tax: 10%'  . "\n\n" .
+                        'Total : $' .$totalPrice . "\n\n" .
                         'This price amount will be claimed ,After your client accept the work' . "\n\n" .
                         'Thank you for choosing our platform.';
                 $emailController->sendTextEmail($user->email, $subject, $content);
