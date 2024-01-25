@@ -260,12 +260,14 @@ class ServiceOrderController extends Controller
                     $serviceOrder->order_attachments= json_decode($fileNames, true);
 
                 }
-
+                $masterController = new MasterController();
                 $taxRate = 0.10; // 10% tax
                 $priceWithTax = $service->price * (1 + $taxRate);
+                $totalPrice = $masterController->calculateTotalAmount($priceWithTax,$service->discount);
                 $serviceOrder->tax = '10% Tax will be included.';
                 $serviceOrder->price = '$'.$service->price;
-                $serviceOrder->totalPrice = '$'.$priceWithTax;
+                $serviceOrder->discount = $service->discount.'%';
+                $serviceOrder->totalPrice = '$'.$totalPrice;
                 $serviceOrder->taxAmount = '$'.$priceWithTax-$service->price;
 
                 return response()->json([
@@ -326,6 +328,7 @@ class ServiceOrderController extends Controller
             }
 
             if(Auth::user()->tokenCan('service:purchase')){
+                $totalPrice = 0;
                 try{
                     $service = Service::where('id',$request->service_id)->first();
                     if(!isset($service)){
@@ -353,10 +356,11 @@ class ServiceOrderController extends Controller
                         ],401);
                     }
 
-
+                    $masterController = new MasterController();
                     $taxRate = 0.10; // 10% tax
-                    $priceWithTax = $service->price * (1 + $taxRate);
-                    if($userDetail->balance < $priceWithTax){
+                    $priceWithTax =  $service->price * (1 + $taxRate);
+                    $totalPrice = $masterController->calculateTotalAmount($priceWithTax, $service->discount);
+                    if($userDetail->balance < $totalPrice){
                         return response()->json([
                             'verified' => false,
                             'status' =>  'error',
@@ -369,10 +373,36 @@ class ServiceOrderController extends Controller
                     ->whereIn('order_status', [0, 1, 2])
                     ->first();
                     if(isset($orderCheck)){
-                        $masterController = new MasterController();
+
                         $stringStatus = $masterController->checkServiceStatus($orderCheck->order_status);
                         $orderCheck->stringStatus = $stringStatus;
                         $orderCheck->isReadOnly  = true;
+                        // Attachment
+                        $attachments = json_decode($orderCheck->order_attachments, true);
+                        if(is_array($attachments) && count($attachments) > 0){
+                            foreach($attachments as &$attachment){
+                                $attachment = asset('storage/'.$attachment);
+                            }
+                            $orderCheck->order_attachments = $attachments;
+                        }else{
+                            $orderCheck->ordeer_attachments= new stdClass;
+                        }
+                        // $orderCheck->order_attachments = $attachments && count($attachments) <= 0 ? new stdClass() : $attachments;
+
+                        //completed Attachment
+                        $attachments = json_decode($orderCheck->completed_attachments, true);
+                        if(is_array($attachments) && count($attachments) > 0){
+                            foreach($attachments as &$attachment){
+                                $attachment = asset('storage/'.$attachment);
+                            }
+                            $orderCheck->completed_attachments = $attachments;
+                        }else{
+                            $orderCheck->completed_attachments= new stdClass;
+                        }
+                        // $orderCheck->completed_attachments = $attachments && count($attachments) <= 0 ? new stdClass() : $attachments;
+
+
+
                         return response()->json([
                             'verified' => false,
                             'status' =>  'warning',
@@ -433,6 +463,8 @@ class ServiceOrderController extends Controller
                 $serviceOrder->updated_at = Carbon::now();
                 $serviceOrder->save();
                 $service->increment('service_ordered_count');
+
+                $masterController = new MasterController();
                 $emailController = new EmailController();
                 // Send alert email to client
                 $subject = 'Order Success';
@@ -443,6 +475,9 @@ class ServiceOrderController extends Controller
                 'Service ID: ' . $service->id . "\n" .
                 'Service Title: ' . $service->title . "\n" .
                 'Price: $' . $service->price . "\n\n" .
+                'Discount: ' . $service->discount . "%" . "\n\n" .
+                'Tax: 10%'  . "\n\n" .
+                'Total : $' .$totalPrice . "\n\n" .
                 'This amount has been deducted from your balance. We will notify you as soon as the freelancer accepts your order.' . "\n\n" .
                 'A full refund will be made within 7days if freelancer is not accept the order.' . "\n\n" .
                 'Thank you for choosing our services.';
@@ -462,13 +497,13 @@ class ServiceOrderController extends Controller
                 'Service ID: ' . $service->id . "\n" .
                 'Service Title: ' . $service->title . "\n" .
                 'Price: $' . $service->price . "\n\n" .
+                'Discount: ' . $service->discount . "%" . "\n\n" .
+                'Tax: 10%'  . "\n\n" .
+                'Total : $' .$totalPrice  . "\n\n" .
                 'A full refund will be made within 7days if you did not accept the order.' . "\n\n" .
                 'Thank you for choosing our services.';
 
                 $emailController->sendTextEmail($freelancer->email, $subject2, $content2);
-
-
-
 
                 return response()->json([
                     'verified' => true,

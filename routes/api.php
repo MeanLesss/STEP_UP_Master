@@ -82,6 +82,7 @@ Route::post('/balance/top-up',[TrancsactionController::class ,'topUpBalance'])->
 Route::post('/client/cancellationBeforeDueDate',[TrancsactionController::class ,'clientCancelBeforeDueDate'])->middleware('auth:sanctum') ;
 Route::post('/client/cancellationAfterDueDate',[TrancsactionController::class ,'ClientCancelAfterDueDate'])->middleware('auth:sanctum') ;
 Route::post('/client/cancel/pending',[TrancsactionController::class ,'clientCancelWhilePending'])->middleware('auth:sanctum') ;
+Route::post('/client/accept',[TrancsactionController::class ,'clientAcceptTheSubmitWork'])->middleware('auth:sanctum') ;
 Route::post('/freelancer/cancellationBeforeDueDate',[TrancsactionController::class ,'freelancerCancelBeforeDueDate'])->middleware('auth:sanctum') ;
 Route::post('/freelancer/submit-work',[TrancsactionController::class ,'freelancerSubmitWork'])->middleware('auth:sanctum') ;
 

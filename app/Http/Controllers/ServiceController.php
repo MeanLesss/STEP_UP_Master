@@ -158,6 +158,7 @@ class ServiceController extends Controller
                 'title' => 'required',
                 'description' => 'required',
                 'price' => 'required|numeric|min:5',
+                'discount' => 'numeric|min:0|max:100',
                 'service_type' => 'required',
                 'start_date' => 'required',
                 'end_date' => 'required',

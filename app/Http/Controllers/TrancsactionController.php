@@ -269,8 +269,12 @@ class TrancsactionController extends Controller
                     'error_msg' => $validator->errors(),
                 ],401);
             }
-            if(Auth::user()->tokenCan('serviceOrder:view') && Auth::user()->role == 101){
-                $order = ServiceOrder::where('id',$request->order_id)->where('service_id',$request->service_id)->first();
+            if(Auth::user()->tokenCan('serviceOrder:view')){
+                $order = ServiceOrder::where('id',$request->order_id)
+                        ->where('service_id',$request->service_id)
+                        ->where('order_by',Auth::user()->id)
+                        ->where('cancel_at',null)
+                        ->first();
                 $service = Service::where('id',$request->service_id)->first();
 
                 if(!$order || !$service){
@@ -280,6 +284,7 @@ class TrancsactionController extends Controller
                         'msg' => 'Look like there something wrong with the order or the service. Contact our support for help!',
                     ],401);
                 }
+
                 $request->merge([
                     'order_status'=>3,
                     'updated_at' => Carbon::now(),
@@ -313,9 +318,29 @@ class TrancsactionController extends Controller
                 //Email part
                 $emailController = new EmailController();
                 $masterController = new MasterController();
+                // Send to client
+                $subject = 'Service Completion';
+                $content = 'Dear '. Auth::user()->name.',' . "\n\n" .
+                'Your service order has been completed.' . "\n\n" .
+                'Service Details:' . "\n" .
+                'Service ID: ' . $service->id . "\n" .
+                'Service Title: ' . $service->title . "\n" .
+                'Service Description: ' . $service->description . "\n" .
+                'Service Type: ' . $service->service_type . "\n\n" .
+                'Service Requirement: ' . $service->requirement . "\n" .
+                'Service Start Date: ' . $service->start_date . "\n" .
+                'Service End Date: ' . $service->end_date . "\n" .
+                'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
+                'Discount: ' . $service->discount . "%\n\n" .
+                'Price: $' . $service->price . "\n\n" .
+                'This price amount will be claimed by the freelancer,after you accept the work' . "\n\n" .
+                'Thank you for choosing our platform.';
+                $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
+
+                $user = User::where('id',$order->freelancer_id)->first();
                 // Send to freelancer
                 $subject = 'Service Completion';
-                $content = 'Dear '.Auth::user()->name.',' . "\n\n" .
+                $content = 'Dear '.$user->name.',' . "\n\n" .
                         'Your work has been completed.' . "\n\n" .
                         'Service Details:' . "\n" .
                         'Service ID: ' . $service->id . "\n" .
@@ -330,27 +355,7 @@ class TrancsactionController extends Controller
                         'Price: $' . $service->price . "\n\n" .
                         'This price amount will be claimed ,After your client accept the work' . "\n\n" .
                         'Thank you for choosing our platform.';
-                $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
-                // Send to client
-                $user = User::where('id',$order->order_by)->first();
-                $subject = 'Service Completion';
-                $content = 'Dear '. $user->name.',' . "\n\n" .
-                        'Your service order has been completed.' . "\n\n" .
-                        'Service Details:' . "\n" .
-                        'Service ID: ' . $service->id . "\n" .
-                        'Service Title: ' . $service->title . "\n" .
-                        'Service Description: ' . $service->description . "\n" .
-                        'Service Type: ' . $service->service_type . "\n\n" .
-                        'Service Requirement: ' . $service->requirement . "\n" .
-                        'Service Start Date: ' . $service->start_date . "\n" .
-                        'Service End Date: ' . $service->end_date . "\n" .
-                        'Status: ' . $masterController->checkServiceStatus($order->order_status) . "\n\n" .
-                        'Discount: ' . $service->discount . "%\n\n" .
-                        'Price: $' . $service->price . "\n\n" .
-                        'This price amount will be claimed by the freelancer,after you accept the work' . "\n\n" .
-                        'Thank you for choosing our platform.';
                 $emailController->sendTextEmail($user->email, $subject, $content);
-
                 return response()->json([
                     'verified' => true,
                     'status' =>  'success',
