@@ -341,13 +341,13 @@ class TrancsactionController extends Controller
                 'Tax: 10%'  . "\n\n" .
                 'Price : $' .$service->price . "\n\n" .
                 'Total : $' .$totalPrice . "\n\n" .
-                'This price amount will be claimed by the freelancer.' . "\n\n" .
+                'This price amount will be claimed by the freelancer. No tax included!' . "\n\n" .
                 'Thank you for choosing our platform.';
                 $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
 
                 $user = User::where('id',$order->freelancer_id)->first();
                 //neeed to udpate balance
-                UserDetail::where('user_id',$user->id)->update(['balance'=>$totalPrice]);
+                UserDetail::where('user_id',$user->id)->increment('balance',$service->price);
                 // Send to freelancer
                 $subject = 'Service Completion';
                 $content = 'Dear '.$user->name.',' . "\n\n" .
@@ -365,7 +365,7 @@ class TrancsactionController extends Controller
                         'Tax: 10%'  . "\n\n" .
                         'Price : $' .$service->price . "\n\n" .
                         'Total : $' .$totalPrice . "\n\n" .
-                        'This price amount will be claimed.' . "\n\n" .
+                        'This price amount will be claimed. No tax included!' . "\n\n" .
                         'Thank you for choosing our platform.';
                 $emailController->sendTextEmail($user->email, $subject, $content);
                 return response()->json([

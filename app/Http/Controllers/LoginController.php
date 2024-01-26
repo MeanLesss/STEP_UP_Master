@@ -189,8 +189,8 @@ class LoginController extends Controller
             'freelancer' => 'required|boolean',
             'name' => 'required_if:guest,false|required_if:freelancer,true',
             'email' => 'required_if:guest,false|required_if:freelancer,true|email',
-            'password' => 'required_unless:guest,true|required_unless:freelancer,true',
-            'confirm_password' => 'required_unless:guest,true|required_unless:freelancer,true',
+            'password' => 'required_if:guest,false|required_if:freelancer,false',
+            'confirm_password' => 'required_if:guest,false|required_if:freelancer,false',
             'phone_number' => 'required_if:guest,false|required_if:freelancer,true',
             'id_number' => 'required_if:freelancer,true',
             'job_type' => 'required_if:freelancer,true'
@@ -233,6 +233,14 @@ class LoginController extends Controller
                     if($request->freelancer){
                         if($userExists->role != 100){
                             $userExists->update(['role'=>100]);
+
+                            $userDetail =  UserDetail::where('user_id',$userExists->id)->first();
+                            $userDetail->phone = $request->phone_number;
+                            $userDetail->id_card_no = $request->id_number;
+                            $userDetail->job_type = $request->job_type;
+                            $userDetail->updated_by = $user->id;
+                            $userDetail->updated_at = Carbon::now();
+                            $userDetail->save();
                             return response()->json([
                                 'verified' => true,
                                 'status' =>  'success',
