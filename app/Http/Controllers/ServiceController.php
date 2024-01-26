@@ -276,7 +276,7 @@ class ServiceController extends Controller
 
             if(Auth::user()->tokenCan('service:update')){
 
-                $service =  Service::where('id',$request->service_id)->first();
+                $service =  Service::where('id',$request->service_id)->where('created_by',Auth::user()->id)->first();
 
                 $service->status = $request->is_active ? 1 : 2;
                 if($request->is_active){
