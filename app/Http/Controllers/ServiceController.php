@@ -255,6 +255,84 @@ class ServiceController extends Controller
         }
     }
 
+    public function updateService(Request $request){
+        $masterController = new MasterController();
+        try{
+            $validator = Validator::make($request->all(), [
+                'service_id' => 'required | numeric',
+                'is_active' => 'required | boolean', //true active ,false inactive
+                'start_date'=> 'required_if:is_active,true',
+                'end_date'=> 'required_if:is_active,true'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'verified' => false,
+                    'status' =>  'error',
+                    'msg' =>  'Please input all the required fields!',
+                    // 'error_msg' => $validator->errors(),
+                ],401);
+            }
+
+            if(Auth::user()->tokenCan('service:update')){
+
+                $service =  Service::where('id',$request->service_id)->first();
+
+                $service->status = $request->is_active ? 1 : 2;
+                if($request->is_active){
+                    $service->start_date = $request->start_date;
+                    $service->end_date = $request->end_date;
+                }
+                $service->created_by = Auth::user()->id;
+                $service->created_at = Carbon::now();
+                $service->updated_by = Auth::user()->id;
+                $service->updated_at = Carbon::now();
+                $service->save();
+                $emailController = new EmailController();
+                // Send alert email (Turn back on when linode approve)
+
+                $status = $request->is_active ? 'ACTIVATED' : 'DEACTIVATED';
+                $subject = 'Service Activation';
+                $content = 'Dear '.Auth::user()->name.',' . "\n\n" .
+                'Your service has been successfully '.$status.'.' . "\n\n" .
+                'Service Details:' . "\n" .
+                'Service ID: ' . $service->id . "\n" .
+                'Service Title: ' . $service->id . "\n" .
+                'Service Description: ' . $service->description . "\n" .
+                'Service Type: ' . $service->service_type . "\n\n" .
+                'Service Requirement: ' . $service->requirement . "\n" .
+                'Service Start Date: ' . $service->start_date . "\n" .
+                'Service End Date: ' . $service->end_date . "\n" .
+                'Status: ' . $masterController->checkMyServiceStatus($service->status) . "\n\n" .
+                'Discount: ' . $service->discount . "%\n\n" .
+                'Price: $' . $service->price . "\n\n" .
+                'This amount will be display without tax included.' . "\n\n" .
+                'Thank you for choosing our platform.';
+                $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
+
+                return response()->json([
+                    'verified' => true,
+                    'status' =>  'success',
+                    'msg' => 'Your service ' . $status .' successfully',
+                ],200);
+            }
+            /**
+             * If the user have no authorization for the action.
+             */
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' => "Oops! Looks like you don't have the right permissions for this. Please contact our support for more detail !",
+            ],401);
+        }catch(Exception $e){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
+            ],500);
+        }
+    }
+
     /**
      * Display the specified resource.
      */

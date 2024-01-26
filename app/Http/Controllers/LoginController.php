@@ -139,11 +139,12 @@ class LoginController extends Controller
                     'tranc:top-up',
                     'service:purchase',
                     'free:update'])->plainTextToken;
-            }
-            if(Auth::user()->role == 101){
-                $user_token = Auth::user()->createToken('token',[
+                }
+                if(Auth::user()->role == 101){
+                    $user_token = Auth::user()->createToken('token',[
                     'service:read',
                     'service:view',
+                    'service:update',
                     'service:cancel',
                     'service:purchase',
                     'tranc:top-up',
