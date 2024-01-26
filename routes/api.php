@@ -54,7 +54,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 // Service part
 Route::post('/service/create',[ServiceController::class,'store'])->middleware('auth:sanctum');
-Route::get('/service/activation',[ServiceController::class ,'updateService'])->middleware('auth:sanctum') ;
+Route::post('/service/activation',[ServiceController::class ,'updateService'])->middleware('auth:sanctum') ;
 Route::post('/service/{id}/update',[ServiceController::class,'update'])->middleware('auth:sanctum');
 Route::post('/service/data',[ServiceController::class,'getAllServices']);
 
