@@ -189,11 +189,11 @@ class LoginController extends Controller
             'freelancer' => 'required|boolean',
             'name' => 'required_if:guest,false|required_if:freelancer,true',
             'email' => 'required_if:guest,false|required_if:freelancer,true|email',
-            'password' => 'required_if:guest,false|required_if:freelancer,false',
-            'confirm_password' => 'required_if:guest,false|required_if:freelancer,false',
+            'password' => 'required_unless:freelancer,true',
+            'confirm_password' => 'required_unless:freelancer,true',
             'phone_number' => 'required_if:guest,false|required_if:freelancer,true',
             'id_number' => 'required_if:freelancer,true',
-            'job_type' => 'required_if:guest,false|required_if:freelancer,false'
+            'job_type' => 'required_unless:freelancer,false'
         ]);
 
         if ($validator->fails()) {
