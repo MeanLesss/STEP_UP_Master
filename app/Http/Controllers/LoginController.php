@@ -193,7 +193,7 @@ class LoginController extends Controller
             'confirm_password' => 'required_if:guest,false|required_if:freelancer,false',
             'phone_number' => 'required_if:guest,false|required_if:freelancer,true',
             'id_number' => 'required_if:freelancer,true',
-            'job_type' => 'required_if:freelancer,true'
+            'job_type' => 'required_if:guest,false|required_if:freelancer,false'
         ]);
 
         if ($validator->fails()) {
