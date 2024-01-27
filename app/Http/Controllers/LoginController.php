@@ -185,30 +185,29 @@ class LoginController extends Controller
      */
     public function store(Request $request)
     {
-       /* The above code is performing validation on the data received from a request. It is using the
-       Laravel Validator class to define the validation rules for each field. */
-        // $validator = Validator::make($request->all(), [
-        //     'guest' => 'required|boolean',
-        //     'freelancer' => 'required|boolean',
-        //     'name' => 'required_if:freelancer,true',
-        //     'email' => 'required_if:freelancer,true|email',
-        //     'password' => 'required_unless:freelancer,true',
-        //     'confirm_password' => 'required_unless:freelancer,true',
-        //     'phone_number' => 'required_unless:freelancer,true',
-        //     'id_number' => 'required_if:freelancer,true',
-        //     'job_type' => 'required_unless:freelancer,true'
-        // ]);
         $validator = Validator::make($request->all(), [
             'guest' => 'required|boolean',
-            'freelancer' => 'required_if:guest,false|boolean',
-            'name' => 'required_if:guest,false|required_if:freelancer,false',
-            'email' => 'required_if:guest,false|required_if:freelancer,false|email',
-            'password' => 'required_if:guest,false|required_if:freelancer,false',
-            'confirm_password' => 'required_if:guest,false|required_if:freelancer,false',
-            'phone_number' => 'required_if:guest,false|required_if:freelancer,false',
+            'freelancer' => 'required|boolean',
+            'name' => 'required_if:freelancer,true',
+            'email' => 'required_if:freelancer,true|email',
+            'password' => 'required_unless:freelancer,true',
+            'confirm_password' => 'required_unless:freelancer,true',
+            'phone_number' => 'required_unless:freelancer,true',
             'id_number' => 'required_if:freelancer,true',
-            'job_type' => 'required_if:guest,false|required_if:freelancer,false'
+            'job_type' => 'required_unless:freelancer,true'
         ]);
+
+        // $validator = Validator::make($request->all(), [
+        //     'guest' => 'required|boolean',
+        //     'freelancer' => 'required_if:guest,false|boolean',
+        //     'name' => 'required_if:guest,false|required_if:freelancer,false',
+        //     'email' => 'required_if:guest,false|required_if:freelancer,false|email',
+        //     'password' => 'required_if:guest,false|required_if:freelancer,false',
+        //     'confirm_password' => 'required_if:guest,false|required_if:freelancer,false',
+        //     'phone_number' => 'required_if:guest,false|required_if:freelancer,false',
+        //     'id_number' => 'required_if:freelancer,true',
+        //     'job_type' => 'required_if:guest,false|required_if:freelancer,false'
+        // ]);
 
         // $validator = Validator::make($request->all(), [
         //     'guest' => 'required|boolean',
