@@ -542,9 +542,9 @@ class ServiceController extends Controller
                     ],200);
                 }else{
                     return response()->json([
-                        'verified' => true,
-                        'status' =>  'success',
-                        'msg' => 'Your service updated successfully',
+                        'verified' => false,
+                        'status' =>  'error',
+                        'msg' => 'Service not found!',
                     ],401);
                 }
             }
