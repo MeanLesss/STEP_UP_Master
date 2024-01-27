@@ -188,11 +188,11 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), [
             'guest' => 'required|boolean',
             'freelancer' => 'required|boolean',
-            'name' => 'required_if:freelancer,true',
-            'email' => 'required_if:freelancer,true|email',
+            'name' => 'required_unless:freelancer,true',
+            'email' => 'required_unless:freelancer,true|email',
             'password' => 'required_unless:freelancer,true',
             'confirm_password' => 'required_unless:freelancer,true',
-            'phone_number' => 'required_if:freelancer,true',
+            'phone_number' => 'required_unless:freelancer,true',
             'id_number' => 'required_if:freelancer,true',
             'job_type' => 'required_unless:freelancer,true'
         ]);
