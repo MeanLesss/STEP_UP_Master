@@ -1,6 +1,7 @@
 # Use a specific version of the image
 FROM php:8.2.11-fpm-alpine
 
+WORKDIR /var/www/html
 # Install composer
 RUN echo "\e[1;33mInstall COMPOSER\e[0m" \
     && cd /tmp \
