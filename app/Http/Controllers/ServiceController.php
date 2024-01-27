@@ -505,41 +505,48 @@ class ServiceController extends Controller
             }
 
             if(Auth::user()->tokenCan('service:update')){
-                try{
-                    $service = Service::find($id);
+                $service = Service::find($id);
+                if($service){
+                    try{
+                        if($request->hasFile('attachment_files')) {
+                            $filePaths = array();
+                            // Check if 'attachment_files' is an array of files or a single file
+                            $files = is_array($request->file('attachment_files')) ? $request->file('attachment_files') : [$request->file('attachment_files')];
+                            foreach ($files as $file) {
+                                $originalName = $file->getClientOriginalName();
+                                $extension = $file->getClientOriginalExtension();
+                                $nameWithoutExtension = str_replace("." . $extension, "", $originalName);
+                                $encryptedName = base64_encode($nameWithoutExtension);
+                                $encryptedNameWithExtension = $encryptedName . '.' . $extension;
+                                $path = 'uploads/'. Auth::user()->id;
+                                $file->storeAs('storage/'.$path, $encryptedNameWithExtension);
 
-                    if($request->hasFile('attachment_files')) {
-                        $filePaths = array();
-                        // Check if 'attachment_files' is an array of files or a single file
-                        $files = is_array($request->file('attachment_files')) ? $request->file('attachment_files') : [$request->file('attachment_files')];
-                        foreach ($files as $file) {
-                            $originalName = $file->getClientOriginalName();
-                            $extension = $file->getClientOriginalExtension();
-                            $nameWithoutExtension = str_replace("." . $extension, "", $originalName);
-                            $encryptedName = base64_encode($nameWithoutExtension);
-                            $encryptedNameWithExtension = $encryptedName . '.' . $extension;
-                            $path = 'uploads/'. Auth::user()->id;
-                            $file->storeAs('storage/'.$path, $encryptedNameWithExtension);
-
-                            $filePaths[$originalName] = $path . '/' . $encryptedNameWithExtension;
+                                $filePaths[$originalName] = $path . '/' . $encryptedNameWithExtension;
+                            }
+                            $request->merge(['attachments' => json_encode($filePaths)]);
                         }
-                        $request->merge(['attachments' => json_encode($filePaths)]);
+                    }catch(Exception $e){
+                        return response()->json([
+                            'verified' => false,
+                            'status' =>  'error',
+                            'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
+                        ],500);
                     }
                     $request->merge(['updated_at' => Carbon::now(),'updated_by'=>Auth::user()->id]);
                     $service->update($request->all());
-                }catch(Exception $e){
-                    return response()->json([
-                        'verified' => false,
-                        'status' =>  'error',
-                        'msg' =>  Str::limit($e->getMessage(), 150, '...') ,
-                    ],500);
-                }
 
-                return response()->json([
-                    'verified' => true,
-                    'status' =>  'success',
-                    'msg' => 'Your service updated successfully',
-                ]);
+                    return response()->json([
+                        'verified' => true,
+                        'status' =>  'success',
+                        'msg' => 'Your service updated successfully',
+                    ],200);
+                }else{
+                    return response()->json([
+                        'verified' => true,
+                        'status' =>  'success',
+                        'msg' => 'Your service updated successfully',
+                    ],401);
+                }
             }
             /**
              * If the user have no authorization for the action.
