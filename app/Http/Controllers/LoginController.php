@@ -194,7 +194,7 @@ class LoginController extends Controller
             'confirm_password' => 'required_unless:freelancer,true',
             'phone_number' => 'required_if:freelancer,true',
             'id_number' => 'required_if:freelancer,true',
-            'job_type' => 'required_unless:freelancer,false'
+            'job_type' => 'required_unless:freelancer,true'
         ]);
         // $validator = Validator::make($request->all(), [
         //     'guest' => 'required|boolean',
