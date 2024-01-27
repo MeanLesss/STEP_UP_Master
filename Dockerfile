@@ -28,6 +28,10 @@ RUN echo "\e[1;33mInstall important libraries\e[0m" \
 
 # Copy existing application directory
 COPY . /var/www
+# Copy php.ini production to the server
+COPY ./php/php.ini-production /usr/local/etc/php/php.ini
+
+
 
 # Run as non-root user
 USER www-data

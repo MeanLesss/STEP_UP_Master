@@ -278,6 +278,14 @@ class ServiceController extends Controller
 
                 $service =  Service::where('id',$request->service_id)->where('created_by',Auth::user()->id)->first();
 
+                if($service->status == 1){
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'warning',
+                        'msg' => 'Your service is already active!',
+                    ],401);
+                }
+
                 $service->status = $request->is_active ? 1 : 2;
                 if($request->is_active){
                     $service->start_date = $request->start_date;
