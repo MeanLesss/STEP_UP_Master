@@ -185,48 +185,38 @@ class LoginController extends Controller
      */
     public function store(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'guest' => 'required|boolean',
-        //     'freelancer' => 'required|boolean',
-        //     'name' => 'required_if:freelancer,true',
-        //     'email' => 'required_if:freelancer,true|email',
-        //     'password' => 'required_unless:freelancer,true',
-        //     'confirm_password' => 'required_unless:freelancer,true',
-        //     'phone_number' => 'required_unless:freelancer,true',
-        //     'id_number' => 'required_if:freelancer,true',
-        //     'job_type' => 'required_unless:freelancer,true'
-        // ]);
-
-        // $validator = Validator::make($request->all(), [
-        //     'guest' => 'required|boolean',
-        //     'freelancer' => 'required_if:guest,false|boolean',
-        //     'name' => 'required_if:guest,false|required_if:freelancer,false',
-        //     'email' => 'required_if:guest,false|required_if:freelancer,false|email',
-        //     'password' => 'required_if:guest,false|required_if:freelancer,false',
-        //     'confirm_password' => 'required_if:guest,false|required_if:freelancer,false',
-        //     'phone_number' => 'required_if:guest,false|required_if:freelancer,false',
-        //     'id_number' => 'required_if:freelancer,true',
-        //     'job_type' => 'required_if:guest,false|required_if:freelancer,false'
-        // ]);
-
         $validator = Validator::make($request->all(), [
             'guest' => 'required|boolean',
             'freelancer' => 'required|boolean',
-            'name' => 'required_if:guest,false|required_if:freelancer,true',
-            'email' => 'required_if:guest,false|required_if:freelancer,true|email',
-            'password' => 'required_unless:freelancer,true',
-            'confirm_password' => 'required_unless:freelancer,true',
-            'phone_number' => 'required_if:guest,false|required_if:freelancer,true',
+            'name' => 'required_if:guest,false|required_unless:freelancer,false',
+            'email' => 'required_if:guest,false|required_unless:freelancer,false|email',
+            // 'password' => 'required_unless:guest,false',
+            // 'confirm_password' => 'required_unless:guest,false',
+            'phone_number' => 'required_if:guest,false|required_unless:freelancer,false',
             'id_number' => 'required_if:freelancer,true',
-            'job_type' => 'required_unless:freelancer,false'
+            'job_type' => 'required_if:guest,false|required_unless:freelancer,false'
         ]);
+
 
         if ($validator->fails()) {
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
                 'msg' =>  'Please input all the required fields!',
-                // 'error_msg' => $validator->errors(),
+                'error_msg' => $validator->errors(),
+            ],401);
+        }
+
+      /* The above code is checking if the "guest" and "freelancer" properties of the  object
+      are both false, and if either the "password" or "confirm_password" properties are null. If
+      these conditions are met, the code inside the if statement will be executed. */
+        if($request->guest == false &&
+            $request->freelancer == false &&
+            ($request->password == null || $request->confirm_password == null)){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  'Password and Confirm Password is required!',
             ],401);
         }
 
