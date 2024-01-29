@@ -60,7 +60,7 @@ class MasterController extends Controller
                 $stringStatus = 'Active';
                 break;
             case 2:
-                $stringStatus = 'In active';
+                $stringStatus = 'Inactive';
                 break;
             default:
                 $stringStatus = 'Unknown';

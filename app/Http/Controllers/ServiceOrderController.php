@@ -100,7 +100,7 @@ class ServiceOrderController extends Controller
                     // $request->merge(['order_by_name' => Carbon::now()]);
                     // foreach( $result as $data ){
                         // }
-                    $result->transform(function ($item, $key) {
+                    $result->transform(function ($item, $key) use ($isOrder) {
                         $masterController = new MasterController();
                         $status = $masterController->checkServiceStatus($item->order_status);
                         $item->stringStatus = $status;
@@ -128,6 +128,7 @@ class ServiceOrderController extends Controller
                                 $item->completed_attachments= new stdClass;
                             }
                         }
+                        $item->contact = User::select('name','email')->where('id',$isOrder ? $item->order_by : $item->freelancer_id)->first();
                         return $item;
                     });
                     return response()->json([
