@@ -402,20 +402,18 @@ class ServiceController extends Controller
             ],401);
         }
 
-        if(isset($result->attachments)){
-            $masterController = new MasterController();
-            $stringStatus = $masterController->checkMyServiceStatus($result->order_status);
-            $result->stringStatus = $stringStatus;
+        $masterController = new MasterController();
+        $stringStatus = $masterController->checkMyServiceStatus($result->status);
+        $result->stringStatus = $stringStatus;
 
-            $attachments = json_decode($result->attachments);
-            foreach($attachments as &$attachment){
-                // $attachment = env('APP_URL').$attachment;
-                $attachment = asset('storage/'.$attachment);
-            }
-            $result->attachments = $attachments;
-        }else{
-            $result->attachments = new stdClass();
+        $attachments = json_decode($result->attachments);
+        foreach($attachments as &$attachment){
+            // $attachment = env('APP_URL').$attachment;
+            $attachment = asset('storage/'.$attachment);
         }
+        $result->attachments = $attachments ? $attachments : new stdClass();
+
+
         $result->isReadOnly  = false;
 
         if(isset($orderCheck)){
