@@ -278,7 +278,15 @@ class ServiceController extends Controller
 
                 $service =  Service::where('id',$request->service_id)->where('created_by',Auth::user()->id)->first();
 
-                if($service->status == 1){
+                if(!$service){
+                    return response()->json([
+                        'verified' => false,
+                        'status' =>  'warning',
+                        'msg' => 'Oop nothing found contact up for help!',
+                    ],401);
+                }
+
+                if($service->status == 1 && $request->is_active){
                     return response()->json([
                         'verified' => false,
                         'status' =>  'warning',
@@ -314,7 +322,7 @@ class ServiceController extends Controller
                 'Status: ' . $masterController->checkMyServiceStatus($service->status) . "\n\n" .
                 'Discount: ' . $service->discount . "%\n\n" .
                 'Price: $' . $service->price . "\n\n" .
-                'This amount will be display without tax included.' . "\n\n" .
+
                 'Thank you for choosing our platform.';
                 $emailController->sendTextEmail(Auth::user()->email, $subject, $content);
 
