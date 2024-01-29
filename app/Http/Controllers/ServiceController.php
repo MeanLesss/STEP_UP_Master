@@ -395,7 +395,6 @@ class ServiceController extends Controller
         $result = Service::where('id',$id)->first();
 
         if(!$result){
-            $result->isReadOnly  = true;
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
