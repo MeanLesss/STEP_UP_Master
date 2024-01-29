@@ -394,12 +394,17 @@ class ServiceController extends Controller
         $result = Service::where('id',$id)->increment('view');
         $result = Service::where('id',$id)->first();
 
-        $attachments = json_decode($result->attachments);
-        foreach($attachments as &$attachment){
-            // $attachment = env('APP_URL').$attachment;
-            $attachment = asset('storage/'.$attachment);
+        if(isset($result->attachments)){
+
+            $attachments = json_decode($result->attachments);
+            foreach($attachments as &$attachment){
+                // $attachment = env('APP_URL').$attachment;
+                $attachment = asset('storage/'.$attachment);
+            }
+            $result->attachments = $attachments;
+        }else{
+            $result->attachments = new stdClass();
         }
-        $result->attachments = $attachments;
         $result->isReadOnly  = false;
        /* The above code is incomplete and does not have any logic or condition specified within the if
        statement. Therefore, it is not possible to determine what the code is intended to do without
