@@ -394,6 +394,15 @@ class ServiceController extends Controller
         $result = Service::where('id',$id)->increment('view');
         $result = Service::where('id',$id)->first();
 
+        if(!$result){
+            $result->isReadOnly  = true;
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' => "Nothing Found!",
+            ],401);
+        }
+
         if(isset($result->attachments)){
 
             $attachments = json_decode($result->attachments);
@@ -406,9 +415,7 @@ class ServiceController extends Controller
             $result->attachments = new stdClass();
         }
         $result->isReadOnly  = false;
-       /* The above code is incomplete and does not have any logic or condition specified within the if
-       statement. Therefore, it is not possible to determine what the code is intended to do without
-       further information. */
+
         if(isset($orderCheck)){
             $result->isReadOnly  = true;
             return response()->json([
