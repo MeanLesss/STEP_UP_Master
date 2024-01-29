@@ -84,13 +84,13 @@
                     <i class="now-ui-icons text_caps-small"></i>
                     <p>{{ __('Typography') }}</p>
                 </a>
-            </li> --}}
+            </li>
             <li class = "">
                 <a href="{{ route('page.index', 'upgrade') }}" class="bg-info">
                     <i class="now-ui-icons arrows-1_cloud-download-93"></i>
                     <p> {{ Auth::user()->name }}</p>
                 </a>
-            </li>
+            </li>--}}
         </ul>
     </div>
 </div>
