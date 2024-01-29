@@ -13,7 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <!-- Extra details for Live View on GitHub Pages -->
     <title>
-        Now UI Dashboard by Creative Tim
+        Step Up - KH
     </title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
         name='viewport' />

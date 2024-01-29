@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\LoginController;
@@ -30,7 +31,7 @@ Route::get('/email-verified', function(){
     return view('email.VerifyEmail');
 })->name('email-verified');
 
-Route::get('/index', function(){return view('home');})->name('home');
+Route::get('/index', [Controller::class,'dashboard'])->name('home');
 // Route::get('/index2', [MasterController::class,'index'])->name('profile.edit');
 Route::get('/index2', function(){return view('profile.edit');})->name('profile.edit');
 Route::get('/index2update', function(){return view('profile.edit');})->name('profile.update');

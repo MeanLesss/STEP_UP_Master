@@ -4144,7 +4144,7 @@ Created using IcoMoon - icomoon.io
 
 .sidebar[data-color="dark-purple"]:after,
 .off-canvas-sidebar[data-color="dark-purple"]:after {
-    background: #472874;
+    background: #161A3A;
 }
 
 .sidebar[data-color="dark-purple"] .nav li.active>a:not([data-toggle="collapse"]),
@@ -4863,7 +4863,7 @@ Created using IcoMoon - icomoon.io
         min-width: 400px;
     }
     #minimizeSidebar {
-        display: none;
+        display: block;
     }
     .timeline>li>.timeline-panel {
         width: 86% !important;
@@ -5260,7 +5260,7 @@ Created using IcoMoon - icomoon.io
         background: none !important;
     }
     .navbar .navbar-toggle {
-        display: none;
+        display: block  !important;
     }
     .navbar-nav .nav-link.profile-photo {
         padding: 0;

@@ -15,7 +15,7 @@
     </div>
     <div class="content">
         <div class="row">
-            <div class="col-md-10">
+            <div class="col-md-12">
                 <div class="card">
                     {{-- Part 1 --}}
                     <div class="card-header">
@@ -63,29 +63,14 @@
                     </div>
                     {{-- Part 2 --}}
                     <div class="card-header">
-                        <h5 class="title">{{ __('Password') }}</h5>
+                        {{-- <h5 class="title">{{ __('Password') }}</h5> --}}
                     </div>
                     <div class="card-body">
 
                     </div>
                 </div>
             </div>
-            <div class="col-md-2">
-                <div class="card card-user">
-                    <div class="image">
-                        <h3>(Title)Actions</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="author">
-                            <h4>Body card</h4>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="button-container">
-                        <h1>Footer</h1>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
     <script>
@@ -104,6 +89,9 @@
             // Initialize DataTable
             $(document).ready(function() {
                 $('#' + elementId).DataTable({
+                    drawCallback: function() {
+                        $('.dataTables_paginate > .pagination > .paginate_button').addClass('page-item');
+                    },
                     columns: headers.map(function(header) {
                         var columnConfig = {
                             title: header,

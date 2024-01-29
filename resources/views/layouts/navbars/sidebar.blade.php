@@ -7,7 +7,8 @@
             <a href="/index" class="simple-text logo-mini">
                 <img src="{{ asset('storage/app_img/Step_up_logo.png') }}"
                     style="width: 100%; height: 100%; object-fit: contain;" />
-            </a>
+                </a>
+                <p> {{ Auth::user()->name }}</p>
         </div>
     </div>
     <div class="sidebar-wrapper" id="sidebar-wrapper">
@@ -40,12 +41,12 @@
                                 <p> {{ __('Service Order Management') }} </p>
                             </a>
                         </li>
-                        <li class="@if ($activePage == 'profile') active @endif">
+                        {{-- <li class="@if ($activePage == 'profile') active @endif">
                             <a href="{{ route('profile.edit') }}">
                                 <i class="now-ui-icons users_single-02"></i>
                                 <p> {{ __('User Profile') }} </p>
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="@if ($activePage == 'users') active @endif">
                             <a href="{{ route('users.index') }}">
                                 <i class="now-ui-icons design_bullet-list-67"></i>
@@ -60,7 +61,7 @@
                     <p>{{ __('Icons') }}</p>
                 </a>
             </li>
-            <li class = "@if ($activePage == 'maps') active @endif">
+            {{-- <li class = "@if ($activePage == 'maps') active @endif">
                 <a href="{{ route('page.index', 'maps') }}">
                     <i class="now-ui-icons location_map-big"></i>
                     <p>{{ __('Maps') }}</p>
@@ -71,19 +72,19 @@
                     <i class="now-ui-icons ui-1_bell-53"></i>
                     <p>{{ __('Notifications') }}</p>
                 </a>
-            </li>
-            <li class = " @if ($activePage == 'table') active @endif">
+            </li> --}}
+            {{-- <li class = " @if ($activePage == 'table') active @endif">
                 <a href="{{ route('page.index', 'table') }}">
                     <i class="now-ui-icons design_bullet-list-67"></i>
                     <p>{{ __('Table List') }}</p>
                 </a>
-            </li>
-            <li class = "@if ($activePage == 'typography') active @endif">
+            </li> --}}
+            {{-- <li class = "@if ($activePage == 'typography') active @endif">
                 <a href="{{ route('page.index', 'typography') }}">
                     <i class="now-ui-icons text_caps-small"></i>
                     <p>{{ __('Typography') }}</p>
                 </a>
-            </li>
+            </li> --}}
             <li class = "">
                 <a href="{{ route('page.index', 'upgrade') }}" class="bg-info">
                     <i class="now-ui-icons arrows-1_cloud-download-93"></i>

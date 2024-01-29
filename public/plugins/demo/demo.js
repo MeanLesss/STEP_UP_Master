@@ -1,6 +1,6 @@
 demo = {
-    initPickColor: function() {
-        $('.pick-class-label').click(function() {
+    initPickColor: function () {
+        $('.pick-class-label').click(function () {
             var new_class = $(this).attr('new-class');
             var old_class = $('#display-buttons').attr('data-class');
             var display_div = $('#display-buttons');
@@ -12,7 +12,7 @@ demo = {
             }
         });
     },
-    checkFullPageBackgroundImage: function() {
+    checkFullPageBackgroundImage: function () {
         $page = $('.full-page');
         image_src = $page.data('image');
 
@@ -31,7 +31,7 @@ demo = {
     //     }
     // },
 
-    initDocChart: function() {
+    initDocChart: function () {
         chartColor = "#FFFFFF";
 
         // General configuration for the charts with Line gradientStroke
@@ -122,7 +122,7 @@ demo = {
         });
     },
 
-    initDashboardPageCharts: function() {
+    initDashboardPageCharts: function (chart_user_data = [], chart_order_data = [], chart_order_old_data = [], chart_service_status_data = []) {
 
         chartColor = "#FAFF00";
 
@@ -237,13 +237,14 @@ demo = {
         gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
         gradientFill.addColorStop(1, "rgba(255, 255, 255, 0.24)");
 
-        var data = [50, 150, 100, 190, 130, 90, 150, 160, 120, 140, 190, 95];
+        // var data = [50, 150, 100, 190, 130, 90, 150, 160, 120, 140, 190, 95];
+        var data = chart_user_data.map(x => x.user_count);
         var myChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
                 datasets: [{
-                    label: "Data",
+                    label: "User",
                     borderColor: chartColor,
                     pointBorderColor: chartColor,
                     pointBackgroundColor: "#1e3d60",
@@ -341,13 +342,15 @@ demo = {
         gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
         gradientFill.addColorStop(1, "rgba(249, 99, 59, 0.40)");
 
+        var data = chart_order_data.map(x => x.order_count);
         myChart = new Chart(ctx, {
-            type: 'line',
+            // type: 'line',
+            type: 'bar',
             responsive: true,
             data: {
                 labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                 datasets: [{
-                    label: "Active Users",
+                    label: "Completed orders",
                     borderColor: "#f96332",
                     pointBorderColor: "#FFF",
                     pointBackgroundColor: "#f96332",
@@ -358,7 +361,8 @@ demo = {
                     fill: true,
                     backgroundColor: gradientFill,
                     borderWidth: 2,
-                    data: [542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 630]
+                    data: data
+                    // data: [542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 630]
                 }]
             },
             options: gradientChartOptionsConfiguration
@@ -375,13 +379,16 @@ demo = {
         gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
         gradientFill.addColorStop(1, hexToRGB('#18ce0f', 0.4));
 
+
+        var data = chart_order_old_data.map(x => x.order_count);
         myChart = new Chart(ctx, {
-            type: 'line',
+            // type: 'line',
+            type: 'bar',
             responsive: true,
             data: {
-                labels: ["12pm,", "3pm", "6pm", "9pm", "12am", "3am", "6am", "9am"],
+                labels: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
                 datasets: [{
-                    label: "Email Stats",
+                    label: "Old completed orders",
                     borderColor: "#18ce0f",
                     pointBorderColor: "#FFF",
                     pointBackgroundColor: "#18ce0f",
@@ -392,89 +399,138 @@ demo = {
                     fill: true,
                     backgroundColor: gradientFill,
                     borderWidth: 2,
-                    data: [40, 500, 650, 700, 1200, 1250, 1300, 1900]
+                    // data: [40, 500, 650, 700, 1200, 1250, 1300, 1900]
+                    data: data
                 }]
             },
             options: gradientChartOptionsConfigurationWithNumbersAndGrid
         });
 
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
         var e = document.getElementById("barChartSimpleGradientsNumbers").getContext("2d");
 
-        gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-        gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
-        gradientFill.addColorStop(1, hexToRGB('#2CA8FF', 0.6));
+        var labels = ['Expired/Declined', 'Pending', 'Active', 'Cancel'];
+        var dataValues = chart_service_status_data.map(x => x.count);
+
+        var backgroundColors = labels.map((label, index) => {
+            var gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
+            var color1 = getRandomColor();
+            var color2 = getRandomColor();
+            gradientFill.addColorStop(0, color1);
+            gradientFill.addColorStop(1, color2);
+            return gradientFill;
+        });
+
+        var data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'All service status',
+                    data: dataValues,
+                    backgroundColor: backgroundColors
+                }
+            ]
+        };
 
         var a = {
-            type: "bar",
-            data: {
-                labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-                datasets: [{
-                    label: "Active Countries",
-                    backgroundColor: gradientFill,
-                    borderColor: "#2CA8FF",
-                    pointBorderColor: "#FFF",
-                    pointBackgroundColor: "#2CA8FF",
-                    pointBorderWidth: 2,
-                    pointHoverRadius: 4,
-                    pointHoverBorderWidth: 1,
-                    pointRadius: 4,
-                    fill: true,
-                    borderWidth: 1,
-                    data: [80, 99, 86, 96, 123, 85, 100, 75, 88, 90, 123, 155]
-                }]
-            },
+            type: 'doughnut',
+            data: data,
             options: {
+                responsive: true,
                 maintainAspectRatio: false,
-                legend: {
-                    display: false
-                },
-                tooltips: {
-                    bodySpacing: 4,
-                    mode: "nearest",
-                    intersect: 0,
-                    position: "nearest",
-                    xPadding: 10,
-                    yPadding: 10,
-                    caretPadding: 10
-                },
-                responsive: 1,
-                scales: {
-                    y: {
-                        gridLines: 0,
-                        gridLines: {
-                            zeroLineColor: "transparent",
-                            drawBorder: false
-                        }
+                plugins: {
+                    legend: {
+                        position: 'top',
                     },
-                    x: {
-                        display: 0,
-                        gridLines: 0,
-                        ticks: {
-                            display: false
-                        },
-                        gridLines: {
-                            zeroLineColor: "transparent",
-                            drawTicks: false,
-                            display: false,
-                            drawBorder: false
-                        }
-                    }
-                },
-                layout: {
-                    padding: {
-                        left: 0,
-                        right: 0,
-                        top: 15,
-                        bottom: 15
+                    title: {
+                        display: true,
+                        // text: 'Chart.js Doughnut Chart'
                     }
                 }
-            }
+            },
         };
+        // var a = {
+        //     type: "bar",
+        //     data: {
+        //         labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        //         datasets: [{
+        //             label: "Active Countries",
+        //             backgroundColor: gradientFill,
+        //             borderColor: "#2CA8FF",
+        //             pointBorderColor: "#FFF",
+        //             pointBackgroundColor: "#2CA8FF",
+        //             pointBorderWidth: 2,
+        //             pointHoverRadius: 4,
+        //             pointHoverBorderWidth: 1,
+        //             pointRadius: 4,
+        //             fill: true,
+        //             borderWidth: 1,
+        //             data: [80, 99, 86, 96, 123, 85, 100, 75, 88, 90, 123, 155]
+        //         }]
+        //     },
+        //     options: {
+        //         maintainAspectRatio: false,
+        //         legend: {
+        //             display: false
+        //         },
+        //         tooltips: {
+        //             bodySpacing: 4,
+        //             mode: "nearest",
+        //             intersect: 0,
+        //             position: "nearest",
+        //             xPadding: 10,
+        //             yPadding: 10,
+        //             caretPadding: 10
+        //         },
+        //         responsive: 1,
+        //         scales: {
+        //             y: {
+        //                 gridLines: 0,
+        //                 gridLines: {
+        //                     zeroLineColor: "transparent",
+        //                     drawBorder: false
+        //                 }
+        //             },
+        //             x: {
+        //                 display: 0,
+        //                 gridLines: 0,
+        //                 ticks: {
+        //                     display: false
+        //                 },
+        //                 gridLines: {
+        //                     zeroLineColor: "transparent",
+        //                     drawTicks: false,
+        //                     display: false,
+        //                     drawBorder: false
+        //                 }
+        //             }
+        //         },
+        //         layout: {
+        //             padding: {
+        //                 left: 0,
+        //                 right: 0,
+        //                 top: 15,
+        //                 bottom: 15
+        //             }
+        //         }
+        //     }
+        // };
+
+        ////// var data =chart_service_status_data.count;
 
         var viewsChart = new Chart(e, a);
     },
 
-    initGoogleMaps: function() {
+    initGoogleMaps: function () {
         var myLatlng = new google.maps.LatLng(40.748817, -73.985428);
         var mapOptions = {
             zoom: 13,
