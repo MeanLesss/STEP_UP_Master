@@ -80,12 +80,12 @@ class ServiceOrderController extends Controller
         }
     }
 
-    public function showOrdersForAll($isOrder = true){ //True for my orderand false for my work
+    public function showOrdersForAll($isOrder = true){ //True for my order and false for my work
         try{
             $isOrder = filter_var($isOrder, FILTER_VALIDATE_BOOLEAN);
             if(Auth::user()->tokenCan( 'serviceOrder:view')){
                 if(Auth::user()->role == 100){
-                    if($isOrder){ //True for my work and false for my order
+                    if($isOrder){ //True for my order and false for my work
                         $result = ServiceOrder::where('order_by', Auth::user()->id)->orderBy('created_at', 'desc')->get();
                     }else{
                         $result = ServiceOrder::where('freelancer_id',Auth::user()->id)->orderBy('created_at', 'desc')->get();
@@ -128,7 +128,7 @@ class ServiceOrderController extends Controller
                                 $item->completed_attachments= new stdClass;
                             }
                         }
-                        $item->contact = User::select('name','email')->where('id',$isOrder ? $item->order_by : $item->freelancer_id)->first();
+                        $item->contact = User::select('name','email')->where('id',$isOrder ? $item->freelancer_id : $item->order_by)->first();
                         return $item;
                     });
                     return response()->json([
