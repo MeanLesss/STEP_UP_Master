@@ -404,7 +404,7 @@ class ServiceController extends Controller
 
         if(isset($result->attachments)){
             $masterController = new MasterController();
-            $stringStatus = $masterController->checkServiceStatus($result->order_status);
+            $stringStatus = $masterController->checkMyServiceStatus($result->order_status);
             $result->stringStatus = $stringStatus;
 
             $attachments = json_decode($result->attachments);
