@@ -207,9 +207,14 @@ class LoginController extends Controller
             ],401);
         }
 
-      /* The above code is checking if the "guest" and "freelancer" properties of the  object
-      are both false, and if either the "password" or "confirm_password" properties are null. If
-      these conditions are met, the code inside the if statement will be executed. */
+        $doesExist = User::where('email', $request->email)->exists();
+        if($doesExist){
+            return response()->json([
+                'verified' => false,
+                'status' =>  'error',
+                'msg' =>  'Please use other credential!',
+            ],401);
+        }
         if($request->guest == false &&
             $request->freelancer == false &&
             ($request->password == null || $request->confirm_password == null)){

@@ -476,7 +476,7 @@ class ServiceOrderController extends Controller
                 $transaction->client_status = 0;
                 $transaction->freelancer_status = 0;
                 $transaction->isComplain = 0;
-                $transaction->tranc_attachments = new stdClass();
+                // $transaction->tranc_attachments = new stdClass();
                 $transaction->tranc_status = 0;
                 $transaction->created_by = Auth::user()->id;
                 $transaction->updated_by = Auth::user()->id;
