@@ -110,6 +110,9 @@ class ServiceController extends Controller
                 //$result = Service::paginate($request->range);
                 $query->where('price',$request->price);
             }
+            if($request->has('title') && isset($request->title)){
+                $query->where('title', 'LIKE', '%' . $request->title . '%');
+            }
 
             $query->where('status', 1);
             $result = $query->paginate($request->range);
