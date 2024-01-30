@@ -415,9 +415,9 @@ class ServiceOrderController extends Controller
 
                     // $userDetail->balance -= $priceWithTax;
                     // $userDetail->update(['balance'=>$userDetail->balance]);
-                    $userDetail->decrement('balance',$priceWithTax);
+                    $userDetail->decrement('balance',$totalPrice);
                     // Update accountant balance
-                    UserDetail::where('user_id',2)->increment('balance',$priceWithTax);
+                    UserDetail::where('user_id',2)->increment('balance',$totalPrice);
 
                     $serviceOrder = new ServiceOrder($request->all());
 
