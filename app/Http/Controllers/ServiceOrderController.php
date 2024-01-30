@@ -7,6 +7,7 @@ use Exception;
 use App\Models\User;
 use App\Models\Service;
 use App\Models\UserDetail;
+use App\Models\Transaction;
 use Illuminate\Support\Str;
 use App\Models\ServiceOrder;
 use Illuminate\Http\Request;
@@ -412,8 +413,11 @@ class ServiceOrderController extends Controller
                         ],401);
                     }
 
-                    $userDetail->balance -= $priceWithTax;
-                    $userDetail->update(['balance'=>$userDetail->balance]);
+                    // $userDetail->balance -= $priceWithTax;
+                    // $userDetail->update(['balance'=>$userDetail->balance]);
+                    $userDetail->decrement('balance',$priceWithTax);
+                    // Update accountant balance
+                    UserDetail::where('id',2)->increment('balance',$priceWithTax);
 
                     $serviceOrder = new ServiceOrder($request->all());
 
@@ -464,6 +468,22 @@ class ServiceOrderController extends Controller
                 $serviceOrder->updated_at = Carbon::now();
                 $serviceOrder->save();
                 $service->increment('service_ordered_count');
+
+                $transaction = new Transaction();
+                $transaction->client_id = $serviceOrder->order_by;
+                $transaction->free_id = $serviceOrder->freelancer_id;
+                $transaction->order_id = $serviceOrder->id;
+                $transaction->client_status = 0;
+                $transaction->freelancer_status = 0;
+                $transaction->isComplain = 0;
+                $transaction->tranc_attachments = new stdClass();
+                $transaction->tranc_status = 0;
+                $transaction->created_by = Auth::user()->id;
+                $transaction->updated_by = Auth::user()->id;
+                $transaction->created_at = Carbon::now();
+                $transaction->updated_at = Carbon::now();
+                $transaction->save();
+
 
                 $masterController = new MasterController();
                 $emailController = new EmailController();

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->boolean('isGuest')->comment('determan if it a guest')->nullable();
-            $table->integer('role')->comment('10:guest,100:freelancer,101:client,1000:admin,1001:legal')->nullable();
+            $table->integer('role')->comment('10:guest,100:freelancer,101:client,1000:admin,1001:legal,1002:accountant')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->integer('login_attempt')->nullable();

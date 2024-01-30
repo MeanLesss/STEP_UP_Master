@@ -181,7 +181,7 @@ class TrancsactionController extends Controller
                 $transaction->client_id = $client->id;
                 $transaction->free_id = Auth::user()->id;
                 $transaction->order_id = $order->id;
-                $transaction->client_status = 0;
+                // $transaction->client_status = 0;
                 $transaction->freelancer_status = 2;
                 $transaction->isComplain = 0;
                 $transaction->tranc_attachments = isset($request->completed_attachments) ? $request->completed_attachments : new stdClass() ;
@@ -432,8 +432,8 @@ class TrancsactionController extends Controller
                 $transaction->client_id = $user->id;
                 $transaction->free_id = $order->freelancer_id;
                 $transaction->order_id = $order->id;
-                $transaction->client_status = 2;
-                $transaction->freelancer_status = 0;
+                $transaction->client_status = 1;
+                // $transaction->freelancer_status = 0;
                 $transaction->isComplain = 0;
                 // $transaction->tranc_attachments = new stdClass();
                 $transaction->tranc_status = 1;
@@ -529,7 +529,7 @@ class TrancsactionController extends Controller
                     $transaction->free_id = $order->freelancer_id;
                     $transaction->order_id = $order->id;
                     $transaction->client_status = 1;
-                    $transaction->freelancer_status = 0;
+                    // $transaction->freelancer_status = 0;
                     $transaction->isComplain = 0;
                     // $transaction->tranc_attachments = new stdClass();
                     $transaction->tranc_status = 1;
@@ -622,7 +622,7 @@ class TrancsactionController extends Controller
                 $transaction->client_id = $order->order_by;
                 $transaction->free_id =  $freelancer->id;
                 $transaction->order_id = $order->id;
-                $transaction->client_status = 0;
+                // $transaction->client_status = 0;
                 $transaction->freelancer_status = 1;
                 $transaction->isComplain = 0;
                 // $transaction->tranc_attachments = new stdClass();
@@ -719,7 +719,7 @@ class TrancsactionController extends Controller
                     $transaction->free_id = $order->freelancer_id;
                     $transaction->order_id = $order->id;
                     $transaction->client_status = 2;
-                    $transaction->freelancer_status = 0;
+                    // $transaction->freelancer_status = 0;
                     $transaction->isComplain = 0;
                     // $transaction->tranc_attachments = new stdClass();
                     $transaction->tranc_status = 1;
