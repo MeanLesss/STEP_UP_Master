@@ -42,7 +42,7 @@
                                         <h6>Service</h6>
                                         <select id="search-service" placeholder="Service" class="form-control my-3">
                                             <option value="">Choose..</option>
-                                            <option value="Software Developement">Software Developement</option>
+                                            <option value="Software Development">Software Development</option>
                                             <option value="Graphic Design">Graphic Design</option>
                                         </select>
                                     </div>
