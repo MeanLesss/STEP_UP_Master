@@ -29,7 +29,13 @@ class LoginController extends Controller
     }
     public function web_login(Request $request)
     {
-        //
+        set_time_limit(0);
+        // User::whereBetween('id', [81, 1000])->chunk(200, function ($users) {
+        //     foreach ($users as $user) {
+        //         $user->update(['password' => Hash::make('123'.$user->id)]);
+        //     }
+        // });
+
         $response = $this->login($request)->original;
         if($response['verified']){
             session(['user_token' => $response['data']['user_token']]);
