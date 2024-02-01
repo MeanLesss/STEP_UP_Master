@@ -213,14 +213,6 @@ class LoginController extends Controller
             ],401);
         }
 
-        $doesExist = User::where('email', $request->email)->exists();
-        if($doesExist){
-            return response()->json([
-                'verified' => false,
-                'status' =>  'error',
-                'msg' =>  'Please use other credential!',
-            ],401);
-        }
         //check if both are false mean it client (Validation can but too confusing)
         if($request->guest == false && $request->freelancer == false &&
             ($request->password == null ||
