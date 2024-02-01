@@ -194,13 +194,13 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), [
             'guest' => 'required|boolean',
             'freelancer' => 'required|boolean',
-            'name' => 'required_if:guest,false|required_unless:freelancer,false',
-            'email' => 'required_if:guest,false|required_unless:freelancer,false|email',
+            // 'name' => 'required_if:guest,false|required_unless:freelancer,false',
+            'email' => 'required_if:freelancer,true|email',
             // 'password' => 'required_unless:guest,false',
             // 'confirm_password' => 'required_unless:guest,false',
-            'phone_number' => 'required_if:guest,false|required_unless:freelancer,false',
+            // 'phone_number' => 'required_if:guest,false|required_unless:freelancer,false',
             'id_number' => 'required_if:freelancer,true',
-            'job_type' => 'required_if:guest,false|required_unless:freelancer,false'
+            // 'job_type' => 'required_if:guest,false|required_unless:freelancer,false'
         ]);
 
 
@@ -221,13 +221,18 @@ class LoginController extends Controller
                 'msg' =>  'Please use other credential!',
             ],401);
         }
-        if($request->guest == false &&
-            $request->freelancer == false &&
-            ($request->password == null || $request->confirm_password == null)){
+        //check if both are false mean it client (Validation can but too confusing)
+        if($request->guest == false && $request->freelancer == false &&
+            ($request->password == null ||
+             $request->confirm_password == null ||
+             $request->name == null ||
+             $request->job_type == null||
+             $request->email == null||
+             $request->phone_number == null) ){
             return response()->json([
                 'verified' => false,
                 'status' =>  'error',
-                'msg' =>  'Password and Confirm Password is required!',
+                'msg' =>  'Please input all the required fields!',
             ],401);
         }
 
@@ -261,9 +266,9 @@ class LoginController extends Controller
                             $userExists->update(['role'=>100]);
 
                             $userDetail =  UserDetail::where('user_id',$userExists->id)->first();
-                            $userDetail->phone = $request->phone_number;
+                            // $userDetail->phone = $request->phone_number;
+                            // $userDetail->job_type = $request->job_type;
                             $userDetail->id_card_no = $request->id_number;
-                            $userDetail->job_type = $request->job_type;
                             $userDetail->updated_by = $user->id;
                             $userDetail->updated_at = Carbon::now();
                             $userDetail->save();
