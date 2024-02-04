@@ -67,6 +67,35 @@ class MasterController extends Controller
         }
         return $stringStatus;
     }
+    public function checkUserRole(int $status){
+        $stringStatus = '';
+        switch ($status) {
+            case 1:
+                $stringStatus = 'Banned';
+                break;
+            case 10:
+                $stringStatus = 'Guest';
+                break;
+            case 100:
+                $stringStatus = 'Freelancer';
+                break;
+            case 101:
+                $stringStatus = 'Client';
+                break;
+            case 1000:
+                $stringStatus = 'Admin';
+                break;
+            case 1001:
+                $stringStatus = 'Legal';
+                break;
+            case 1002:
+                $stringStatus = 'Accountant';
+                break;
+            default:
+                $stringStatus = 'Unknown';
+        }
+        return $stringStatus;
+    }
     /**
      * Show the form for creating a new resource.
      */

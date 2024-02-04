@@ -14,7 +14,7 @@
     </div>
     <div class="content">
         <div class="row">
-            <div class="col-md-10">
+            <div class="col-md-12">
                 <div class="card">
                     {{-- Part 1 --}}
                     <div class="card-header">
@@ -31,65 +31,120 @@
                                         <h6>Status</h6>
                                         <select id="search-status" placeholder="Status" class="form-control my-3">
                                             <option value="">Choose..</option>
-                                            <option value="-1">Expired / Declined</option>
-                                            <option value="0">Pending</option>
                                             <option value="1">Active</option>
-                                            <option value="2">Cancel</option>
+                                            <option value="2">Inactive</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3 col-lg-3">
+                                    {{-- <div class="col-md-3 col-lg-3">
                                         <h6>Service</h6>
                                         <select id="search-service" placeholder="Service" class="form-control my-3">
                                             <option value="">Choose..</option>
                                             <option value="Software Developement">Software Developement</option>
                                             <option value="Graphic Design">Graphic Design</option>
                                         </select>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
-                        {{ $dataTable->table() }}
+                        {{-- {{ $dataTable->table() }} --}}
+                        <table id="users-table" class="table table-striped " style="width:100%;">
                         </table>
                     </div>
-                    {{-- Part 2 --}}
-                    <div class="card-header">
-                        <h5 class="title">{{ __('Password') }}</h5>
-                    </div>
-                    <div class="card-body">
+                </div>
+            </div>
 
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card card-user">
-                    <div class="image">
-                        <h3>(Title)Actions</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="author">
-                            <h4>Body card</h4>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="button-container">
-                        <h1>Footer</h1>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <script>
-        // $(document).ready(function() {
-        //     $('#users-table').DataTable({
-        //         processing: true,
-        //         serverSide: true,
-        //         ajax: "{{ route('users.data') }}",
-        //         column:[]
-        //     });
-        // });
-    </script>
-@endsection
-@push('scripts')
-    {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
-@endpush
+        $(document).ready(function() {
+            userTable();
+        });
+        function userTable(){
+            $('#users-table').DataTable({
+                serverSide: true,
+                ajax: "{{ route('users.data') }}",
+                columns: [{
+                        title:'Id',
+                        data: 'id'
+                    },
+                    {
+                        title:'Name',
+                        data: 'name'
+                    },
+                    {
+                        title:'Email',
+                        data: 'email'
+                    },
+                    {
+                        title:'Role',
+                        data: 'role'
+                    },
+                    {
+                        title:'Created At',
+                        data: 'created_at'
+                    },
+                    {
+                        title:'Updated At',
+                        data: 'updated_at'
+                    },
+                ],
+                dom: 'Bfrtip',
+                // select: true,
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    ['10 rows', '25 rows', '50 rows', 'Show all']
+                ],
+                buttons: [{
+                        extend: 'pageLength',
+                        className: "btn-round btn-primary btn",
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        className: "btn-round btn-primary btn",
+                        customize: function(xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
 
+                            // Loop over the cells in column `C`
+                            $('row c[r^="C"]', sheet).each(function() {
+                                // Get the value
+                                if ($('is t', this).text() == 'New York') {
+                                    $(this).attr('s', '20');
+                                }
+                            });
+                        },
+                    },
+                    {
+                        extend: 'pdf',
+                        className: "btn-round btn-primary btn",
+                    },
+                    {
+                        text: 'Reload',
+                        className: "btn-round btn-primary btn",
+                        action: function(e, dt, node, config) {
+                            // dt.ajax.reload();
+                            status = $('#search-status').val();
+                            service = $('#search-service').val();
+                            filterService(status, service);
+                        }
+                    }
+
+                ],
+                responsive: true,
+                bDestroy: true,
+                processing: true,
+                fixedHeader: true,
+                fixedColumn: true,
+                paging: true,
+                searching: true,
+                columnDefs: [{
+                    className: 'dtr_control'
+                }],
+
+            });
+        }
+    </script>
+
+@endsection
+{{-- @push('scripts')
+    {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
+@endpush --}}

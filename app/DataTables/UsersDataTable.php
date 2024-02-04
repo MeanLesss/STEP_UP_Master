@@ -45,6 +45,12 @@ class UsersDataTable extends DataTable
                         Button::make('print'),
                         Button::make('reset'),
                         Button::make('reload'),
+                    ])
+                    ->parameters([
+                        'dom' => 'Bfrtip',
+                        'initComplete' => "function () {
+                            $('#users-table').css('width', '100%');
+                        }",
                     ]);
     }
 
@@ -54,6 +60,7 @@ class UsersDataTable extends DataTable
             Column::make('id'),
             Column::make('name'),
             Column::make('email'),
+            Column::make('roleString'),
             Column::make('created_at'),
             Column::make('updated_at'),
         ];

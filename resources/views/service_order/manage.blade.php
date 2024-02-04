@@ -80,8 +80,12 @@
             var status = $('#search-status').val();
             var service = $('#search-service').val();
 
-            filterOrder(status, service);
-
+            //filterOrder(status, service);
+            Swal.fire({
+                icon: 'warning',
+                title: "In Progress",
+                text: 'Work in progress! Comming Soon.',
+            })
         });
 
         function ServiceTable(elementId, headers, data, status, service_type) {
