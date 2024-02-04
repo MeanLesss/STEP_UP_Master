@@ -258,7 +258,7 @@ class ServiceController extends Controller
         }
     }
 
-    public function updateService(Request $request){
+    public function updateService(Request $request){ //Service ativation
         $masterController = new MasterController();
         try{
             $validator = Validator::make($request->all(), [
@@ -591,7 +591,7 @@ class ServiceController extends Controller
         try{
             $validator = Validator::make($request->all(), [
                 'service_id' => 'required',
-                'isApprove' => 'required',
+                'status' => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -607,7 +607,7 @@ class ServiceController extends Controller
             if(Auth::user()->role == 1000){
                 try{
                     $service = Service::find($request->service_id);
-                    $service->update(['updated_at' => Carbon::now(),'updated_by'=>Auth::user()->id,'status'=>$request->isApprove ? 1 : -1]);
+                    $service->update(['updated_at' => Carbon::now(),'updated_by'=>Auth::user()->id,'status'=>$request->status]);
                     $masterController = new MasterController();
 
                     $creator = User::where('id',$service->created_by)->first();

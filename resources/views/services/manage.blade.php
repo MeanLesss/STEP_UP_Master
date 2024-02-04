@@ -101,7 +101,7 @@
                             columnConfig.render = function(data, type, row, meta) {
                                 switch (data) {
                                     case -1:
-                                        return '<span class="badge text-bg-danger">Expired/Declined </span>';
+                                        return '<span class="badge text-bg-danger">Expired/Declined/Banned </span>';
                                         break;
                                     case 0:
                                         return '<span class="badge text-bg-warning">Pending </span>';
@@ -110,7 +110,7 @@
                                         return '<span class="badge text-bg-success">Active </span>';
                                         break;
                                     case 2:
-                                        return '<span class="badge text-bg-primary">Cancel </span>';
+                                        return '<span class="badge text-bg-primary">Inactive </span>';
                                         break;
                                     default:
                                         return `<span class="badge text-bg-dark">Unknown</span>`;
@@ -171,7 +171,7 @@
                                         '<td>' + col.title + ':' + '</td> ' +
                                         '<td>' + col.data + '</td>' +
                                         '</tr>';
-                                    console.log(col.data);
+                                    // console.log(col.data);
 
                                     if (col.title == "id") id = col.data;
 
@@ -179,8 +179,16 @@
                                         columnData += `<tr>
                                                         <td>Approval :</td>
                                                         <td>
-                                                            <button class="btn btn-success" onclick="serviceApproval(${id},true)">Approve</button>
-                                                            <button class="btn btn-danger" onclick="serviceApproval(${id},false)">Reject</button>
+                                                            <button class="btn btn-success" onclick="serviceApproval(${id},1)">Approve</button>
+                                                            <button class="btn btn-danger" onclick="serviceApproval(${id},-1)">Reject</button>
+                                                        </td>
+                                                    </tr>`;
+                                    }else if(col.title == 'status' && col.data.includes('Active')){
+                                        columnData += `<tr>
+                                                        <td>Approval :</td>
+                                                        <td>
+                                                            <button class="btn btn-warning" onclick="serviceApproval(${id},0)">Back to Pending</button>
+                                                            <button class="btn btn-danger" onclick="serviceApproval(${id},-1)">BAN</button>
                                                         </td>
                                                     </tr>`;
                                     }
@@ -258,7 +266,7 @@
             });
         }
 
-        function serviceApproval(service_id, isApprove) {
+        function serviceApproval(service_id, status) {
             var settings = {
                 "url": "{{ url('/service/management/approval') }}",
                 "method": "POST",
@@ -270,7 +278,7 @@
                 "data": JSON.stringify({
                     '_token': "<?= csrf_token() ?>",
                     "service_id": service_id,
-                    "isApprove": isApprove
+                    "status": status
                 }),
                 "beforeSend": function() {
                     Swal.fire({
